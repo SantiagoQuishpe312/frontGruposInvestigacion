@@ -154,6 +154,24 @@ tr:nth-child(odd) {
   width: 100%;
 }
 
+.search-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr; 
+  gap: 16px; 
+  margin-top: 16px;
+}
+
+.rep {
+  margin-bottom: 20px; 
+  margin-left: 60px;
+}
+
+.full-width {
+  width: 80%;
+
+}
+
+
 .label-container {
   width: 100%;
   margin-bottom: 5px;

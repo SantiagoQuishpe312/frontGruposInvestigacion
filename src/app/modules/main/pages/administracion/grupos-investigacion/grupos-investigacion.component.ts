@@ -18,9 +18,15 @@ export class GruposControlComponent implements OnInit {
   ];
   
   dataSource = new MatTableDataSource<InvGroupForm>();
+  fullDataSource: InvGroupForm[] = [];
   isLoading: boolean = true;
   searchControl = new FormControl(); // Campo de búsqueda reactivo
+  departmentControl = new FormControl('');
   usuarioNombre: { [key: number]: string } = {};
+  totalGrupos: number = 0;
+  departments: string[] = [];
+
+
 
   @ViewChild(MatSort) sort!: MatSort; // Habilitar ordenamiento
 
@@ -35,23 +41,104 @@ export class GruposControlComponent implements OnInit {
     
     // Aplicar filtro en tiempo real
     this.searchControl.valueChanges.subscribe(value => {
-      this.dataSource.filter = value.trim().toLowerCase();
+      const searchValue = value?.trim().toLowerCase() || '';
+      this.dataSource.filter = searchValue;
+    });
+
+    /*
+    this.departmentControl.valueChanges.subscribe(value => {
+      if (value) {
+        this.dataSource.filter = value.trim().toLowerCase();
+      }
+    });*/
+
+    this.departmentControl.valueChanges.subscribe(value => {
+      if (value === '') {
+        // Restaurar todos los datos originales cuando se selecciona "Todos los departamentos"
+        this.dataSource.data = [...this.fullDataSource];
+        
+        // Aplicar el filtro de búsqueda si existe
+        const searchValue = this.searchControl.value?.trim().toLowerCase() || '';
+        if (searchValue) {
+          this.dataSource.filter = searchValue;
+        }
+      } else {
+        // Filtrar por departamento seleccionado
+        this.dataSource.data = this.fullDataSource.filter(item => 
+          item.departamento === value
+        );
+        
+        // Aplicar filtro de búsqueda si existe
+        const searchValue = this.searchControl.value?.trim().toLowerCase() || '';
+        if (searchValue) {
+          this.dataSource.filter = searchValue;
+        }
+      }
+      
+      // Actualizar contador de grupos
+      this.totalGrupos = this.dataSource.filteredData.length;
     });
   }
-
+/*
   get() {
     this.giService.getAll().subscribe((data) => {
+      this.totalGrupos = data.length;
+      
+      this.departments = Array.from(new Set(data.map(grupo => grupo.departamento)))
+        .filter(Boolean)
+        .sort();
+      
       data.forEach((grupo) => {
         this.getCoordinador(grupo.idCoordinador).then(nombre => {
           grupo['nombreCoordinador'] = nombre; // Agregar el nombre del coordinador al objeto
           this.dataSource.data = data;
           this.dataSource.sort = this.sort;
+
+          this.dataSource.filterPredicate = (data: InvGroupForm, filter: string) => {
+            return data.departamento.toLowerCase().includes(filter) || 
+                   data.nombreGrupoInv.toLowerCase().includes(filter);
+          };
+
         });
       });
 
       this.isLoading = false;
     });
   }
+*/
+get() {
+  this.giService.getAll().subscribe((data) => {
+    this.totalGrupos = data.length;
+    
+    // Extraer la lista única de departamentos
+    this.departments = Array.from(new Set(data.map(grupo => grupo.departamento)))
+      .filter(Boolean)
+      .sort();
+      
+    const promises = data.map((grupo) => {
+      return this.getCoordinador(grupo.idCoordinador).then(nombre => {
+        grupo['nombreCoordinador'] = nombre; // Agregar el nombre del coordinador al objeto
+        return grupo;
+      });
+    });
+    
+    Promise.all(promises).then(() => {
+      this.fullDataSource = [...data]; // Guardar copia de todos los datos
+      this.dataSource.data = data;
+      this.dataSource.sort = this.sort;
+      
+      // Configurar filterPredicate para el filtro de búsqueda por nombre
+      this.dataSource.filterPredicate = (data: InvGroupForm, filter: string) => {
+        return data.nombreGrupoInv.toLowerCase().includes(filter);
+      };
+      
+      this.isLoading = false;
+    });
+  });
+}
+
+
+
 
   async getCoordinador(id: number): Promise<string> {
     if (this.usuarioNombre[id]) {
