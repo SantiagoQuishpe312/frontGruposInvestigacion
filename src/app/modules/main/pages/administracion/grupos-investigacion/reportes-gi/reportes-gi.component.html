@@ -1,32 +1,99 @@
-<h2>Investigadores por País</h2>
+<h3 class="summary-title">Investigadores por País</h3>
 <canvas id="usuariosPorPaisChart"></canvas>
 
-<h2>Resumen de Investigadores</h2>
+<h3 class="summary-title">Resumen de Investigadores</h3>
+<div class="summary-container">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="summary-card">
+        <div class="card-header">
+          <h4><strong>Resumen por departamento</strong> </h4>
+        </div>
+        <div class="card-body">
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th>Departamento</th>
+                <th>Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of usuariosPorDepartamento | keyvalue">
+                <td>{{ item.key }}</td>
+                <td>{{ item.value }}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td><strong>Total</strong></td>
+                <td><strong>{{ calcularTotal(usuariosPorDepartamento) }}</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
 
-<h3>Por Grado Académico</h3>
-<ul>
-  <li *ngFor="let item of usuariosPorGrado | keyvalue">
-    {{ item.key }}: {{ item.value }}
-  </li>
-</ul>
+    <div class="col-md-4">
+      <div class="summary-card">
+        <div class="card-header">
+          <h4><strong>Resumen por sede</strong> </h4>
+        </div>
+        <div class="card-body">
 
-<h3>Por Departamento</h3>
-<ul>
-  <li *ngFor="let item of usuariosPorDepartamento | keyvalue">
-    {{ item.key }}: {{ item.value }}
-  </li>
-</ul>
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th>Sede</th>
+                <th>Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of usuariosPorSede | keyvalue">
+                <td>{{ item.key }}</td>
+                <td>{{ item.value }}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td><strong>Total</strong></td>
+                <td><strong>{{ calcularTotal(usuariosPorSede) }}</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
 
-<h3>Por Sede</h3>
-<ul>
-  <li *ngFor="let item of usuariosPorSede | keyvalue">
-    {{ item.key }}: {{ item.value }}
-  </li>
-</ul>
+    <div class="col-md-4">
+      <div class="summary-card">
+        <div class="card-header">
+          <h4><strong>Resumen por género</strong> </h4>
+        </div>
+        <div class="card-body">
 
-<h3>Por Género</h3>
-<ul>
-  <li *ngFor="let item of usuariosPorGenero | keyvalue">
-    {{ item.key }}: {{ item.value }}
-  </li>
-</ul>
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th>Género</th>
+                <th>Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of usuariosPorGenero | keyvalue">
+                <td>{{ item.key }}</td>
+                <td>{{ item.value }}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td><strong>Total</strong></td>
+                <td><strong>{{ calcularTotal(usuariosPorGenero) }}</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

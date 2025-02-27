@@ -28,6 +28,10 @@ export class ReportesGIComponent implements OnInit {
     this.get(this.id);
   
   }
+
+  calcularTotal(datos: { [key: string]: number }): number {
+    return Object.values(datos).reduce((acc, curr) => acc + curr, 0);
+  }
   get(id: number) {
     this.giService.getByIdAll(id).subscribe((data) => {
       const dataGroup = [
