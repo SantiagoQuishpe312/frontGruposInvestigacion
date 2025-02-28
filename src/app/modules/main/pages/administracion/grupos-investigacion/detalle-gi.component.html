@@ -13,12 +13,14 @@
           <div class="column">
             <p><strong>Departamento:</strong> {{
               invGroup.invGroup.departamento }}</p>
-            <p *ngIf="invGroup.line?.length">
-              <strong>Líneas de Investigación:</strong>
-              <span *ngFor="let line of invGroup.line; let last = last">
-                {{ line.nombreLinea }}{{ !last ? ', ' : '' }}
+            
+            <p *ngIf="invGroup.academicDomain?.length">
+              <strong>Dominios Académicos:</strong>
+              <span *ngFor="let acad of invGroup.academicDomain; let last = last">
+                {{ acad.nombreDominioAcademico }}{{ !last ? ', ' : '' }}
               </span>
             </p>
+            
 
             <p *ngIf="invGroup.area?.length">
               <strong>Áreas de Investigación:</strong>
@@ -26,10 +28,10 @@
                 {{ area.nombreArea }}{{ !last ? ', ' : '' }}
               </span>
             </p>
-            <p *ngIf="invGroup.academicDomain?.length">
-              <strong>Dominios Académicos:</strong>
-              <span *ngFor="let acad of invGroup.academicDomain; let last = last">
-                {{ acad.nombreDominioAcademico }}{{ !last ? ', ' : '' }}
+            <p *ngIf="invGroup.line?.length">
+              <strong>Líneas de Investigación:</strong>
+              <span *ngFor="let line of invGroup.line; let last = last">
+                {{ line.nombreLinea }}{{ !last ? ', ' : '' }}
               </span>
             </p>
           </div>
@@ -44,6 +46,44 @@
 
 
         </div>
+        <div class="filters-container">
+          <!-- Filtro por función -->
+          <mat-form-field>
+            <mat-label>Filtrar por función</mat-label>
+            <mat-select [(value)]="selectedFuncion" (selectionChange)="aplicarFiltro()">
+              <mat-option *ngFor="let funcion of ['Miembro', 'Coordinador', 'Colaborador', 'Secretario']" [value]="funcion">
+                {{ funcion }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        
+          <!-- Filtro por género -->
+          <mat-form-field>
+            <mat-label>Filtrar por género</mat-label>
+            <mat-select [(value)]="selectedGenero" (selectionChange)="aplicarFiltro()">
+              <mat-option *ngFor="let genero of ['Masculino', 'Femenino', 'Otro']" [value]="genero">
+                {{ genero }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        
+          <!-- Filtro por grado académico -->
+          <mat-form-field>
+            <mat-label>Filtrar por grado académico</mat-label>
+            <mat-select [(value)]="selectedGrado" (selectionChange)="aplicarFiltro()">
+              <mat-option *ngFor="let grado of ['Phd', 'Licenciado', 'Ing', 'Mg']" [value]="grado">
+                {{ grado }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div *ngIf="usuariosPorFuncion">
+          <p><strong>Miembros: </strong>{{ usuariosPorFuncion['Miembro'] }}</p>
+          <p><strong>Coordinadores: </strong>{{ usuariosPorFuncion['Coordinador'] }}</p>
+          <p><strong>Colaboradores: </strong>{{ usuariosPorFuncion['Colaborador'] }}</p>
+          <p><strong>Secretarios: </strong>{{ usuariosPorFuncion['Secretario'] }}</p>
+        </div>
+                
         <div class="modal-buttons">
           <button color="primary" mat-button (click)="EditLine()">
             <i class="fa fa-edit"></i>Líneas y áreas

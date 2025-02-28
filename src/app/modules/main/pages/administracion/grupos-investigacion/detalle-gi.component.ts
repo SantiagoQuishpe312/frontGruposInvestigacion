@@ -29,6 +29,7 @@ export class DetalleGIComponent implements OnInit {
   token: string;
   imagenUrl: SafeResourceUrl | undefined;
   @ViewChild(MatSort) sort!: MatSort;
+  usuariosPorFuncion: { [key: string]: number } = {};
 
   constructor(
     private router: Router,
@@ -49,23 +50,48 @@ export class DetalleGIComponent implements OnInit {
   get(id: number) {
     this.giService.getByIdAll(id).subscribe((data) => {
       this.invGroup = data;
-      const dataGroup= [
-        ...data.users.map(user => ({ 
-          ...user, 
-          funcion: 'Miembro' 
-        })), 
-        {
-          ...data.coordinador, 
-          funcion: 'Coordinador'
-        }
+      const dataGroup = [
+        ...data.users.map(user => ({
+          ...user,
+          funcion: 'Miembro'
+        })),
+        { ...data.coordinador, funcion: 'Coordinador' }
       ];
+  
+      // Contar usuarios por función
+      this.contarUsuariosPorFuncion(dataGroup);
+  
       // Construcción del dataSource con usuarios y coordinador
-      this.dataSource =new MatTableDataSource(dataGroup);
+      this.dataSource = new MatTableDataSource(dataGroup);
       this.dataSource.sort = this.sort;
       this.dataSource.filterPredicate = (data: any, filter: string) =>
         data.nombreDocente.toLowerCase().includes(filter);
     });
   }
+  
+  contarUsuariosPorFuncion(data: any[]) {
+    // Contar los diferentes tipos de función
+    this.usuariosPorFuncion = data.reduce((acc, user) => {
+      const key = user.funcion || 'Miembro'; // Si no tiene función, será 'Miembro'
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
+  }
+  selectedFuncion: string = '';
+selectedGenero: string = '';
+selectedGrado: string = '';
+
+aplicarFiltro() {
+  this.dataSource.filter = this.selectedFuncion.toLowerCase().trim();
+  // Puedes aplicar más filtros aquí según los valores seleccionados
+  if (this.selectedGenero) {
+    this.dataSource.filter = this.dataSource.filter + this.selectedGenero.toLowerCase().trim();
+  }
+  if (this.selectedGrado) {
+    this.dataSource.filter = this.dataSource.filter + this.selectedGrado.toLowerCase().trim();
+  }
+}
+
 
   getImage() {
     this.annexesService.getByGroupType(this.id, 'imagen_GI').subscribe((data) => {

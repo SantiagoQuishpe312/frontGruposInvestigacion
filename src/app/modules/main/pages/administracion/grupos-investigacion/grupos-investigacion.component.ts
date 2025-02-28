@@ -6,6 +6,7 @@ import { InvGroupForm } from 'src/app/types/invGroup.types';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { FormControl } from '@angular/forms';
+import { Chart, registerables } from 'chart.js';
 
 @Component({
   selector: 'app-grupos-investigacion-crud',
@@ -16,6 +17,8 @@ export class GruposControlComponent implements OnInit {
   displayedColumns: string[] = [
     'index', 'nombreGrupoInv', 'acronimoGrupoinv', 'departamento', 'coordinador', 'abrir'
   ];
+  chart: Chart | undefined;
+  gruposPorDepartamento:{ [key: string]: number } = {};
   
   dataSource = new MatTableDataSource<InvGroupForm>();
   fullDataSource: InvGroupForm[] = [];
@@ -34,7 +37,7 @@ export class GruposControlComponent implements OnInit {
     private router: Router,
     private giService: InvGroupService,
     private usuarioService: UsuarioService
-  ) {}
+  ) {Chart.register(...registerables)}
 
   ngOnInit() {
     this.get();
@@ -45,6 +48,7 @@ export class GruposControlComponent implements OnInit {
       this.dataSource.filter = searchValue;
     });
 
+   
     /*
     this.departmentControl.valueChanges.subscribe(value => {
       if (value) {
@@ -79,6 +83,9 @@ export class GruposControlComponent implements OnInit {
       this.totalGrupos = this.dataSource.filteredData.length;
     });
   }
+  calcularTotal(datos:{[key: string]: number}):number{
+      return Object.values(datos).reduce((acc,curr)=>acc+curr,0);
+  }
 /*
   get() {
     this.giService.getAll().subscribe((data) => {
@@ -109,7 +116,7 @@ export class GruposControlComponent implements OnInit {
 get() {
   this.giService.getAll().subscribe((data) => {
     this.totalGrupos = data.length;
-    
+    this.gruposPorDepartamento=this.contarPorCategoria(data,'departamento');
     // Extraer la lista única de departamentos
     this.departments = Array.from(new Set(data.map(grupo => grupo.departamento)))
       .filter(Boolean)
@@ -135,10 +142,41 @@ get() {
       this.isLoading = false;
     });
   });
+  this.crearGraficoDepartamentoPorGrupo();
+}
+contarPorCategoria(data: any[], campo: string): { [key: string]: number } {
+  return data.reduce((acc, item) => {
+    const key = item[campo] || 'Desconocido';
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {} as { [key: string]: number });
 }
 
+crearGraficoDepartamentoPorGrupo() {
+  if (this.chart) this.chart.destroy();
 
+    const labels = Object.keys(this.gruposPorDepartamento);
+    const values = Object.values(this.gruposPorDepartamento);
 
+    this.chart = new Chart('grupoPorDepartamentoChart', {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Grupos por Departamento',
+          data: values,
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: true } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+}
 
   async getCoordinador(id: number): Promise<string> {
     if (this.usuarioNombre[id]) {

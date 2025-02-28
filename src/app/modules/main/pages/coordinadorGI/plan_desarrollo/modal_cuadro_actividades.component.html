@@ -77,20 +77,22 @@
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Condicional Indicador </mat-label>
+                    <mat-label>Periodicidad del Indicador </mat-label>
                     <mat-select formControlName="indicadorCondicional" required>
-                        <mat-option value="c">Continuo</mat-option>
-                        <mat-option value="d">Discreto</mat-option>
+                        <mat-option value="a">Anual</mat-option>
+                        <mat-option value="s">Semestral</mat-option>
+                        <mat-option value="t">Trimestral</mat-option>
+
                       </mat-select>                      <mat-error *ngIf="controlPanelForm.get('indicadorCondicional').invalid && controlPanelForm.get('indicadorCondicional').touched">
                         El campo es obligatorio.
                     </mat-error>
                 </mat-form-field>
                 
                 <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Indicador Acumulativo</mat-label>
+                    <mat-label>Sentido de la Medición del Indicador</mat-label>
                     <mat-select formControlName="indicadorAcumulativo" required>
-                        <mat-option value="s">Si</mat-option>
-                        <mat-option value="n">No</mat-option>
+                        <mat-option value="a">Ascendente</mat-option>
+                        <mat-option value="d">Descendente</mat-option>
                       </mat-select>                          <mat-error *ngIf="controlPanelForm.get('indicadorAcumulativo').invalid && controlPanelForm.get('indicadorAcumulativo').touched">
                         El campo es obligatorio.
                     </mat-error>

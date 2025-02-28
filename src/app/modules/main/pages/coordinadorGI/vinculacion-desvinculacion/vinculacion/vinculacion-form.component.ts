@@ -211,7 +211,7 @@ export class VinculacionFormComponent implements OnInit {
             console.log('Archivo subido con éxito.');
             this.fileUploaded = true;
             setTimeout(() => {
-              this.router.navigateByUrl('main/crea');
+              this.router.navigateByUrl('main/dashboard');
             }, 1000);
           },
           (error) => {

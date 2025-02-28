@@ -97,6 +97,7 @@ export class DevelopmentPlanFormComponent implements OnInit {
     private usuarioService: UsuarioService,
     private specificObjetivesService: SpecificObjetivesService,
     private objStrategiesODSService: ObjStrategiesODSService,
+    private cdr: ChangeDetectorRef,
   ) { this.obj = []; }
   public formReady: boolean = false; // Bandera para indicar si el formulario está listo
   public isLoading: boolean = true; // Inicializar como true para que el spinner aparezca al inicio
@@ -169,9 +170,11 @@ export class DevelopmentPlanFormComponent implements OnInit {
     return this.myForm.get('grupoInv2_1') as FormGroup;
   }
 
-  trackByFn(index: number, item: any): number {
-    return index;
+  trackByIndex(index: number, item: any): number {
+    return item ? item.value.id || index : index;
   }
+  
+  
   //Cargar Data inicial para poder iniciar los Formularios con Datos
   loadData() {
     return forkJoin({
@@ -215,10 +218,28 @@ export class DevelopmentPlanFormComponent implements OnInit {
   }
 
   eliminarObjetivo(index: number): void {
-    if (this.objetivos.length > 1) {
-      this.objetivos.removeAt(index);
+    const objetivo = this.objetivos.at(index).value.objetivo; // Obtener el texto del objetivo
+    
+    if (!window.confirm(`¿Estás seguro de que deseas eliminar el objetivo?\n"${objetivo}"`)) {
+      return;
+    }
+  
+    console.log("Intentando eliminar índice:", index, "Total objetivos:", this.objetivos.length);
+  
+    if (this.objetivos.length > 1 && index >= 0 && index < this.objetivos.length) {
+      const updatedObjetivos = this.objetivos.controls.filter((_, i) => i !== index);
+      this.myForm.setControl('planDesarrolloForm3', this.fb.array(updatedObjetivos));
+  
+      console.log("Elemento eliminado correctamente. Nuevo tamaño:", updatedObjetivos.length);
+  
+      this.cdr.detectChanges();
+    } else {
+      console.warn("No se puede eliminar el objetivo. Índice fuera de rango.");
     }
   }
+  
+  
+  
   getRowspan(estrategias: any[], ods: any[]): number {
     return Math.max(estrategias.length, ods.length);
   }
@@ -251,6 +272,23 @@ export class DevelopmentPlanFormComponent implements OnInit {
       }
     });
   }
+  eliminarOds(objetivoIndex: number, itemIndex: number): void {
+    const objetivo = this.objetivos.at(objetivoIndex);
+    
+    // Clonar los arreglos actuales
+    const estrategias = [...objetivo.value.estrategias];
+    const ods = [...objetivo.value.ods];
+  
+    // Verificar que el índice sea válido y eliminar ambos elementos
+    if (estrategias.length > itemIndex && ods.length > itemIndex) {
+      estrategias.splice(itemIndex, 1);
+      ods.splice(itemIndex, 1);
+      
+      // Actualizar el formulario reactivo con los nuevos valores
+      objetivo.patchValue({ estrategias, ods });
+    }
+  }
+  
 
   crearMarco(): FormGroup {
     return this.fb.group({
@@ -410,7 +448,7 @@ export class DevelopmentPlanFormComponent implements OnInit {
         this.actualizarEstados();
         setTimeout(() => {
           this.formReady = false;
-          this.router.navigateByUrl('main/crea');
+          this.router.navigateByUrl('main/dashboard');
         }, 8000);
       },
       (error) => {
@@ -635,7 +673,8 @@ export class DevelopmentPlanFormComponent implements OnInit {
         idGrupoInv: this.idGroup,
         idCoordinador: data.idCoordinador,
         nombreGrupoInv: data.nombreGrupoInv,
-        estadoGrupoInv: "2",
+        estadoGrupoInv: "",
+        proceso:'2',
         acronimoGrupoinv: data.acronimoGrupoinv,
         usuarioCreacion: data.usuarioCreacion,
         fechaCreacion: data.fechaCreacion,

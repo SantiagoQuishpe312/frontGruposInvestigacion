@@ -112,7 +112,7 @@ export class PropuestaGIComponent implements OnInit {
                         this.matSnackBar.open('Solicitudes Enviados correctamente.', 'Cerrar', {
                             duration: 3000,
                           });
-                        this.router.navigateByUrl('main/crea');
+                        this.router.navigateByUrl('main/dashboard');
                       }, 1000);
                 })
             }), (err) => {
@@ -145,7 +145,7 @@ export class PropuestaGIComponent implements OnInit {
         return iconClass; // Retornar la clase de estilo del icono
     }
     goBack() {
-        this.router.navigateByUrl('main/crea');
+        this.router.navigateByUrl('main/dashboard');
     }
     actualizarEstados(){
     
@@ -174,7 +174,8 @@ export class PropuestaGIComponent implements OnInit {
             usuarioCreacion:data.usuarioCreacion,
             fechaCreacion:data.fechaCreacion,
             usuarioModificacion:this.currentUser,
-            fechaModificacion:this.currentDate
+            fechaModificacion:this.currentDate,
+            proceso:'3',
     
           }
           this.invGroupService.update(this.groupId,invGroup).subscribe(

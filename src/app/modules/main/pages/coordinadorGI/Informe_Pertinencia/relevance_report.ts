@@ -115,7 +115,7 @@ export class InformeDePertinenciaComponent implements OnInit {
                         this.matSnackBar.open('Solicitudes Enviados correctamente.', 'Cerrar', {
                             duration: 3000,
                           });
-                        this.router.navigateByUrl('main/crea');
+                        this.router.navigateByUrl('main/dashboard');
                       }, 1000);
                 })
             }), (err) => {
@@ -148,7 +148,7 @@ export class InformeDePertinenciaComponent implements OnInit {
         return iconClass; // Retornar la clase de estilo del icono
     }
     goBack() {
-        this.router.navigateByUrl('main/crea');
+        this.router.navigateByUrl('main/dashboard');
     }
     actualizarEstados(){
     

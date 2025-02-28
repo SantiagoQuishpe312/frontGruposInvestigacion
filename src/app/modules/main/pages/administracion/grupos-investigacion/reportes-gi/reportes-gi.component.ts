@@ -51,7 +51,7 @@ export class ReportesGIComponent implements OnInit {
   }
   contarPorCategoria(data: any[], campo: string): { [key: string]: number } {
     return data.reduce((acc, item) => {
-      const key = item[campo] || 'Desconocido';
+      const key = item[campo] || 'H';
       acc[key] = (acc[key] || 0) + 1;
       return acc;
     }, {} as { [key: string]: number });

@@ -79,7 +79,7 @@ export class infBienesEquiposComponent implements OnInit{
         this.assetsReportService.createAssetsReport(assetsReport).subscribe(
             (response) => {
                 setTimeout(() => {
-                    this.router.navigateByUrl('main/crea');
+                    this.router.navigateByUrl('main/dashboard');
                 }, 8000);
                 console.log('Informe creado:',response);
             },
