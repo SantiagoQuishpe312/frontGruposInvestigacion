@@ -58,13 +58,10 @@ h2 {
 }
 
 table {
-  margin-left: 5%;
-  width: 90%;
+  margin-left: 2%;
+  width: 96%;
   border-collapse: collapse;
   text-align: left; 
-  //table-layout: fixed; /* Mantiene las columnas del mismo tamaño */
- // word-wrap: break-word; /* Permite que el texto largo se divida */
-  //overflow-wrap: break-word; /* Permite que el texto largo se divida */
 }
 
 thead {
@@ -258,16 +255,36 @@ tr:nth-child(odd) {
   width: 48%;
 }
 
-p {
-  margin: 0.5em 0;
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: transparent;
 }
+
+.info-table td {
+  border: none;
+  padding: 8px;
+  vertical-align: top;
+  background-color: transparent;
+
+}
+
 
 .imgLogo {
   width: 180px;  /* Define el ancho deseado */
   height: 180px; /* Define la altura deseada */
   object-fit: contain; /* Evita la deformación y ajusta la imagen dentro del contenedor */
-  object-position: center
+  object-position: center;
+  margin-left: 30%;
+
 }
+.img-container{
+  display: flex;
+  width: 100%;
+  text-align: center;
+  align-content: center;
+}
+
 .modal-buttons {
   display: flex;
   flex-direction: row;
@@ -321,4 +338,29 @@ p {
   justify-content: center;
   align-items: center;
   gap: 10px;
+}
+
+.tablaInvestigadores {
+  margin-left: 1%;
+  width: 98%;
+  border-collapse: collapse;
+  text-align: left; 
+}
+.tablaInvestigadores th {
+  font-size: 12px; /* Tamaño de fuente para los encabezados de la tabla */
+}
+
+.tablaInvestigadores td {
+  font-size: 11px; /* Tamaño de fuente para las celdas de la tabla */
+}
+
+
+.tables-container3 {
+  width: 100%;
+display: flex;
+gap: 50px;
+}
+.members-table{
+  flex: 1; /* Esto hace que las tablas ocupen el mismo espacio disponible */
+
 }

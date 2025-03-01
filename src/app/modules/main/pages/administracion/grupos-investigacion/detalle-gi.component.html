@@ -11,79 +11,154 @@
       <mat-card>
         <div class="info-container">
           <div class="column">
-            <p><strong>Departamento:</strong> {{
-              invGroup.invGroup.departamento }}</p>
-            
-            <p *ngIf="invGroup.academicDomain?.length">
-              <strong>Dominios Académicos:</strong>
-              <span *ngFor="let acad of invGroup.academicDomain; let last = last">
-                {{ acad.nombreDominioAcademico }}{{ !last ? ', ' : '' }}
-              </span>
-            </p>
-            
-
-            <p *ngIf="invGroup.area?.length">
-              <strong>Áreas de Investigación:</strong>
-              <span *ngFor="let area of invGroup.area; let last = last">
-                {{ area.nombreArea }}{{ !last ? ', ' : '' }}
-              </span>
-            </p>
-            <p *ngIf="invGroup.line?.length">
-              <strong>Líneas de Investigación:</strong>
-              <span *ngFor="let line of invGroup.line; let last = last">
-                {{ line.nombreLinea }}{{ !last ? ', ' : '' }}
-              </span>
-            </p>
+            <table class="info-table">
+              <tr>
+                <td><strong>Departamento:</strong></td>
+                <td>{{ invGroup.invGroup.departamento }}</td>
+              </tr>
+              <tr *ngIf="invGroup.academicDomain?.length">
+                <td><strong>Dominios Académicos:</strong></td>
+                <td>
+                  <span
+                    *ngFor="let acad of invGroup.academicDomain; let last = last">
+                    {{ acad.nombreDominioAcademico }}<ng-container
+                      *ngIf="!last"><br></ng-container>
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="invGroup.area?.length">
+                <td><strong>Áreas de Investigación:</strong></td>
+                <td>
+                  <span *ngFor="let area of invGroup.area; let last = last">
+                    {{ area.nombreArea }}<ng-container
+                      *ngIf="!last"><br></ng-container>
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="invGroup.line?.length">
+                <td><strong>Líneas de Investigación:</strong></td>
+                <td>
+                  <span *ngFor="let line of invGroup.line; let last = last">
+                    {{ line.nombreLinea }}<ng-container
+                      *ngIf="!last"><br></ng-container>
+                  </span>
+                </td>
+              </tr>
+            </table>
           </div>
+
           <div class="column">
             <div class="img-container">
-              <img class="imgLogo" *ngIf="imagenUrl" [src]="imagenUrl" alt="Imagen del Grupo" />
-              <img class="imgLogo" *ngIf="!imagenUrl" src="assets/img/espe/logo-espe.png" alt="Imagen del Grupo" />
-
+              <img class="imgLogo" *ngIf="imagenUrl" [src]="imagenUrl"
+                alt="Imagen del Grupo" />
+              <img class="imgLogo" *ngIf="!imagenUrl"
+                src="assets/img/espe/logo-espe.png" alt="Imagen del Grupo" />
             </div>
 
           </div>
 
-
         </div>
         <div class="filters-container">
           <!-- Filtro por función -->
+          <!-- Filtro por función (opciones fijas) -->
           <mat-form-field>
             <mat-label>Filtrar por función</mat-label>
-            <mat-select [(value)]="selectedFuncion" (selectionChange)="aplicarFiltro()">
-              <mat-option *ngFor="let funcion of ['Miembro', 'Coordinador', 'Colaborador', 'Secretario']" [value]="funcion">
+            <mat-select [(value)]="selectedFuncion"
+              (selectionChange)="aplicarFiltro()">
+              <mat-option [value]="''">Todos</mat-option>
+              <!-- Opción para mostrar todos -->
+              <mat-option
+                *ngFor="let funcion of ['Miembro', 'Coordinador', 'Colaborador', 'Secretario']"
+                [value]="funcion">
                 {{ funcion }}
               </mat-option>
             </mat-select>
           </mat-form-field>
-        
-          <!-- Filtro por género -->
+
+          <!-- Filtro por género (opciones dinámicas desde la API) -->
           <mat-form-field>
             <mat-label>Filtrar por género</mat-label>
-            <mat-select [(value)]="selectedGenero" (selectionChange)="aplicarFiltro()">
-              <mat-option *ngFor="let genero of ['Masculino', 'Femenino', 'Otro']" [value]="genero">
+            <mat-select [(value)]="selectedGenero"
+              (selectionChange)="aplicarFiltro()">
+              <mat-option [value]="''">Todos</mat-option>
+              <!-- Opción para mostrar todos -->
+              <mat-option *ngFor="let genero of availableGeneros"
+                [value]="genero">
                 {{ genero }}
               </mat-option>
             </mat-select>
           </mat-form-field>
-        
-          <!-- Filtro por grado académico -->
+
+          <!-- Filtro por grado académico (opciones dinámicas desde la API) -->
           <mat-form-field>
             <mat-label>Filtrar por grado académico</mat-label>
-            <mat-select [(value)]="selectedGrado" (selectionChange)="aplicarFiltro()">
-              <mat-option *ngFor="let grado of ['Phd', 'Licenciado', 'Ing', 'Mg']" [value]="grado">
+            <mat-select [(value)]="selectedGrado"
+              (selectionChange)="aplicarFiltro()">
+              <mat-option [value]="''">Todos</mat-option>
+              <!-- Opción para mostrar todos -->
+              <mat-option *ngFor="let grado of availableGrados" [value]="grado">
                 {{ grado }}
               </mat-option>
             </mat-select>
           </mat-form-field>
+
         </div>
-        <div *ngIf="usuariosPorFuncion">
-          <p><strong>Miembros: </strong>{{ usuariosPorFuncion['Miembro'] }}</p>
-          <p><strong>Coordinadores: </strong>{{ usuariosPorFuncion['Coordinador'] }}</p>
-          <p><strong>Colaboradores: </strong>{{ usuariosPorFuncion['Colaborador'] }}</p>
-          <p><strong>Secretarios: </strong>{{ usuariosPorFuncion['Secretario'] }}</p>
+        <div class="tables-container3">
+
+          <div *ngIf="usuariosPorFuncion">
+            <table class="members-table">
+              <thead>
+                <tr>
+                  <th>Función</th>
+                  <th>Cantidad</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Miembros</td>
+                  <td>{{ usuariosPorFuncion['Miembro'] }}</td>
+                </tr>
+                <tr>
+                  <td>Coordinadores</td>
+                  <td>{{ usuariosPorFuncion['Coordinador'] }}</td>
+                </tr>
+                <tr>
+                  <td>Colaboradores</td>
+                  <td>{{ usuariosPorFuncion['Colaborador'] }}</td>
+                </tr>
+                <tr>
+                  <td><strong>Total General</strong></td>
+                  <td><strong>{{
+                      (+usuariosPorFuncion['Miembro'] || 0) +
+                      (+usuariosPorFuncion['Coordinador'] || 0) +
+                      (+usuariosPorFuncion['Colaborador'] || 0)
+                      }}</strong></td> </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div *ngIf="usuariosPorGradoAcademico">
+            <table class="members-table">
+              <thead>
+                <tr>
+                  <th>Grado Académico</th>
+                  <th>Cantidad</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let grado of obtenerGrados()">
+                  <td>{{ grado }}</td>
+                  <td>{{ usuariosPorGradoAcademico[grado] }}</td>
+                </tr>
+                <tr>
+                  <td><strong>Total General</strong></td>
+                  <td><strong>{{ obtenerTotal() }}</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-                
+
         <div class="modal-buttons">
           <button color="primary" mat-button (click)="EditLine()">
             <i class="fa fa-edit"></i>Líneas y áreas
@@ -97,32 +172,40 @@
           </button>
         </div>
 
-        <table mat-table [dataSource]="dataSource" matSort>
+        <table class="tablaInvestigadores" mat-table [dataSource]="dataSource"
+          matSort>
 
           <ng-container matColumnDef="pais">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> País </th>
-            <td mat-cell *matCellDef="let user"> {{ user.nacionalidad }} </td>
+            <td mat-cell *matCellDef="let user">
+              {{ user.nacionalidad === 'E' ? 'Ecuador' : (user.nacionalidad ===
+              'E5' ? 'España' : user.nacionalidad) }}
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="nombreDocente">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre del Docente </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre del
+              Docente </th>
             <td mat-cell *matCellDef="let user"> {{ user.nombre }} </td>
           </ng-container>
 
           <ng-container matColumnDef="funcion">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Función </th>
-            <td mat-cell *matCellDef="let user"> {{ user.funcion ? user.funcion : 'Miembro' }} </td>
+            <td mat-cell *matCellDef="let user"> {{ user.funcion ? user.funcion
+              : 'Miembro' }} </td>
           </ng-container>
 
           <ng-container matColumnDef="sede">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Sede </th>
             <td mat-cell *matCellDef="let user">
-              {{ user.departamento ? user.departamento.split('-')[0] : 'Externo' }}
+              {{ user.departamento ? user.departamento.split('-')[0] : 'Externo'
+              }}
             </td>
           </ng-container>
 
           <ng-container matColumnDef="universidadCentro">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Universidad/Centro </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Universidad/Centro </th>
             <td mat-cell *matCellDef="let user"> {{ user.institucion }} </td>
           </ng-container>
 
@@ -130,7 +213,8 @@
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
         </table>
-        <button type="button" mat-raised-button color="primary" [disabled]="!invGroup" (click)="enlace('reportesGI')">
+        <button type="button" mat-raised-button color="primary"
+          [disabled]="!invGroup" (click)="enlace('reportesGI')">
           Reportes
         </button>
       </mat-card>

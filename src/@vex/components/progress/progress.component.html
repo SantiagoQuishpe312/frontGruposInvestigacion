@@ -1,9 +1,17 @@
-<div class="process-container">
-    <div *ngFor="let step of steps; let i = index" class="step-container">
-      <!-- Paso -->
-      <div class="step" [ngClass]="step.state">{{ step.label }}</div>
-      <!-- Línea -->
-      <div *ngIf="i < steps.length - 1" class="line"></div>
+  <div class="timeline">
+    <div *ngFor="let event of events" class="timeline-item">
+      <div class="timeline-date">{{ event.date }}</div>
+      <div class="timeline-content" [ngStyle]="{ backgroundColor: getEventColor(event.state) }">
+        <h3>{{ event.title }}</h3>
+        <div *ngIf="event.state === 'aprobado'">
+          <i class="fa fa-check-circle" ></i> 
+        </div>
+        <div *ngIf="event.state === 'revision'">
+          <i class="fa fa-exclamation-circle" ></i> 
+        </div>
+        <div *ngIf="event.state === 'pendiente'">
+          <i class="fa fa-hourglass-half" ></i> 
+        </div>
+      </div>
     </div>
   </div>
-  

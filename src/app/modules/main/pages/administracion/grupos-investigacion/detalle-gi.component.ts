@@ -30,6 +30,14 @@ export class DetalleGIComponent implements OnInit {
   imagenUrl: SafeResourceUrl | undefined;
   @ViewChild(MatSort) sort!: MatSort;
   usuariosPorFuncion: { [key: string]: number } = {};
+  usuariosPorGradoAcademico:{};
+  availableGeneros: string[] = [];
+  availableGrados: string[] = [];
+
+  // Variables para los filtros:
+  selectedFuncion: string = '';
+  selectedGenero: string = '';
+  selectedGrado: string = '';
 
   constructor(
     private router: Router,
@@ -58,16 +66,42 @@ export class DetalleGIComponent implements OnInit {
         { ...data.coordinador, funcion: 'Coordinador' }
       ];
   
+      this.availableGeneros = Array.from(new Set(
+        dataGroup.map((user: any) => user.genero).filter(Boolean)
+      ));
+      this.availableGrados = Array.from(new Set(
+        dataGroup.map((user: any) => user.grado).filter(Boolean)
+      ));
+      
+
+      this.usuariosPorGradoAcademico = dataGroup.reduce((acc, usuario) => {
+        const grado = usuario.grado;
+        if (!acc[grado]) {
+          acc[grado] = 0;
+        }
+        acc[grado]++;
+        return acc;
+      }, {});
       // Contar usuarios por función
       this.contarUsuariosPorFuncion(dataGroup);
   
-      // Construcción del dataSource con usuarios y coordinador
       this.dataSource = new MatTableDataSource(dataGroup);
       this.dataSource.sort = this.sort;
       this.dataSource.filterPredicate = (data: any, filter: string) =>
         data.nombreDocente.toLowerCase().includes(filter);
     });
   }
+  
+  obtenerGrados() {
+    // Devuelve las claves (grados académicos) del objeto usuariosPorGradoAcademico
+    return Object.keys(this.usuariosPorGradoAcademico);
+  }
+
+  obtenerTotal() {
+    return Object.values(this.usuariosPorGradoAcademico)
+      .reduce((total, cantidad) => +total + (Number(cantidad) || 0), 0);
+  }
+  
   
   contarUsuariosPorFuncion(data: any[]) {
     // Contar los diferentes tipos de función
@@ -77,20 +111,25 @@ export class DetalleGIComponent implements OnInit {
       return acc;
     }, {});
   }
-  selectedFuncion: string = '';
-selectedGenero: string = '';
-selectedGrado: string = '';
 
-aplicarFiltro() {
-  this.dataSource.filter = this.selectedFuncion.toLowerCase().trim();
-  // Puedes aplicar más filtros aquí según los valores seleccionados
-  if (this.selectedGenero) {
-    this.dataSource.filter = this.dataSource.filter + this.selectedGenero.toLowerCase().trim();
+
+  aplicarFiltro() {
+    const filtroFuncion = this.selectedFuncion.toLowerCase().trim();
+    const filtroGenero = this.selectedGenero.toLowerCase().trim();
+    const filtroGrado = this.selectedGrado.toLowerCase().trim();
+
+    // Filtro combinado que evalúa cada propiedad de forma independiente:
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+      const matchesFuncion = !filtroFuncion || data.funcion?.toLowerCase().includes(filtroFuncion);
+      const matchesGenero = !filtroGenero || data.genero?.toLowerCase().includes(filtroGenero);
+      const matchesGrado = !filtroGrado || data.grado?.toLowerCase().includes(filtroGrado);
+
+      return matchesFuncion && matchesGenero && matchesGrado;
+    };
+
+    // Forzar la actualización del filtro:
+    this.dataSource.filter = '' + Math.random();
   }
-  if (this.selectedGrado) {
-    this.dataSource.filter = this.dataSource.filter + this.selectedGrado.toLowerCase().trim();
-  }
-}
 
 
   getImage() {
