@@ -19,8 +19,8 @@ export class InvMemberService {
     return this.http.get<InvMemberForm[]>(`${this.URL + "/"}`);
   }
 
-  getById(id: number): Observable<InvMemberForm> {
-    return this.http.get<InvMemberForm>(`${this.URL}/${id}`);
+  getById(id: number): Observable<InvMemberForm[]> {
+    return this.http.get<InvMemberForm[]>(`${this.URL}/${id}`);
   }
 
   createInvMemberFormForm(formData: InvMemberForm): Observable<any> {
@@ -30,7 +30,9 @@ export class InvMemberService {
     return this.http.get<InvMemberForm[]>(`${this.URL}/group/${id}`);
   }
   //groupId/65
-
+  getByUsername(username:string):Observable<InvMemberForm[]> {
+    return this.http.get<InvMemberForm[]>(`${this.URL}/byUsername/${username}`);
+  }
   
   getAllByGroupId(id:number):Observable<Usuario[]> {
     return this.http.get<Usuario[]>(`${this.URL}/groupId/${id}`);

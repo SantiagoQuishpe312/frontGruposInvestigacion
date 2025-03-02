@@ -8,19 +8,22 @@
 
             <!-- Aparece Unicamente cuando se debe cargar el formulario de creación de grupo de investigación -->
             <header *ngIf="!invGroupExists">
-                <h1>Formulario de Solicitud de Creación de grupo de Investigación</h1>
+                <h1>Formulario de Solicitud de Creación de Grupo de
+                    Investigación</h1>
             </header>
             <header *ngIf="invGroupExists">
-                <h1>!Formulario no Disponible! El grupo de investigación {{grupo.nombreGrupoInv}} ya ha sido creado</h1>
+                <h1>!Formulario no Disponible! El grupo de investigación
+                    {{grupo.nombreGrupoInv}} ya ha sido creado</h1>
             </header>
         </div>
         <div *ngIf="!loadingData">
-        <div class="container-fluid" *ngIf="invGroupExists">
-            El grupo de investigación {{grupo.nombreGrupoInv}} ya ha sido creado o se encuentra en un proceso de creación
-            Por favor Revisa el tablero principal de Información
-            <button type="button" (click)="enlace('dashboard')"
-                color="primary" mat-raised-button>Regresar</button>
-</div></div>
+            <div class="container-fluid" *ngIf="invGroupExists">
+                El grupo de investigación {{grupo.nombreGrupoInv}} ya ha sido
+                creado o se encuentra en un proceso de creación
+                Por favor Revisa el tablero principal de Información
+                <button type="button" (click)="enlace('dashboard')"
+                    color="primary" mat-raised-button>Regresar</button>
+            </div></div>
         <!-- FASE DE CREACIÓN DEL GRUPO DE INVESTIGACIÓN (FORMULARIO CUANDO SE ENVÍA LA SOLICITUD POR PRIMERA VEZ) -->
         <div class="container-fluid" *ngIf="!invGroupExists">
             <form [formGroup]="myForm" (ngSubmit)="HandleSubmit()">
@@ -46,7 +49,7 @@
                                             placeholder="Ingrese el nombre del grupo"
                                             minlength="5"
                                             maxlength="99"
-                                           >
+                                            >
                                     </mat-form-field>
                                 </div>
 
@@ -60,8 +63,7 @@
                                             class="form-control"
                                             placeholder="Ingrese el acronimo"
                                             minlength="1"
-                                            maxlength="10"
-                                           >
+                                            maxlength="10">
                                     </mat-form-field>
                                 </div><div class="grid-item"></div>
                                 <div class="grid-item">
@@ -69,7 +71,7 @@
                                         <button type="button" mat-raised-button
                                             color="primary"
                                             [disabled]="!myForm.get('grupoInv1').valid"
-                                            matStepperNext>Siguiente</button>
+                                            matStepperNext matTooltip="Siguiente">Siguiente</button>
 
                                     </div>
                                 </div>
@@ -142,13 +144,13 @@
                                     <div>
                                         <button type="button" mat-raised-button
                                             color="primary"
-                                            matStepperPrevious>Regresar</button>
+                                            matStepperPrevious matTooltip="Anterior">Regresar</button>
 
                                         <!-- Botón Siguiente deshabilitado si no se han seleccionado opciones en los 3 selectores -->
                                         <button type="button" mat-raised-button
                                             color="primary"
                                             [disabled]="!dominiosControl.value?.length || !areasControl.value?.length || !lineasControl.value?.length"
-                                            matStepperNext>Siguiente</button>
+                                            matStepperNext matTooltip="Siguiente">Siguiente</button>
                                     </div>
                                 </div>
 
@@ -156,89 +158,57 @@
                         </div>
                     </mat-step>
                     <mat-step [stepControl]="grupoInv5"
-                    class="centrado-y-mayusculas"
-                    label="Hoja de Vida">
-                    <ng-template matStepLabel>Hoja de Vida del Coordinador</ng-template>
-
-                    <div formGroupName="grupoInv5"
-                        class="centrado-form-group">
-
-
-                        <h1>Hojas de vida y Certificados de Talento humano del coordinador del Grupo de Investigación (Un solo PDF)  </h1>
-                        <div class="drag-drop" (drop)="onDrop($event,'h')" (dragover)="onDragOver($event)">
-                            <i *ngIf="selectedCv" class="{{ getFileIcon(selectedCv.type) }}"></i>
-                            <p *ngIf="!selectedCv">Arrastra y suelta el documento aquí o haz clic para seleccionarlo.</p>
-                            <p *ngIf="selectedCv">{{ CvNameOriginal }} </p>
-                            <div class="custom-file-input">
-                              <label *ngIf="!selectedCv" for="fileInput">Seleccionar archivo</label>
-                              <label *ngIf="selectedCv" for="fileInput">Cambiar archivo</label>
-
-                              <input id="fileInput" type="file" (change)="onCVCoordSelected($event)" accept=".pdf" />
-                            </div>
-                          </div>
-                        <div class="grid-container">
-                            <div class="grid-item">
-                                <button type="button" mat-raised-button
-                                    color="primary"
-                                    matStepperPrevious>Regresar</button>
-                                <button type="button" mat-raised-button
-                                    color="primary"
-                                    [disabled]="!selectedCv"
-                                    matStepperNext>
-                                    Siguiente
-                                </button>
-                            </div>
-                        </div>
-
-                    </div>
-                </mat-step>
-               <!--     <mat-step [stepControl]="grupoInv2_1"
                         class="centrado-y-mayusculas"
-                        label="Alineación Estratégica">
-                        <ng-template matStepLabel>Alineación
-                            Estratégica</ng-template>
+                        label="Hoja de Vida">
+                        <ng-template matStepLabel>Hoja de Vida del
+                            Coordinador</ng-template>
 
-                        <div formGroupName="grupoInv2_1"
+                        <div formGroupName="grupoInv5"
                             class="centrado-form-group">
 
+                            <h1>Hoja de vida y Certificado de Talento Humano
+                                del Coordinador del Grupo de Investigación (Un
+                                solo PDF) </h1>
+                            <div class="drag-drop" (drop)="onDrop($event,'h')"
+                                (dragover)="onDragOver($event)">
+                                <i *ngIf="selectedCv"
+                                    class="{{ getFileIcon(selectedCv.type) }}"></i>
+                                <p *ngIf="!selectedCv">Arrastra y suelta el
+                                    documento aquí o haz clic para
+                                    seleccionarlo.</p>
+                                <p *ngIf="selectedCv">{{ CvNameOriginal }} </p>
+                                <div class="custom-file-input">
+                                    <label *ngIf="!selectedCv"
+                                        for="fileInput">Seleccionar
+                                        archivo</label>
+                                    <label *ngIf="selectedCv"
+                                        for="fileInput">Cambiar archivo</label>
 
-                            <h1>Alineación Estratégica</h1>
-                            <mat-form-field appearance="fill">
-                                <mat-label class="multiline-label">Contribución
-                                    a los objetivos nacionales o
-                                    internacionales:
-                                    Describir cómo las actividades del grupo
-                                    responderán a los desafíos nacionales y a
-                                    los Objetivos de Desarrollo Sostenible
-                                    (ODS).
-                                    Coherencia con la planificación
-                                    institucional: Describir cómo el grupo está
-                                    alineado con las metas
-                                    y planes estratégicos de la institución.
-                                </mat-label>
-                                <textarea matInput
-                                    formControlName="alineacionEstrategica"
-                                    class="textarea" rows="15" required
-                                    maxlength="4000"></textarea>
-                            </mat-form-field>
-
+                                    <input id="fileInput" type="file"
+                                        (change)="onCVCoordSelected($event)"
+                                        accept=".pdf" />
+                                </div>
+                            </div>
                             <div class="grid-container">
                                 <div class="grid-item">
+
+                                </div>
+                                <div class="grid-item">
+                                    <div>
                                     <button type="button" mat-raised-button
                                         color="primary"
-                                        matStepperPrevious>Regresar</button>
+                                        matStepperPrevious matTooltip="Anterior">Regresar</button>
                                     <button type="button" mat-raised-button
                                         color="primary"
-                                        [disabled]="!myForm.get('grupoInv2_1').valid"
-                                        matStepperNext>
+                                        [disabled]="!selectedCv"
+                                        matStepperNext matTooltip="Siguiente">
                                         Siguiente
-                                    </button>
+                                    </button></div>
                                 </div>
                             </div>
 
                         </div>
-                    </mat-step>-->
-
+                    </mat-step>
                     <mat-step [stepControl]="grupoInv3"
                         label="Integrantes del Grupo">
                         <div class="creacion-grupo-investigacion">
@@ -336,7 +306,7 @@
                                     <!-- Deshabilitar el botón Enviar hasta que documentosCompletosCargados sea true -->
                                     <button type="button" mat-raised-button
                                         color="primary" matStepperNext
-                                        [disabled]="selectedUsers.length <4 || !documentosCompletosCargados">Siguiente</button>
+                                        [disabled]="totalMiembrosInternos <3   || !documentosCompletosCargados">Siguiente</button>
 
                                 </div>
                             </div>
@@ -347,27 +317,47 @@
                         label="Imagen del Grupo">
                         <div class="creacion-grupo-investigacion">
                             <div formGroupName="grupoInv4">
-                                <h1>Imagen (logo) del Grupo de Investigación  </h1>
+                                <h1>Imagen (logo) del Grupo de Investigación
+                                </h1>
 
-                                <div class="drag-drop" (drop)="onDrop($event,'i')" (dragover)="onDragOver($event)">
+                                <div class="drag-drop"
+                                    (drop)="onDrop($event,'i')"
+                                    (dragover)="onDragOver($event)">
                                     <!-- Contenedor para previsualización o ícono -->
-                                    <div *ngIf="filePreview">
-                                      <img *ngIf="isImageFile" [src]="filePreview" alt="Vista previa" width="100">
-                                      <i *ngIf="!isImageFile" [class]="fileIcon"></i>
+                                    <div class="vista-previa-img" *ngIf="filePreview">
+                                        <img *ngIf="isImageFile"
+                                            [src]="filePreview"
+                                            alt="Vista previa" width="150px">
+                                        <i *ngIf="!isImageFile"
+                                            [class]="fileIcon"></i>
                                     </div>
-                                  
-                                    <i *ngIf="selectedImg && !isImageFile" [class]="getFileIcon(selectedImg.type)"></i>
-                                    <p *ngIf="!selectedImg">Arrastra y suelta la imagen aquí o haz clic para seleccionarla.</p>
-                                    <p *ngIf="selectedImg">{{ imageNameOriginal }}</p>
-                                  
+
+                                    <i *ngIf="selectedImg && !isImageFile"
+                                        [class]="getFileIcon(selectedImg.type)"></i>
+                                    <p *ngIf="!selectedImg">Arrastra y suelta la
+                                        imagen aquí o haz clic para
+                                        seleccionarla.</p>
+                                    <p *ngIf="selectedImg">{{ imageNameOriginal
+                                        }}</p>
+
                                     <div class="custom-file-input">
-                                      <label for="imageInput">{{ selectedImg ? 'Cambiar imagen' : 'Seleccionar imagen' }}</label>
-                                      <input id="imageInput" type="file" (change)="onImgSelected($event)" 
-                                             accept=".jpg, .jpeg, .png, .gif, .bmp, .webp, .tiff, .svg" />
+                                        <label for="imageInput">{{ selectedImg ?
+                                            'Cambiar imagen' :
+                                            'Seleccionar imagen' }}</label>
+                                        <input id="imageInput" type="file"
+                                            (change)="onImgSelected($event)"
+                                            accept=".jpg, .jpeg, .png, .gif, .bmp, .webp, .tiff, .svg" />
                                     </div>
-                                  </div>
-                                  
-                              
+                                </div>
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Selecciona un miembro del GI para asignarle el rol de Secretario</mat-label>
+                                    <mat-select [(value)]="selectedMember" placeholder="Seleccionar miembro">
+                                      <mat-option *ngFor="let miembro of miembrosInternos" [value]="miembro">
+                                        {{ miembro.user.nombres }}
+                                      </mat-option>
+                                    </mat-select>
+                                  </mat-form-field>
+                                
                             </div>
                             <div class="grid-item">
                                 <div>
@@ -375,7 +365,7 @@
                                         color="primary"
                                         matStepperPrevious>Regresar</button>
                                     <button type="submit" mat-raised-button
-                                        color="primary">Guardar</button>
+                                        color="primary" [disabled]='!selectedImg || !selectedMember '>Guardar</button>
 
                                 </div> </div>
                         </div>

@@ -14,7 +14,7 @@ export interface UserApp {
   escalafon:string;
   grado:string;
   nacionalidad:string;
-  genero:string;
+  sexo:string;
 }
 export interface UserRole {
   idRol: number;

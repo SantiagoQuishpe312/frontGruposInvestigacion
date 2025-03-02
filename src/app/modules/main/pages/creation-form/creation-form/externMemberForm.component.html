@@ -1,6 +1,6 @@
 <div class="cont">
     <div class="container-fluid">
-        <form [formGroup]="miembro" (submit)="guardarmiembro()" class="container">
+        <form [formGroup]="miembro" (ngSubmit)="guardarmiembro()" class="container">
             <header class="header">
                 <h1 class="title">Añadir Investigadores Externos</h1>
             </header>
@@ -17,31 +17,31 @@
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>Nombre del Integrante</mat-label>
                         <input matInput type="text" formControlName="nombre" required>
-                        <mat-error *ngIf="miembro.get('nombre').invalid && miembro.get('nombre').touched">
+                        <mat-error *ngIf="miembro.get('nombre')?.invalid && miembro.get('nombre')?.touched">
                             El nombre es obligatorio
                         </mat-error>
                     </mat-form-field>
 
-                    <!-- Campo Apellido (sin formControlName) -->
+                    <!-- Campo Apellido -->
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>Apellido del Integrante</mat-label>
-                        <input matInput type="text" #apellidoInput>
+                        <input matInput type="text" #apellidoInput required>
                     </mat-form-field>
-    
+
                     <!-- Campo Correo -->
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>Correo Electrónico</mat-label>
-                        <input matInput type="email" formControlName="correo" required>
-                        <mat-error *ngIf="miembro.get('correo').invalid && miembro.get('correo').touched">
-                            El correo es obligatorio y debe tener un formato válido
+                        <input matInput type="email" formControlName="correo">
+                        <mat-error *ngIf="miembro.get('correo')?.invalid && miembro.get('correo')?.touched">
+                            El correo es obligatorio y debe ser válido
                         </mat-error>
                     </mat-form-field>
 
                     <!-- Campo Cédula -->
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>Cédula</mat-label>
-                        <input matInput type="text" formControlName="cedula" required>
-                        <mat-error *ngIf="miembro.get('cedula').invalid && miembro.get('cedula').touched">
+                        <input matInput type="text" formControlName="cedula">
+                        <mat-error *ngIf="miembro.get('cedula')?.invalid && miembro.get('cedula')?.touched">
                             La cédula es obligatoria
                         </mat-error>
                     </mat-form-field>
@@ -49,25 +49,31 @@
                     <!-- Campo Institución -->
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>Institución</mat-label>
-                        <input matInput type="text" formControlName="institucion" required>
-                        <mat-error *ngIf="miembro.get('institucion').invalid && miembro.get('institucion').touched">
+                        <input matInput type="text" formControlName="institucion" required (input)="convertirAMayusculas($event)">
+                        <mat-error *ngIf="miembro.get('institucion')?.invalid && miembro.get('institucion')?.touched">
                             La institución es obligatoria
                         </mat-error>
                     </mat-form-field>
 
+                    <!-- Campo Nacionalidad con Autocomplete -->
                     <mat-form-field appearance="outline" class="full-width">
-                        <mat-label>Nacionalidad</mat-label>
-                        <input matInput type="text" formControlName="nacionalidad" required>
-                        <mat-error *ngIf="miembro.get('nacionalidad').invalid && miembro.get('nacionalidad').touched">
+                        <mat-label>País de Origen</mat-label>
+                        <input matInput type="text" formControlName="nacionalidad" required [matAutocomplete]="auto">
+                        <mat-autocomplete #auto="matAutocomplete">
+                            <mat-option *ngFor="let nacionalidad of nacionalidadesFiltradas | async" [value]="nacionalidad">
+                                {{ nacionalidad }}
+                            </mat-option>
+                        </mat-autocomplete>
+                        <mat-error *ngIf="miembro.get('nacionalidad')?.invalid && miembro.get('nacionalidad')?.touched">
                             La nacionalidad es obligatoria
                         </mat-error>
                     </mat-form-field>
-
+                    
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>Género</mat-label>
                         <mat-select formControlName="genero" required>
-                            <mat-option value="H">Hombre</mat-option>
-                            <mat-option value="M">Mujer</mat-option>
+                            <mat-option value="M">Maculino</mat-option>
+                            <mat-option value="F">Femenino</mat-option>
                         </mat-select>
                         <mat-error *ngIf="miembro.get('genero').invalid && miembro.get('genero').touched">
                             El género es obligatorio
@@ -80,7 +86,7 @@
                             <mat-option value="BACH">Bachiller</mat-option>
                             <mat-option value="LIC.">Licenciado</mat-option>
                             <mat-option value="ING.">Ingeniero</mat-option>
-                            <mat-option value="MAG">Magíster</mat-option>
+                            <mat-option value="MSc.">Magíster</mat-option>
                             <mat-option value="PHD.">PHD.</mat-option>
                         </mat-select>
                         <mat-error *ngIf="miembro.get('grado').invalid && miembro.get('grado').touched">
@@ -91,15 +97,14 @@
             </div>
         </form>
 
-        <!-- Botones del diálogo -->
+        <!-- Botones -->
         <div mat-dialog-actions>
             <button mat-button class="btn-agregar" 
-                    (click)="guardarmiembro()"
-                    type="button"
-                    >
-                Añadir
-            </button>
-            <button mat-button class="btn-cerrar" (click)="onClickNo()">Cerrar</button>
+            (click)="guardarmiembro()"
+            type="button"
+            >
+        Añadir
+    </button>            <button mat-button class="btn-cerrar" (click)="onClickNo()">Cerrar</button>
         </div>
     </div>
 </div>

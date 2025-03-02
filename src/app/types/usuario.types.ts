@@ -13,6 +13,7 @@ export interface Usuario{
     genero?:string;
     grado?:string;
     rol?: string;
+    sede?:string;
     fechaCreacion:Date;
     fechaModificacion:Date;
     usuarioCreacion:string;

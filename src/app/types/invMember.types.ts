@@ -3,6 +3,8 @@ export interface InvMemberForm {
     idUsuario: number;
     estado: boolean;
     tipo: string;
+    status?: string;
+
     usuarioCreacion: string;
     fechaCreacion: Date;
     usuarioModificacion: string;

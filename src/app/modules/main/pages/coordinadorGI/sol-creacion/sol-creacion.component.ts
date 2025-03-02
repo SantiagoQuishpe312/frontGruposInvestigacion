@@ -153,14 +153,14 @@ export class SolCreacionComponent implements OnInit {
     const invGroup = Number(sessionStorage.getItem('invGroup'));
     if (invGroup) {
       this.invGroupExists = true;
-        this.loadGroup(invGroup);
+      this.loadGroup(invGroup);
     } else {
       this.invGroupExists = false;
       this.cargarFormularios(invGroup);
       this.loadCoordinador();
     }
   }
-  loadGroup(id:number) {
+  loadGroup(id: number) {
     this.apiInvGroupService.getById(id).subscribe((data) => {
       this.grupo = data;
       this.loadingData = false;
@@ -214,6 +214,16 @@ export class SolCreacionComponent implements OnInit {
 
       })
     });
+    this.myForm.get('grupoInv1.nombreGrupoInv')?.valueChanges.subscribe(valor => {
+      if (valor) {
+        this.myForm.get('grupoInv1.nombreGrupoInv')?.setValue(valor.toUpperCase(), { emitEvent: false });
+      }
+    });
+    this.myForm.get('grupoInv1.acronimoGrupoinv')?.valueChanges.subscribe(valor => {
+      if (valor) {
+        this.myForm.get('grupoInv1.acronimoGrupoinv')?.setValue(valor.toUpperCase(), { emitEvent: false });
+      }
+    });
   }
   get grupoInvform() {
     return this.myForm.get('grupoInv1') as FormGroup;
@@ -255,6 +265,7 @@ export class SolCreacionComponent implements OnInit {
       this.dominios = data.filter(dominio => dominio.estado === true);
     });
   }
+  totalMiembrosInternos: number = 0; // Contador de miembros agregados
 
   loadAreas(): void {
     this.areaService.getAll().subscribe(data => {
@@ -262,23 +273,28 @@ export class SolCreacionComponent implements OnInit {
     });
   }
 
+  miembrosInternos: any[] = []; // Lista para almacenar solo los miembros
+  selectedMember: any | null = null; // Miembro seleccionado
+
   openDialog(): void {
     const dialogRef = this.dialog.open(MembersGroup, {
       width: '60%',
       height: '90%',
       data: { usuarios: this.usuarios }
     });
-
     dialogRef.componentInstance.usuarioExternoCreado.subscribe((usuarioCreado: Usuario) => {
       const dialogRefRol = this.dialog.open(SeleccionRolDialogComponent, {
         width: '30%',
       });
 
       dialogRefRol.afterClosed().subscribe((rolSeleccionado: string) => {
+        this.verificarDocumentosCargados();
+
         dialogRef.close();
         if (rolSeleccionado) {
           usuarioCreado.rol = rolSeleccionado; // Agregar el rol seleccionado al usuario
           this.selectedUsersExterns.push(usuarioCreado);
+          console.log(this.usuarios);
 
           this.snackBar.open(
             `Investigador agregado exitosamente como ${rolSeleccionado}`,
@@ -295,16 +311,39 @@ export class SolCreacionComponent implements OnInit {
 
 
     dialogRef.afterClosed().subscribe((data: { user: any, usuarioValue: any }) => {
+      let numeroDeGruposVinculados = 0;
+      console.log(data.user, data.user.idBd, data.user.id)
+      this.apiInvMemberService.getByUsername(data.usuarioValue).subscribe((response) => {
+        numeroDeGruposVinculados = response.length;
+      })
       if (data?.usuarioValue) {
+        if (numeroDeGruposVinculados >= 2) {
+          this.snackBar.open('No puedes agregar a este miembro, ya pertenece a dos grupos de investigación de la Universidad.', 'Cerrar', { duration: 3000 });
+          return;
+        }
+        this.verificarDocumentosCargados();
         const idUsuarioSeleccionado = data.usuarioValue;
         if (idUsuarioSeleccionado === this.currentUser) {
           this.snackBar.open('No puedes agregarte a ti mismo', 'Cerrar', { duration: 3000 });
+          this.verificarDocumentosCargados();
           return;
         }
 
         const usuarioYaExiste = this.selectedUsers.some(user => user.userId === idUsuarioSeleccionado);
         if (usuarioYaExiste) {
           this.snackBar.open('El usuario ya ha sido agregado', 'Cerrar', { duration: 3000 });
+          this.verificarDocumentosCargados();
+          return;
+        }
+
+        if (data.user.tipo === 'SERVIDOR PUBLICO' || data.user.tipo === 'ESTUDIANTE') {
+          this.snackBar.open(`El usuario seleccionado es ${data.user.tipo}. Se agregará como Colaborador del GI`, 'Cerrar', { duration: 3000 });
+          this.selectedUsers.push({
+            user: data.user,
+            userId: idUsuarioSeleccionado,
+            rol: 'Colaborador'  // Almacenar el rol junto con el usuario
+          });
+          this.verificarDocumentosCargados();
           return;
         }
 
@@ -316,24 +355,48 @@ export class SolCreacionComponent implements OnInit {
 
         dialogRolRef.afterClosed().subscribe(rolSeleccionado => {
           if (rolSeleccionado) {
-            this.selectedUsers.push({
+            const nuevoUsuario = {
               user: data.user,
               userId: idUsuarioSeleccionado,
-              rol: rolSeleccionado  // Almacenar el rol junto con el usuario
-            });
+              rol: rolSeleccionado
+            };
 
+            this.selectedUsers.push(nuevoUsuario);
             this.snackBar.open(`Usuario agregado como ${rolSeleccionado}`, 'Cerrar', { duration: 3000 });
+
+            if (rolSeleccionado === 'Miembro') {
+              this.totalMiembrosInternos++;
+              this.miembrosInternos.push(nuevoUsuario); // Guardamos solo los miembros
+            }
+            this.verificarDocumentosCargados();
           }
+
         });
       }
+
     });
   }
 
+  cambiarRol(): void {
+    if (this.selectedMember) {
+      // Actualizar el rol en la lista de selectedUsers
+      const index = this.selectedUsers.findIndex(user => user.userId === this.selectedMember.userId);
+      if (index !== -1) {
+        this.selectedUsers[index].rol = 'Miembro-Secretario'; // Cambiar el rol a "Miembro"
+      }
+    }
+  }
+
   borrarInvestigador(index: number) {
-    this.selectedUsers.splice(index, 1);
+    console.log(this.selectedUsers)
+    if (this.selectedUsers[index].rol === 'Miembro') {
+      this.totalMiembrosInternos--;
+    }
     this.investigadores.splice(index, 1);
     this.userIdSelect.splice(index, 1);
     delete this.selectedFileByUser[index];
+    this.selectedUsers.splice(index, 1);
+
   }
   borrarInvestigadorExtern(index: number) {
     this.selectedUsersExterns.splice(index, 1);
@@ -341,36 +404,18 @@ export class SolCreacionComponent implements OnInit {
     this.userIdSelect.splice(index, 1);
     delete this.selectedFileByUserExtern[index];
   }
-  agregarInvestigador() {
-    (this.myForm.get('grupoInv3').get('investigadores') as FormArray).push(
-      this.crearFormGroupInvestigador()
-    );
-    this.investigadores.push(this.investigadores.length + 1);
-
-  }
-  agregarInvestigadorExtern() {
-    (this.myForm.get('grupoInv3').get('investigadoresExterns') as FormArray).push(
-      this.crearFormGroupInvestigadorExtern()
-    );
-    this.investigadoresExterns.push(this.investigadoresExterns.length + 1);
-  }
-
-  eliminarInvestigadorExtern() {
-    const index = this.investigadoresExterns.length - 1; // Obtener el índice del último investigador
-    (this.myForm.get('grupoInv3').get('investigadoresExterns') as FormArray).removeAt(index); // Eliminar el investigador en el índice
-    this.investigadoresExterns.pop(); // Eliminar el último índice
-    delete this.selectedFileByUserExtern[index];
-
-  }
+  contadorDocumentos = 0;
   onFileSelected(event: Event, index: number, userId: number) {
     const input = event.target as HTMLInputElement;
     const files = input.files;
     if (input?.files?.length) {
+      this.contadorDocumentos++;
       this.documentosCargados[userId] = true;
+      this.verificarDocumentosCargados();
     } else {
       this.documentosCargados[userId] = false;
     }
-    this.verificarDocumentosCargados();
+
     if (files && files.length > 0) {
       const file = files[0];
       if (file.type === 'application/pdf') {
@@ -391,488 +436,496 @@ export class SolCreacionComponent implements OnInit {
     this.documentosCompletosCargados = usuariosInternosCompletos && usuariosExternosCompletos;
   }
   onFileSelectedExtern(event: Event, index: number, userId: number) {
-      const input = event.target as HTMLInputElement;
-      const files = input.files;
-      if (input?.files?.length) {
-        this.documentosCargados[userId] = true;
-      } else {
-        this.documentosCargados[userId] = false;
-      }
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
+    if (input?.files?.length) {
+      this.contadorDocumentos++;
+
+      this.documentosCargados[userId] = true;
       this.verificarDocumentosCargados();
-      if (files && files.length > 0) {
-        const file = files[0];
-        if (file.type === 'application/pdf') {
-          const nombreUsuario = userId;
-          const nuevoNombre = `hojaDeVida_${nombreUsuario}.${file.name.split('.').pop()}`;
-          const archivoRenombrado = new File([file], nuevoNombre, { type: file.type });
-          this.selectedFileByUserExtern[index] = archivoRenombrado;
-        } else {
-          alert('Por favor, seleccione un archivo PDF.');
-          input.value = '';
-        }
+    } else {
+      this.documentosCargados[userId] = false;
+    }
+
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file.type === 'application/pdf') {
+        const nombreUsuario = userId;
+        const nuevoNombre = `hojaDeVida_${nombreUsuario}.${file.name.split('.').pop()}`;
+        const archivoRenombrado = new File([file], nuevoNombre, { type: file.type });
+        this.selectedFileByUserExtern[index] = archivoRenombrado;
+      } else {
+        alert('Por favor, seleccione un archivo PDF.');
+        input.value = '';
       }
     }
-  
-    //Envio del Formulario
-    HandleSubmit() {
-      this.loadingData = true;
-      if (this.myForm.valid) {
-        const partes = this.userCoordinador.departamento.split(" - ");
-        const departamento = partes[1].trim();
-        const grupoInvData: InvGroupForm = {
-          idGrupoInv: null,
-          idCoordinador: this.currentUserId,
-          nombreGrupoInv: this.myForm.value.grupoInv1.nombreGrupoInv,
-          estadoGrupoInv: "pCreacion",
-          acronimoGrupoinv: this.myForm.value.grupoInv1.acronimoGrupoinv,
-          departamento: departamento,
-          proceso: "1",
+  }
+
+  //Envio del Formulario
+  HandleSubmit() {
+    this.cambiarRol;
+    this.loadingData = true;
+    if (this.myForm.valid) {
+      const partes = this.userCoordinador.departamento.split(" - ");
+      const departamento = partes[1].trim();
+      const sede = partes[0].trim();
+      const grupoInvData: InvGroupForm = {
+        idGrupoInv: null,
+        idCoordinador: this.currentUserId,
+        nombreGrupoInv: this.myForm.value.grupoInv1.nombreGrupoInv,
+        estadoGrupoInv: "pendiente",
+        acronimoGrupoinv: this.myForm.value.grupoInv1.acronimoGrupoinv,
+        departamento: departamento,
+        proceso: "1",
+        sede: sede,
+        usuarioCreacion: this.currentUser,
+        fechaCreacion: this.currentDate,
+        usuarioModificacion: null,
+        fechaModificacion: null
+      }
+      this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
+        (response) => {
+          this.reqFormResponse = response;
+          const idGrupoCreado = this.reqFormResponse;
+          this.saveCurriculums(idGrupoCreado, this.currentUser, this.currentDate);
+          this.saveAcademicDomain(idGrupoCreado);
+          this.saveArea(idGrupoCreado);
+          this.saveLine(idGrupoCreado);
+          this.saveMember(idGrupoCreado);
+          setTimeout(() => {
+            this.router.navigateByUrl('main/principal');
+            this.loadingData = false;
+          }, 4000);
+
+          const reqFormData: CreationReqForm = {
+            idPeticionCreacion: null,
+            idGrupoInv: idGrupoCreado,
+            alineacionEstrategica: null,
+            estado: "p",
+            usuarioCreacionPeticion: this.currentUser,
+            fechaCreacionPeticion: this.currentDate,
+            usuarioModificacionPeticion: null,
+            fechaModificacionPeticion: null,
+          };
+          this.creationReqService.createCreationRequestForm(reqFormData).subscribe(
+            (reqFormResponse) => {
+              setTimeout(() => {
+                window.location.reload();
+              }, 8000);
+            },
+            (reqFormError) => {
+            }
+          );
+        },
+        (error) => {
+          this.savedMessage = 'Error al guardar el formulario';
+          this.loadingData = false;
+
+        }
+      );
+    } else {
+      this.savedMessage = 'Verifica los campos del formulario';
+      this.loadingData = false;
+
+    }
+
+  }
+
+  //Guardamos los dominios academicos,lineas y areas relacionadas al la solicitud de creacion y al grupo de Investigacion
+  private saveAcademicDomain(id: number) {
+    const dominiosSeleccionados = this.dominiosControl.value;
+    if (dominiosSeleccionados && dominiosSeleccionados.length > 0) {
+      dominiosSeleccionados.forEach((dominioId: number) => {
+        const acadCreaForm: InvGroup_academicDomain = {
+          idGrupo: id,
+          idDomAcad: dominioId,
           usuarioCreacion: this.currentUser,
           fechaCreacion: this.currentDate,
           usuarioModificacion: null,
           fechaModificacion: null
         }
-        this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
+        this.invGroup_academicDomainService.createAcadCreaForm(acadCreaForm).subscribe(
           (response) => {
-            this.reqFormResponse = response;
-            const idGrupoCreado = this.reqFormResponse;
-            this.saveCurriculums(idGrupoCreado, this.currentUser, this.currentDate);
-            this.saveAcademicDomain(idGrupoCreado);
-            this.saveArea(idGrupoCreado);
-            this.saveLine(idGrupoCreado);
-            this.saveMember(idGrupoCreado);
-            setTimeout(() => {
-              this.router.navigateByUrl('main/principal');
-              this.loadingData = false;
-            }, 4000);
-  
-              const reqFormData: CreationReqForm = {
-                idPeticionCreacion: null,
-                idGrupoInv: idGrupoCreado,
-                alineacionEstrategica: null,
-                estado: "p",
-                usuarioCreacionPeticion: this.currentUser,
-                fechaCreacionPeticion: this.currentDate,
-                usuarioModificacionPeticion: null,
-                fechaModificacionPeticion: null,
-              };
-             this.creationReqService.createCreationRequestForm(reqFormData).subscribe(
-                (reqFormResponse) => {
-                  setTimeout(() => {
-                    window.location.reload();
-                  }, 8000);
-                },
-                (reqFormError) => {
-                }
-              );
-          },
-          (error) => {
-            this.savedMessage = 'Error al guardar el formulario';
-            this.loadingData = false;
-
           }
         );
-      } else {
-        this.savedMessage = 'Verifica los campos del formulario';
-        this.loadingData = false;
-
-      }
-  
-    }
-  
-    //Guardamos los dominios academicos,lineas y areas relacionadas al la solicitud de creacion y al grupo de Investigacion
-    private saveAcademicDomain(id: number) {
-      const dominiosSeleccionados = this.dominiosControl.value;
-      if (dominiosSeleccionados && dominiosSeleccionados.length > 0) {
-        dominiosSeleccionados.forEach((dominioId: number) => {
-          const acadCreaForm: InvGroup_academicDomain = {
-            idGrupo: id,
-            idDomAcad: dominioId,
-            usuarioCreacion: this.currentUser,
-            fechaCreacion: this.currentDate,
-            usuarioModificacion: null,
-            fechaModificacion: null
-          }
-          this.invGroup_academicDomainService.createAcadCreaForm(acadCreaForm).subscribe(
-            (response) => {
-            }
-          );
-        });
-      } else {
-      }
-    }
-  
-    private saveLine(id: number) {
-      const lineasSeleccionadas = this.lineasControl.value;
-      if (lineasSeleccionadas && lineasSeleccionadas.length > 0) {
-        lineasSeleccionadas.forEach((lineasId: number) => {
-          const lineCreaForm: InvGroup_line = {
-            idGrupo: id,
-            idLinea: lineasId,
-            usuarioCreacion: this.currentUser,
-            fechaCreacion: this.currentDate,
-            usuarioModificacion: null,
-            fechaModificacion: null
-          }
-          this.invGroup_linesService.createInvGroup_lineForm(lineCreaForm).subscribe(
-            (response) => {
-            }
-          )
-        });
-      } else {
-      }
-    }
-  
-    private saveArea(id: number) {
-      const areasSeleccionadas = this.areasControl.value;
-      if (areasSeleccionadas && areasSeleccionadas.length > 0) {
-        areasSeleccionadas.forEach((areasId: number) => {
-          const areaForm: InvGroup_area = {
-            idGrupo: id,
-            idArea: areasId,
-            usuarioCreacion: this.currentUser,
-            fechaCreacion: this.currentDate,
-            usuarioModificacion: null,
-            fechaModificacion: null
-          }
-          this.invGroup_areaService.createAreaCreaForm(areaForm).subscribe(
-            (response) => {
-            }
-          )
-        });
-      } else {
-      }
-    }
-  
-    //Guarda información de los miembros del grupo y se les asiga al rol de miembro
-    private saveMember(idGrupo: number) {
-      if (this.selectedUsers && this.selectedUsers.length > 0) {
-        this.selectedUsers.forEach((user: any) => {
-          const member: InvMemberForm = {
-            idGrupoInv: idGrupo,
-            idUsuario: user.user.idBd,
-            estado: true,
-            tipo: user.rol + "_I",
-            usuarioCreacion: this.currentUser,
-            fechaCreacion: this.currentDate,
-            usuarioModificacion: null,
-            fechaModificacion: null
-          }
-          this.apiInvMemberService.createInvMemberFormForm(member).subscribe(
-            (response) => {
-              console.log(response);
-            }, (error) => {
-            }
-          )
-          const userRol: UserRoles = {
-            idUsuario: user.user.idBd,
-            idRoles: 8,
-            usuarioCreacion: this.currentUser,
-            fechaCreacion: this.currentDate,
-            usuarioModificacion: null,
-            fechaModificacion: null
-          }
-          this.userRolService.createUserRol(userRol).subscribe((response) => {
-  
-          },
-            (error) => {
-              console.error('El usuario ya tiene el rol:', error);
-            }
-          )
-  
-        })
-      } else {
-        console.log('error no se guardo nada')
-      }
-  
-  
-      if (this.selectedUsersExterns && this.selectedUsersExterns.length > 0) {
-        this.selectedUsersExterns.forEach((user: { id: number, rol: string }) => {
-          const member: InvMemberForm = {
-            idGrupoInv: idGrupo,
-            idUsuario: user.id,
-            estado: true,
-            tipo: user.rol + '_E',
-            usuarioCreacion: this.currentUser,
-            fechaCreacion: this.currentDate,
-            usuarioModificacion: null,
-            fechaModificacion: null
-          }
-          this.apiInvMemberService.createInvMemberFormForm(member).subscribe(
-            (response) => {
-              console.log(response);
-            }, (error) => {
-              console.log(error);
-            }
-          )
-          const userRol: UserRoles = {
-            idUsuario: user.id,
-            idRoles: 8,
-            usuarioCreacion: this.currentUser,
-            fechaCreacion: this.currentDate,
-            usuarioModificacion: null,
-            fechaModificacion: null
-          }
-          this.userRolService.createUserRol(userRol).subscribe((response) => {
-          },
-            (error) => {
-              console.error('El usuario ya tiene el rol:', error);
-            }
-          )
-  
-        })
-      }
-      this.snackBar.open('Enviado con éxito', 'Cerrar', {
-        duration: 4000, // Duración del toast en milisegundos
       });
+    } else {
     }
-    private saveCurriculums(idGrupo: number, user: string, date: Date) {
-  
-      const sistema = 'GruposInv'
-      const token = sessionStorage.getItem('access_token');
-  
-      const cv = this.selectedCv;
-      const img = this.selectedImg;
-      this.documentService.saveDocument(token, img, sistema).subscribe(response => {
-        const annexes: Annexes = {
-          idAnexo: null,
-          idDocumento: 3,
-          idGrupo: idGrupo,
-          nombreAnexo: response.fileName,
-          rutaAnexo: response.uuid,
-          usuarioCreacionAnexo: user,
-          fechaCreacionAnexo: date,
-          usuarioModificacionAnexo: null,
-          fechaModificacionAnexo: null
+  }
+
+  private saveLine(id: number) {
+    const lineasSeleccionadas = this.lineasControl.value;
+    if (lineasSeleccionadas && lineasSeleccionadas.length > 0) {
+      lineasSeleccionadas.forEach((lineasId: number) => {
+        const lineCreaForm: InvGroup_line = {
+          idGrupo: id,
+          idLinea: lineasId,
+          usuarioCreacion: this.currentUser,
+          fechaCreacion: this.currentDate,
+          usuarioModificacion: null,
+          fechaModificacion: null
         }
-  
-        this.annexesServices.createAnnexesForm(annexes).subscribe((response) => {
-          console.log(response);
-        })
-      }), (error) => {
-        console.log(error);
-      }
-  
-      this.documentService.saveDocument(token, cv, sistema).subscribe(response => {
-        const annexes: Annexes = {
-          idAnexo: null,
-          idDocumento: 2,
-          idGrupo: idGrupo,
-          nombreAnexo: response.fileName,
-          rutaAnexo: response.uuid,
-          usuarioCreacionAnexo: user,
-          fechaCreacionAnexo: date,
-          usuarioModificacionAnexo: null,
-          fechaModificacionAnexo: null
-        }
-        this.annexesServices.createAnnexesForm(annexes).subscribe((response) => {
-  
-        })
-      }), (error) => {
-        console.log(error);
-      }
-      for (let index in this.selectedFileByUser) {
-        if (this.selectedFileByUser.hasOwnProperty(index)) {
-          const archivo = this.selectedFileByUser[index];
-          this.documentService.saveDocument(token, archivo, sistema).subscribe(response => {
-            const annexes: Annexes = {
-              idAnexo: null,
-              idDocumento: 2,
-              idGrupo: idGrupo,
-              nombreAnexo: response.fileName,
-              rutaAnexo: response.uuid,
-              usuarioCreacionAnexo: user,
-              fechaCreacionAnexo: date,
-              usuarioModificacionAnexo: null,
-              fechaModificacionAnexo: null
-            }
-  
-            this.annexesServices.createAnnexesForm(annexes).subscribe((response) => {
-  
-            })
-          }), (err) => {
-            console.log(err);
+        this.invGroup_linesService.createInvGroup_lineForm(lineCreaForm).subscribe(
+          (response) => {
           }
-  
-  
+        )
+      });
+    } else {
+    }
+  }
+
+  private saveArea(id: number) {
+    const areasSeleccionadas = this.areasControl.value;
+    if (areasSeleccionadas && areasSeleccionadas.length > 0) {
+      areasSeleccionadas.forEach((areasId: number) => {
+        const areaForm: InvGroup_area = {
+          idGrupo: id,
+          idArea: areasId,
+          usuarioCreacion: this.currentUser,
+          fechaCreacion: this.currentDate,
+          usuarioModificacion: null,
+          fechaModificacion: null
         }
-      }
-  
-      for (let index in this.selectedFileByUserExtern) {
-        if (this.selectedFileByUserExtern.hasOwnProperty(index)) {
-          const archivo = this.selectedFileByUserExtern[index];
-          this.documentService.saveDocument(token, archivo, sistema).subscribe(response => {
-            const annexes: Annexes = {
-              idAnexo: null,
-              idDocumento: 1,
-              idGrupo: idGrupo,
-              nombreAnexo: response.fileName,
-              rutaAnexo: response.uuid,
-              usuarioCreacionAnexo: user,
-              fechaCreacionAnexo: date,
-              usuarioModificacionAnexo: null,
-              fechaModificacionAnexo: null
-            }  
-  
-            this.annexesServices.createAnnexesForm(annexes).subscribe((response) => {
-  
-            })
-          }), (err) => {
-            console.log(err);
+        this.invGroup_areaService.createAreaCreaForm(areaForm).subscribe(
+          (response) => {
           }
-  
-  
+        )
+      });
+    } else {
+    }
+  }
+
+  //Guarda información de los miembros del grupo y se les asiga al rol de miembro
+  private saveMember(idGrupo: number) {
+    if (this.selectedUsers && this.selectedUsers.length > 0) {
+      this.selectedUsers.forEach((user: any) => {
+        const member: InvMemberForm = {
+          idGrupoInv: idGrupo,
+          idUsuario: user.user.idBd,
+          estado: true,
+          tipo: user.rol,
+          status: "Interno",
+          usuarioCreacion: this.currentUser,
+          fechaCreacion: this.currentDate,
+          usuarioModificacion: null,
+          fechaModificacion: null
         }
-      }
-  
-  
+        this.apiInvMemberService.createInvMemberFormForm(member).subscribe(
+          (response) => {
+            console.log(response);
+          }, (error) => {
+          }
+        )
+        const userRol: UserRoles = {
+          idUsuario: user.user.idBd,
+          idRoles: 8,
+          usuarioCreacion: this.currentUser,
+          fechaCreacion: this.currentDate,
+          usuarioModificacion: null,
+          fechaModificacion: null
+        }
+        this.userRolService.createUserRol(userRol).subscribe((response) => {
+
+        },
+          (error) => {
+            console.error('El usuario ya tiene el rol:', error);
+          }
+        )
+
+      })
+    } else {
+      console.log('error no se guardo nada')
     }
 
-    onDrop(event: any, t: string) {
-      event.preventDefault();
-  
-      const files = event.dataTransfer.files;
-      if (files.length === 0) return;
-  
-      const file = files[0];
-  
-      if (t === 'h') {
-        const fileExtension = file.name.split('.').pop()?.toLowerCase();
-        if (fileExtension !== 'pdf') {
-          alert('Solo se permiten archivos PDF.');
-          return;
+
+    if (this.selectedUsersExterns && this.selectedUsersExterns.length > 0) {
+      this.selectedUsersExterns.forEach((user: { id: number, rol: string }) => {
+        const member: InvMemberForm = {
+          idGrupoInv: idGrupo,
+          idUsuario: user.id,
+          estado: true,
+          tipo: user.rol,
+          status: "Externo",
+          usuarioCreacion: this.currentUser,
+          fechaCreacion: this.currentDate,
+          usuarioModificacion: null,
+          fechaModificacion: null
         }
-        this.selectedCv = file;
-        const customFileName = `Hoja_de_Vida_Coordinador${this.currentUserId}.pdf`;
-        this.setFileName(customFileName);
-      } else if (t === 'i') {
-        this.processImageFile(file);
+        this.apiInvMemberService.createInvMemberFormForm(member).subscribe(
+          (response) => {
+            console.log(response);
+          }, (error) => {
+            console.log(error);
+          }
+        )
+        const userRol: UserRoles = {
+          idUsuario: user.id,
+          idRoles: 8,
+          usuarioCreacion: this.currentUser,
+          fechaCreacion: this.currentDate,
+          usuarioModificacion: null,
+          fechaModificacion: null
+        }
+        this.userRolService.createUserRol(userRol).subscribe((response) => {
+        },
+          (error) => {
+            console.error('El usuario ya tiene el rol:', error);
+          }
+        )
+
+      })
+    }
+    this.snackBar.open('Enviado con éxito', 'Cerrar', {
+      duration: 4000, // Duración del toast en milisegundos
+    });
+  }
+  private saveCurriculums(idGrupo: number, user: string, date: Date) {
+
+    const sistema = 'GruposInv'
+    const token = sessionStorage.getItem('access_token');
+
+    const cv = this.selectedCv;
+    const img = this.selectedImg;
+    this.documentService.saveDocument(token, img, sistema).subscribe(response => {
+      const annexes: Annexes = {
+        idAnexo: null,
+        idDocumento: 3,
+        idGrupo: idGrupo,
+        nombreAnexo: response.fileName,
+        rutaAnexo: response.uuid,
+        usuarioCreacionAnexo: user,
+        fechaCreacionAnexo: date,
+        usuarioModificacionAnexo: null,
+        fechaModificacionAnexo: null
+      }
+
+      this.annexesServices.createAnnexesForm(annexes).subscribe((response) => {
+        console.log(response);
+      })
+    }), (error) => {
+      console.log(error);
+    }
+
+    this.documentService.saveDocument(token, cv, sistema).subscribe(response => {
+      const annexes: Annexes = {
+        idAnexo: null,
+        idDocumento: 2,
+        idGrupo: idGrupo,
+        nombreAnexo: response.fileName,
+        rutaAnexo: response.uuid,
+        usuarioCreacionAnexo: user,
+        fechaCreacionAnexo: date,
+        usuarioModificacionAnexo: null,
+        fechaModificacionAnexo: null
+      }
+      this.annexesServices.createAnnexesForm(annexes).subscribe((response) => {
+
+      })
+    }), (error) => {
+      console.log(error);
+    }
+    for (let index in this.selectedFileByUser) {
+      if (this.selectedFileByUser.hasOwnProperty(index)) {
+        const archivo = this.selectedFileByUser[index];
+        this.documentService.saveDocument(token, archivo, sistema).subscribe(response => {
+          const annexes: Annexes = {
+            idAnexo: null,
+            idDocumento: 2,
+            idGrupo: idGrupo,
+            nombreAnexo: response.fileName,
+            rutaAnexo: response.uuid,
+            usuarioCreacionAnexo: user,
+            fechaCreacionAnexo: date,
+            usuarioModificacionAnexo: null,
+            fechaModificacionAnexo: null
+          }
+
+          this.annexesServices.createAnnexesForm(annexes).subscribe((response) => {
+
+          })
+        }), (err) => {
+          console.log(err);
+        }
+
+
       }
     }
-  
-    onImgSelected(event: any) {
-      const file = event.target.files[0];
-      if (file) {
-        this.processImageFile(file);
+
+    for (let index in this.selectedFileByUserExtern) {
+      if (this.selectedFileByUserExtern.hasOwnProperty(index)) {
+        const archivo = this.selectedFileByUserExtern[index];
+        this.documentService.saveDocument(token, archivo, sistema).subscribe(response => {
+          const annexes: Annexes = {
+            idAnexo: null,
+            idDocumento: 1,
+            idGrupo: idGrupo,
+            nombreAnexo: response.fileName,
+            rutaAnexo: response.uuid,
+            usuarioCreacionAnexo: user,
+            fechaCreacionAnexo: date,
+            usuarioModificacionAnexo: null,
+            fechaModificacionAnexo: null
+          }
+
+          this.annexesServices.createAnnexesForm(annexes).subscribe((response) => {
+
+          })
+        }), (err) => {
+          console.log(err);
+        }
+
+
       }
     }
-  
-    processImageFile(file: File) {
-      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/bmp', 'image/webp', 'image/tiff', 'image/svg+xml'];
-  
-      if (!allowedTypes.includes(file.type)) {
+
+
+  }
+
+  onDrop(event: any, t: string) {
+    event.preventDefault();
+
+    const files = event.dataTransfer.files;
+    if (files.length === 0) return;
+
+    const file = files[0];
+
+    if (t === 'h') {
+      const fileExtension = file.name.split('.').pop()?.toLowerCase();
+      if (fileExtension !== 'pdf') {
+        alert('Solo se permiten archivos PDF.');
+        return;
+      }
+      this.selectedCv = file;
+      const customFileName = `Hoja_de_Vida_Coordinador${this.currentUserId}.pdf`;
+      this.setFileName(customFileName);
+    } else if (t === 'i') {
+      this.processImageFile(file);
+    }
+  }
+
+  onImgSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.processImageFile(file);
+    }
+  }
+
+  processImageFile(file: File) {
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/bmp', 'image/webp', 'image/tiff', 'image/svg+xml'];
+
+    if (!allowedTypes.includes(file.type)) {
+      alert('Solo se permiten archivos de imagen (JPG, JPEG, PNG, GIF, BMP, WEBP, TIFF, SVG).');
+      this.clearImageInput();
+      return;
+    }
+
+    this.isImageFile = true;
+    this.selectedImg = file;
+    this.imageNameOriginal = file.name;
+
+    const customFileName = `imagen_GI_${this.currentUserId}.png`;
+    const renamedFile = new File([file], customFileName, { type: file.type });
+    this.selectedImg = renamedFile;
+
+    this.previewImage(file);
+  }
+  previewImage(file: File) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.filePreview = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+  clearImageInput() {
+    this.selectedImg = undefined;
+    this.imageNameOriginal = '';
+    this.filePreview = null;
+    const fileInput = document.getElementById('imageInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  }
+
+  onDragOver(event: any) {
+    event.preventDefault();
+    event.stopPropagation();
+    event.target.classList.add('drag-over');
+
+  }
+  fileNameOriginal: string;
+  setFileName(name: string) {
+    if (!this.selectedCv) {
+      console.error("Error: No hay archivo seleccionado.");
+      return;
+    }
+    this.CvNameOriginal = this.selectedCv.name;
+    const modifiedFile = new File([this.selectedCv], name, { type: this.selectedCv.type });
+    this.selectedCv = modifiedFile;
+  }
+  setImageName(name: string) {
+    if (!this.selectedImg) {
+      return;
+    }
+    this.imageNameOriginal = this.selectedImg.name;
+    const modifiedFile = new File([this.selectedImg], name, { type: this.selectedImg.type });
+    this.selectedImg = modifiedFile;
+  }
+
+  onCVCoordSelected(event: any) {
+    this.selectedCv = event.target.files[0];
+    const customFileName = `Hoja_de_Vida_Coordinador${this.currentUserId}.pdf`;
+    this.validateFileType();
+    this.setFileName(customFileName);
+  }
+
+
+  validateFileType() {
+    if (this.selectedCv) {
+      const fileExtension = this.selectedCv.name.split('.').pop().toLowerCase();
+      if (fileExtension !== 'pdf') {
+        alert('Solo se permiten archivos PDF.');
+        this.clearFileInput();
+      }
+    }
+  }
+
+  validateImageType() {
+    if (this.selectedImg) {
+      const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff', 'svg'];
+      const fileExtension = this.selectedImg.name.split('.').pop().toLowerCase();
+
+      if (!allowedExtensions.includes(fileExtension)) {
         alert('Solo se permiten archivos de imagen (JPG, JPEG, PNG, GIF, BMP, WEBP, TIFF, SVG).');
         this.clearImageInput();
-        return;
-      }
-  
-      this.isImageFile = true;
-      this.selectedImg = file;
-      this.imageNameOriginal = file.name;
-  
-      const customFileName = `imagen_GI_${this.currentUserId}.png`;
-      const renamedFile = new File([file], customFileName, { type: file.type });
-      this.selectedImg = renamedFile;
-  
-      this.previewImage(file);
-    }
-    previewImage(file: File) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.filePreview = e.target?.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
-    clearImageInput() {
-      this.selectedImg = undefined;
-      this.imageNameOriginal = '';
-      this.filePreview = null;
-      const fileInput = document.getElementById('imageInput') as HTMLInputElement;
-      if (fileInput) {
-        fileInput.value = '';
       }
     }
-  
-    onDragOver(event: any) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.target.classList.add('drag-over');
-  
+  }
+
+  clearFileInput() {
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
     }
-    fileNameOriginal: string;
-    setFileName(name: string) {
-      if (!this.selectedCv) {
-        console.error("Error: No hay archivo seleccionado.");
-        return;
-      }
-      this.CvNameOriginal = this.selectedCv.name;
-      const modifiedFile = new File([this.selectedCv], name, { type: this.selectedCv.type });
-      this.selectedCv = modifiedFile;
-    }
-    setImageName(name: string) {
-      if (!this.selectedImg) {
-        return;
-      }
-      this.imageNameOriginal = this.selectedImg.name;
-      const modifiedFile = new File([this.selectedImg], name, { type: this.selectedImg.type });
-      this.selectedImg = modifiedFile;
-    }
-  
-    onCVCoordSelected(event: any) {
-      this.selectedCv = event.target.files[0];
-      const customFileName = `Hoja_de_Vida_Coordinador${this.currentUserId}.pdf`;
-      this.validateFileType();
-      this.setFileName(customFileName);
-    }
-  
-  
-    validateFileType() {
-      if (this.selectedCv) {
-        const fileExtension = this.selectedCv.name.split('.').pop().toLowerCase();
-        if (fileExtension !== 'pdf') {
-          alert('Solo se permiten archivos PDF.');
-          this.clearFileInput();
-        }
-      }
-    }
-  
-    validateImageType() {
-      if (this.selectedImg) {
-        const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff', 'svg'];
-        const fileExtension = this.selectedImg.name.split('.').pop().toLowerCase();
-  
-        if (!allowedExtensions.includes(fileExtension)) {
-          alert('Solo se permiten archivos de imagen (JPG, JPEG, PNG, GIF, BMP, WEBP, TIFF, SVG).');
-          this.clearImageInput();
-        }
-      }
-    }
-  
-    clearFileInput() {
-      const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-      if (fileInput) {
-        fileInput.value = '';
-      }
-    }
-  
-  
-    getFileIcon(fileType: string | undefined): string {
-      if (!fileType) return 'far fa-file'; // Ícono genérico si no hay tipo de archivo
-      const fileIcons: { [key: string]: string } = {
-        'application/pdf': 'far fa-file-pdf', // Ícono para PDF
-        'image/png': 'far fa-file-image',
-        'image/jpeg': 'far fa-file-image',
-        'image/jpg': 'far fa-file-image',
-        'image/gif': 'far fa-file-image',
-        'image/bmp': 'far fa-file-image',
-        'image/webp': 'far fa-file-image',
-        'image/tiff': 'far fa-file-image',
-        'image/svg+xml': 'far fa-file-image',
-      };
-      return fileIcons[fileType] || 'far fa-file';
-    }
-    enlace(url: string) {
-      this.router.navigateByUrl(`main/${url}`);
-  
-    }
+  }
+
+
+  getFileIcon(fileType: string | undefined): string {
+    if (!fileType) return 'far fa-file'; // Ícono genérico si no hay tipo de archivo
+    const fileIcons: { [key: string]: string } = {
+      'application/pdf': 'far fa-file-pdf', // Ícono para PDF
+      'image/png': 'far fa-file-image',
+      'image/jpeg': 'far fa-file-image',
+      'image/jpg': 'far fa-file-image',
+      'image/gif': 'far fa-file-image',
+      'image/bmp': 'far fa-file-image',
+      'image/webp': 'far fa-file-image',
+      'image/tiff': 'far fa-file-image',
+      'image/svg+xml': 'far fa-file-image',
+    };
+    return fileIcons[fileType] || 'far fa-file';
+  }
+  enlace(url: string) {
+    this.router.navigateByUrl(`main/${url}`);
+
+  }
 }

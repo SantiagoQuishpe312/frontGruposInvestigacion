@@ -23,6 +23,20 @@
   border: solid 1px #e9e9e9;
   border-radius: 5px;
 }
+.titulos-procesos{
+  font-size: 16px;
+  font-weight: bold;
+}
+.info-proceso{
+  padding: 2%;
+  text-align: justify;
+}
+.info-proceso button{
+  background-color: #2e8041;
+  color: white;
+  display: inline-block;
+
+}
 .multiline-label {
   white-space: normal; /* Permite el ajuste de texto en líneas múltiples */
   word-wrap: break-word; /* Rompe las palabras si es necesario para evitar que se salgan del área */
@@ -194,10 +208,6 @@ button.custom-button:disabled {
 
 .creacion-grupo-investigacion {
   text-align: center;
-}
-
-.btn-solicitud{
-  text-align: right;
 }
 
 .grid-item-input {

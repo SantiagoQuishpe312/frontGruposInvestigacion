@@ -66,16 +66,23 @@
                 </header>
 
             </div>
-            <div *ngIf="!invGroupExists" class="container-fluid">
-                <div class="card">
-                    <h1>Para empezar el proceso de creación debe llenar el Formulario de Solicitud
-                        de Creación de Grupo de Investigación</h1>
-                    <button type="button" (click)="enlace('creation_request')"
-                        color="primary" mat-raised-button class="btn-solicitud">Formulario de
-                        Solicitud de Creación de Grupo de Investigación</button>
-                </div>
 
+            <div *ngIf="!invGroupExists" class="info-proceso">
+                <h1 class="titulos-procesos">Para empezar el proceso de creación debe llenar el
+                    Formulario de Solicitud
+                    de Creación de Grupo de Investigación</h1>
+                <p>
+                    El personal académico interesado en formar un GI
+                    multidisciplinario, presenta la solicitud de creación de GI
+                    con base a los requisitos establecidos en el 
+                    <a href="https://usgn.espe.edu.ec/wp-content/uploads/2024/04/RESOLUCION-ESPE-HCU-RES-2024-035.pdf" target="_blank" rel="noopener noreferrer">Reglamento de
+                        Investigación.</a> 
+                </p>
+                👉<button type="button" (click)="enlace('creation_request')"
+                    mat-raised-button
+                    matTooltip="Formulario"><span>Formulario de Solicitud de Creación de Grupo de Investigación</span></button>
             </div>
+            
             <div class="presentacionGrupo"
                 *ngIf=" !loadingData  && grupo.estadoGrupoInv==='revDirDep' || grupo.estadoGrupoInv==='revInfPer' "
                 style="text-align: center;">

@@ -12,10 +12,13 @@ export interface InvGroupForm {
     vision?:string;
     departamento?: string;
     proceso?:string;
+    adicional?:string;
+    sede?:string;
     usuarioCreacion: string;
     fechaCreacion: Date;
     usuarioModificacion: string;
     fechaModificacion: Date;
+
 }
 
 export interface InvGroupCompleteForm{
