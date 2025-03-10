@@ -32,9 +32,9 @@ import { ReportMenuComponent } from './pages/reportes/report-menu.component';
 import { AllInvGroupCDComponent } from './pages/reportes/all-inv-group-cd/all-inv-group-cd.component';
 import { ScientificProductionGroupsComponent } from './pages/reportes/scientific-production-groups/scientific-production-groups.component';
 import { ReporteActividadesComponent } from './pages/reporte-actividades/reporte-actividades.component';
-import { SolicitudesForDirectorComponent } from './pages/directorDepartamento/solicitudes-de-creacion/obtenerSolicitudes.component';
-import { MostrarSolicitudForDirector } from './pages/directorDepartamento/solicitudes-de-creacion/mostrarSolicitud.component';
-import { CargaMemoDirComponent } from './pages/directorDepartamento/memorandosSolicitudCreacion/memorando.component';
+import { SolicitudesForDirectorComponent } from './pages/directorDepartamento/faseCreacionGI/solicitudes-de-creacion/obtenerSolicitudes.component';
+import { MostrarSolicitudForDirector } from './pages/directorDepartamento/faseCreacionGI/solicitudes-de-creacion/mostrarSolicitud.component';
+import { CargaMemoDirComponent } from './pages/directorDepartamento/faseCreacionGI/memorandosSolicitudCreacion/memorando.component';
 import { GestionRolesComponent } from './pages/administracion/gestion-roles/gestion-crea/gestion-roles.component';
 import { GestionMenuComponent } from './pages/administracion/gestion-roles/gestion-menu.component';
 
@@ -77,20 +77,21 @@ import { DevelopmentPlanFormComponent } from './pages/coordinadorGI/plan_desarro
 import { VerReportesComponent } from './pages/reporte-actividades/ver-reportes/ver-reportes.component';
 import { PropuestaGIComponent } from './pages/coordinadorGI/memorando/creation_proposal';
 import { InformeDePertinenciaComponent } from './pages/coordinadorGI/Informe_Pertinencia/relevance_report';
-import { MemoDirVIITComponent } from './pages/directorDepartamento/memorandosVIIT/memorando.component';
+import { ResolucionConsejoComponent } from './pages/directorDepartamento/faseCreacionGI/resolucionConsejo/resolucionConsejo.component';
 import { SolicitudesForVicerectorIComponent } from './pages/vicerectorDeInvestigacion/resoluciones copy/solicitudes-de-creacion/obtenerSolicitudes.component';
 import { CargaMemoVicIComponent } from './pages/vicerectorDeInvestigacion/resoluciones copy/memorandosSolicitudCreacion/memorando.component';
 import { MostrarSolicitudForVicerectorI } from './pages/vicerectorDeInvestigacion/resoluciones copy/solicitudes-de-creacion/mostrarSolicitud.component';
 import { InstStrategicObjComponent } from './pages/administracion/inst-strategic-obj/inst-strategic-obj.component';
 import { StrategiesComponent } from './pages/administracion/strategies/strategies.component';
 import { InfPertinenciaComponent } from './pages/coordinador-inv/informePertinencia/infPertinencia.component';
-import { MostrarSolicitudForDirector2 } from './pages/directorDepartamento/solicitudes-de-creacion/mostrarSolicitud2.component';
+import { MostrarSolicitudForDirector2 } from './pages/directorDepartamento/faseCreacionGI/solicitudes-de-creacion/mostrarSolicitud2.component';
 import { GruposControlComponent } from './pages/administracion/grupos-investigacion/grupos-investigacion.component';
 import { DetalleGIComponent } from './pages/administracion/grupos-investigacion/detalle-gi.component';
 import { CrearGIComponent } from './pages/administracion/grupos-investigacion/crearGI.component';
 import { AnnualPlanComponent } from './pages/coordinadorGI/seguimiento/PlanAnual/planAnual.component';
 import { SolCreacionComponent } from './pages/coordinadorGI/sol-creacion/sol-creacion.component';
 import { ReportesGIComponent } from './pages/administracion/grupos-investigacion/reportes-gi/reportes-gi.component';
+import { MemorandoCreacionVITTComponent } from './pages/directorDepartamento/faseCreacionGI/memorando-creacion-vitt/memorando-creacion-vitt.component';
 const routes: Routes = [
   {
     path: 'principal',
@@ -197,6 +198,10 @@ const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardCoordinadorComponent
+  },
+  {
+path: 'memorando-vitt',
+component: MemorandoCreacionVITTComponent
   },
 
   {
@@ -428,8 +433,8 @@ const routes: Routes = [
     component: InformeDePertinenciaComponent
   },
   {
-    path: 'memoDIR_VITT',
-    component: MemoDirVIITComponent
+    path: 'resolucion_consejo',
+    component: ResolucionConsejoComponent
   },
   {
     path: 'obj_institucionales',

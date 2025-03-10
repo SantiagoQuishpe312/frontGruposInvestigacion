@@ -73,6 +73,8 @@ export class DevelopmentPlanFormComponent implements OnInit {
   obj: any[] = [];
   usuarioNombre: { [key: number]: string } = {};
   specificObjetives: SpecificObjetives[] = [];
+  informacionObjetivos: string = '';
+
   constructor(
     private fb: FormBuilder,
     private upperLevelPlanService: UpperLevelPlanService,
@@ -133,8 +135,9 @@ export class DevelopmentPlanFormComponent implements OnInit {
       planDesarrolloForm3: this.fb.array([
         this.crearObjetivo()
       ]),
-      grupoInv2_1:this.fb.group({
-        alineacionEstrategica: this.alineacionEstrategicaControl,}),
+      grupoInv2_1: this.fb.group({
+        alineacionEstrategica: this.alineacionEstrategicaControl,
+      }),
       planDesarrolloForm4: this.fb.array([]),
     });
     this.planSuperiorControl.setValue([this.planSuperior[0].idPlanNivelSuperior]);
@@ -173,8 +176,8 @@ export class DevelopmentPlanFormComponent implements OnInit {
   trackByIndex(index: number, item: any): number {
     return item ? item.value.id || index : index;
   }
-  
-  
+
+
   //Cargar Data inicial para poder iniciar los Formularios con Datos
   loadData() {
     return forkJoin({
@@ -207,6 +210,8 @@ export class DevelopmentPlanFormComponent implements OnInit {
   agregarObjetivo(): void {
     if (this.objetivos) {
       this.objetivos.push(this.crearObjetivo());
+      this.actualizarInformacion(); // Actualizar la información
+
     } else {
       console.error('El FormArray "objetivos" no está definido.');
     }
@@ -219,34 +224,55 @@ export class DevelopmentPlanFormComponent implements OnInit {
 
   eliminarObjetivo(index: number): void {
     const objetivo = this.objetivos.at(index).value.objetivo; // Obtener el texto del objetivo
-    
+
     if (!window.confirm(`¿Estás seguro de que deseas eliminar el objetivo?\n"${objetivo}"`)) {
       return;
     }
-  
+
     console.log("Intentando eliminar índice:", index, "Total objetivos:", this.objetivos.length);
-  
+
     if (this.objetivos.length > 1 && index >= 0 && index < this.objetivos.length) {
       const updatedObjetivos = this.objetivos.controls.filter((_, i) => i !== index);
       this.myForm.setControl('planDesarrolloForm3', this.fb.array(updatedObjetivos));
-  
+
       console.log("Elemento eliminado correctamente. Nuevo tamaño:", updatedObjetivos.length);
-  
+      this.actualizarInformacion(); // Actualizar la información
+
       this.cdr.detectChanges();
     } else {
       console.warn("No se puede eliminar el objetivo. Índice fuera de rango.");
     }
   }
-  
-  
-  
+
+  actualizarInformacion(): void {
+    if (!this.objetivos || this.objetivos.length === 0) {
+      this.informacionObjetivos = "No hay objetivos registrados.";
+      return;
+    }
+
+    this.informacionObjetivos = this.objetivos.value.map((obj, index) => {
+      const estrategiasTexto = obj.estrategias.length
+        ? obj.estrategias.map(e => e.descripcion).join(', ')
+        : 'Ninguna';
+
+      const odsTexto = obj.ods.length
+        ? obj.ods.map(o => o.descripcion).join(', ')
+        : 'Ninguno';
+
+      return `🎯 Objetivo ${index + 1}: ${obj.objetivo}
+      📌 Estrategias: ${estrategiasTexto}
+      🌍 ODS: ${odsTexto}
+  --------------------------------------------------`;
+    }).join('\n\n');
+  }
+
+
   getRowspan(estrategias: any[], ods: any[]): number {
     return Math.max(estrategias.length, ods.length);
   }
   openDialogObj(index: number): void {
     const objetivoActual = this.objetivos.at(index).value;
     const objetivoInstitucional = this.myForm.get('planDesarrolloForm2_2').get('objInstitucional').value;
-    console.log('Objetivo institucional:', objetivoInstitucional); // Para depuración inicial
     const dialogRef = this.dialog.open(ObjControl, {
       width: '50%',
       height: '70%',
@@ -268,27 +294,28 @@ export class DevelopmentPlanFormComponent implements OnInit {
           estrategias: updatedEstrategias,
           ods: updatedOds
         });
-        console.log(`Estado completo del Objetivo ${index + 1}:`, currentObjetivo.value);
-      }
+      } this.actualizarInformacion(); // Actualizar la información
+
     });
   }
   eliminarOds(objetivoIndex: number, itemIndex: number): void {
     const objetivo = this.objetivos.at(objetivoIndex);
-    
+
     // Clonar los arreglos actuales
     const estrategias = [...objetivo.value.estrategias];
     const ods = [...objetivo.value.ods];
-  
+
     // Verificar que el índice sea válido y eliminar ambos elementos
     if (estrategias.length > itemIndex && ods.length > itemIndex) {
       estrategias.splice(itemIndex, 1);
       ods.splice(itemIndex, 1);
-      
+
       // Actualizar el formulario reactivo con los nuevos valores
       objetivo.patchValue({ estrategias, ods });
-    }
+    } this.actualizarInformacion(); // Actualizar la información
+
   }
-  
+
 
   crearMarco(): FormGroup {
     return this.fb.group({
@@ -414,6 +441,7 @@ export class DevelopmentPlanFormComponent implements OnInit {
   //Envio del Formulario------------------------------
   HandleSubmit() {
     this.formReady = true;
+    this.isLoading = true;
     if (this.myForm.valid) {
       this.guardarPlanBase();
       this.snackBar.open('Solicitudes Enviados correctamente.', 'Cerrar', {
@@ -449,7 +477,8 @@ export class DevelopmentPlanFormComponent implements OnInit {
         setTimeout(() => {
           this.formReady = false;
           this.router.navigateByUrl('main/dashboard');
-        }, 8000);
+        }, 2000);
+        this.isLoading = false;
       },
       (error) => {
         console.error('Error al crear el plan de desarrollo:', error); // Manejo de errores
@@ -639,11 +668,7 @@ export class DevelopmentPlanFormComponent implements OnInit {
 
         // Guarda el control de panel y espera la respuesta
         await this.controlPanelService.createControlPanelForm(act).toPromise();
-        console.log("Panel de control creado:", act);
       }
-
-      console.log('Todos los paneles de control fueron guardados correctamente.');
-
     } catch (error) {
       console.error('Error al guardar los paneles de control:', error);
       throw error; // Propagamos el error para manejarlo en el flujo principal
@@ -673,8 +698,8 @@ export class DevelopmentPlanFormComponent implements OnInit {
         idGrupoInv: this.idGroup,
         idCoordinador: data.idCoordinador,
         nombreGrupoInv: data.nombreGrupoInv,
-        estadoGrupoInv: "",
-        proceso:'2',
+        estadoGrupoInv: data.estadoGrupoInv,
+        proceso: '2',
         acronimoGrupoinv: data.acronimoGrupoinv,
         usuarioCreacion: data.usuarioCreacion,
         fechaCreacion: data.fechaCreacion,

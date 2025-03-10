@@ -4,6 +4,24 @@
     background-color: #F4FAFE;
     padding: 20px;
   }
+  .drag-drop i {
+    margin-right: 8px;
+    color: #d9534f; /* Rojo para PDF */
+    font-size: 5rem;
+  }
+  .loading-spinner-overlay {
+    position: fixed; /* Para que el div esté posicionado en relación a la pantalla */
+    top: 0;
+    left: 0;
+    width: 100vw; /* Abarca todo el ancho de la pantalla */
+    height: 100vh; /* Abarca todo el alto de la pantalla */
+    display: flex; /* Centra el contenido usando flexbox */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    z-index: 1000; /* Asegúrate de que esté encima de otros elementos */
+  }
+  
   
   header {
     background-color: #2e8041;

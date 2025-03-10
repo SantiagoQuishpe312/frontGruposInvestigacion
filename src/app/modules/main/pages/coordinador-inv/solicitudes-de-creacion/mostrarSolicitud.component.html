@@ -54,7 +54,7 @@
         </mat-step>
         <mat-step>
           <ng-template matStepLabel>Plan de Desarrollo</ng-template>
-          <app-developmentPlanForm-component [id]="creationReqForm.idGrupoInv"></app-developmentPlanForm-component>
+          <app-developmentPlanForm-component [id]="invGroupId"></app-developmentPlanForm-component>
 
           <!-- 1. Encabezado -->
         
@@ -85,6 +85,24 @@
                 matStepperNext>
                 Siguiente
               </button>
+            </div> </div>
+          
+        </mat-step>
+        <mat-step>
+          <ng-template matStepLabel>Hoja de Vida del Coordinador del Grupo de Investigación</ng-template>
+          <div *ngIf="cvUrl">
+            <iframe [src]="cvUrl" width="100%" height="600px"></iframe>
+          </div>
+          <div class="grid-container">
+            <div class="grid-item"></div>
+            <div class="grid-item">
+              <div>
+              <button type="button" mat-raised-button color="primary"
+                matStepperPrevious>Regresar</button>
+              <button type="button" mat-raised-button color="primary"
+                matStepperNext>
+                Siguiente
+              </button></div>
             </div> </div>
           
         </mat-step>

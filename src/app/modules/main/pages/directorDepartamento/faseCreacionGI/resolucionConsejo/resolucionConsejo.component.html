@@ -1,0 +1,39 @@
+<div *ngIf="loading" class="loading-spinner-overlay">
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+</div>
+<div class="container-fluid">
+  <div class="card">
+  <header>
+    <h1>Presentar Resolución de Consejo de Carrera</h1>
+  </header>
+  <main>
+    <p>Adjuntar la Resolución del Consejo de Carrera sobre el Grupo de Investigación 
+    </p>
+    <form (submit)="onSubmit()">
+      <div class="drag-drop" (drop)="onDrop($event)" (dragover)="onDragOver($event)">
+        <i *ngIf="selectedFile"
+            class="{{ getFileIcon(selectedFile.type) }}"></i>
+        <p *ngIf="!selectedFile">Arrastra y suelta el documento aquí o haz
+          clic para seleccionarlo.</p>
+          <p *ngIf="selectedFile">{{ originalFileName }}</p>
+          <div class="custom-file-input">
+            <label *ngIf="!selectedFile" for="fileInput">Seleccionar
+              archivo</label>
+            <label *ngIf="selectedFile" for="fileInput">Cambiar archivo</label>
+            <input id="fileInput" type="file" (change)="onFileSelected($event)"
+              accept=".pdf" />
+        </div>
+      </div>
+      <button class="boton" type="submit" [disabled]="!selectedFile">Cargar Resolución</button>
+      <div *ngIf="selectedFile" class="file-info">
+        <p *ngIf="fileUploaded" class="success-message">El anexo se ha cargado con éxito.</p>
+      </div>
+    </form>
+
+    <section class="acciones">
+      <button class="boton" (click)="goBack()">Regresar</button>
+    </section>
+    
+  </main>
+</div>
+</div>

@@ -31,7 +31,7 @@ export class InvMemberService {
   }
   //groupId/65
   getByUsername(username:string):Observable<InvMemberForm[]> {
-    return this.http.get<InvMemberForm[]>(`${this.URL}/byUsername/${username}`);
+    return this.http.get<InvMemberForm[]>(`${this.URL}/username/${username}`);
   }
   
   getAllByGroupId(id:number):Observable<Usuario[]> {

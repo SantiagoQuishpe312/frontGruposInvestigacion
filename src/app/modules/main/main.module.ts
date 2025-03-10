@@ -49,10 +49,10 @@ import {MatSelectModule} from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MembersGroup } from './pages/creation-form/creation-form/membersGroup.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { SolicitudesForDirectorComponent } from './pages/directorDepartamento/solicitudes-de-creacion/obtenerSolicitudes.component';
-import { MostrarSolicitudForDirector } from './pages/directorDepartamento/solicitudes-de-creacion/mostrarSolicitud.component';
+import { SolicitudesForDirectorComponent } from './pages/directorDepartamento/faseCreacionGI/solicitudes-de-creacion/obtenerSolicitudes.component';
+import { MostrarSolicitudForDirector } from './pages/directorDepartamento/faseCreacionGI/solicitudes-de-creacion/mostrarSolicitud.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import { CargaMemoDirComponent } from './pages/directorDepartamento/memorandosSolicitudCreacion/memorando.component';
+import { CargaMemoDirComponent } from './pages/directorDepartamento/faseCreacionGI/memorandosSolicitudCreacion/memorando.component';
 import { GestionRolesComponent } from './pages/administracion/gestion-roles/gestion-crea/gestion-roles.component';
 import { GestionMenuComponent } from './pages/administracion/gestion-roles/gestion-menu.component';
 import { ModalUpperPlanControl } from './pages/administracion/upper-plan/modal-upper-plan.component';
@@ -118,7 +118,7 @@ import { VerReportesComponent } from './pages/reporte-actividades/ver-reportes/v
 import { DevelopmentPlanFormComponent } from './pages/coordinadorGI/plan_desarrollo/development-plan';
 import { PropuestaGIComponent } from './pages/coordinadorGI/memorando/creation_proposal';
 import { InformeDePertinenciaComponent } from './pages/coordinadorGI/Informe_Pertinencia/relevance_report';
-import { MemoDirVIITComponent } from './pages/directorDepartamento/memorandosVIIT/memorando.component';
+import { ResolucionConsejoComponent } from './pages/directorDepartamento/faseCreacionGI/resolucionConsejo/resolucionConsejo.component';
 import { SolicitudesForVicerectorIComponent } from './pages/vicerectorDeInvestigacion/resoluciones copy/solicitudes-de-creacion/obtenerSolicitudes.component';
 import { MostrarSolicitudForVicerectorI } from './pages/vicerectorDeInvestigacion/resoluciones copy/solicitudes-de-creacion/mostrarSolicitud.component';
 import { CargaMemoVicIComponent } from './pages/vicerectorDeInvestigacion/resoluciones copy/memorandosSolicitudCreacion/memorando.component';
@@ -140,7 +140,7 @@ import { CreationRequestFormComponent } from 'src/@vex/components/forms/creation
 import { DevelopPlanFormComponent } from 'src/@vex/components/forms/developmentPlanForm/developmentPlanForm.component';
 import { CvComponent } from 'src/@vex/components/forms/cv/cv.component';
 import { InformePertinenciaComponent } from 'src/@vex/components/forms/relevanceReport/relevanceReport.component';
-import { MostrarSolicitudForDirector2 } from './pages/directorDepartamento/solicitudes-de-creacion/mostrarSolicitud2.component';
+import { MostrarSolicitudForDirector2 } from './pages/directorDepartamento/faseCreacionGI/solicitudes-de-creacion/mostrarSolicitud2.component';
 import { GruposControlComponent } from './pages/administracion/grupos-investigacion/grupos-investigacion.component';
 import { DetalleGIComponent } from './pages/administracion/grupos-investigacion/detalle-gi.component';
 import { CrearGIComponent } from './pages/administracion/grupos-investigacion/crearGI.component';
@@ -156,6 +156,8 @@ import { SeleccionRolDialogComponent } from './pages/creation-form/SeleccionRolD
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { SolCreacionComponent } from './pages/coordinadorGI/sol-creacion/sol-creacion.component';
 import { ReportesGIComponent } from './pages/administracion/grupos-investigacion/reportes-gi/reportes-gi.component';
+import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
+import { MemorandoCreacionVITTComponent } from './pages/directorDepartamento/faseCreacionGI/memorando-creacion-vitt/memorando-creacion-vitt.component';
 
 @NgModule({
   declarations: [
@@ -263,7 +265,7 @@ import { ReportesGIComponent } from './pages/administracion/grupos-investigacion
     VerReportesComponent,
     PropuestaGIComponent,
     InformeDePertinenciaComponent,
-    MemoDirVIITComponent,
+    ResolucionConsejoComponent, 
     SolicitudesForVicerectorIComponent,
     MostrarSolicitudForVicerectorI,
     CargaMemoVicIComponent,AcademicDomainsControl,
@@ -277,7 +279,8 @@ import { ReportesGIComponent } from './pages/administracion/grupos-investigacion
     AnnualPlanComponent,
     SolCreacionComponent,
     ReportesGIComponent,
-   
+   ConfirmDialogComponent,
+   MemorandoCreacionVITTComponent,
   ],
   imports: [
     MatButtonToggleModule,  
@@ -312,6 +315,8 @@ import { ReportesGIComponent } from './pages/administracion/grupos-investigacion
     
   ],
   exports:[CdkStepperModule],
-  providers: []
+  providers: [],
+  entryComponents: [ConfirmDialogComponent] // Asegura que se pueda abrir dinámicamente
+
 })
 export class MainModule { }

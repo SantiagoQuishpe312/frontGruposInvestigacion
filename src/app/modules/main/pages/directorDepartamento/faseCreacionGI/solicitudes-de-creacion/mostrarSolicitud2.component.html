@@ -17,7 +17,7 @@
             <mat-step>
                 <ng-template matStepLabel>Informe de Pertinencia</ng-template>
               
-              <app-relevanceReportForm-component [id]="creationReqForm.idGrupoInv"></app-relevanceReportForm-component>
+              <app-relevanceReportForm-component [id]="invGroupId"></app-relevanceReportForm-component>
                 <div style="width: 100%;display: flex;
             justify-content: right;
             align-items: right;" *ngIf="creationReqForm || invGroup || usuario">
@@ -31,7 +31,7 @@
           <mat-step>
             <ng-template matStepLabel>Solicitud de Creación del Grupo de
               Investigación</ng-template>
-            <app-creation-request-form [id]="idSolicitud"></app-creation-request-form>
+            <app-creation-request-form [id]="creationReqForm.idPeticionCreacion"></app-creation-request-form>
             <div class="grid-item">
                 <div>
                 <button type="button" mat-raised-button color="primary"
@@ -47,7 +47,7 @@
             <ng-template matStepLabel>Plan de Desarrollo</ng-template>
           
             <!-- 1. Encabezado -->
-            <app-developmentPlanForm-component [id]="creationReqForm.idGrupoInv"></app-developmentPlanForm-component>
+            <app-developmentPlanForm-component [id]="invGroupId"></app-developmentPlanForm-component>
             <!-- 9. Firmas de Responsabilidad -->
             <!--<div class="section">
               <h3>9. FIRMAS DE RESPONSABILIDAD</h3>
@@ -90,6 +90,24 @@
             
           </mat-step>
           <mat-step>
+            <ng-template matStepLabel>Hoja de Vida del Coordinador del Grupo de Investigación</ng-template>
+            <div *ngIf="cvUrl">
+              <iframe [src]="cvUrl" width="100%" height="600px"></iframe>
+            </div>
+            <div class="grid-container">
+              <div class="grid-item"></div>
+              <div class="grid-item">
+                <div>
+                <button type="button" mat-raised-button color="primary"
+                  matStepperPrevious>Regresar</button>
+                <button type="button" mat-raised-button color="primary"
+                  matStepperNext>
+                  Siguiente
+                </button></div>
+              </div> </div>
+            
+          </mat-step>
+          <mat-step>
             <ng-template matStepLabel>Hojas de Vida de los miembros del grupo</ng-template>
             <app-cv-component [id]="creationReqForm.idGrupoInv"></app-cv-component>
             <div class="grid-container">
@@ -111,18 +129,18 @@
                   >
                     Siguiente
                   </button>
-                </div>
                 <button
                   type="button"
                   mat-raised-button
                   color="primary"
                   matStepperPrevious
-                  (click)="validarGrupo('memo-solicitud')"
+                  (click)="validarGrupo('resolucion_consejo')"
                   *ngIf="!pdfUrlInforme"
                 >
-                  Validar Grupo
+                  Adjuntar Resolución de Consejo de Carrera
                 </button>
-              </div>
+              </div>                </div>
+
             </div>
           </mat-step>
           

@@ -27,13 +27,13 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let solicitud of solicitudesFiltradas; let i = index">
+                <tr *ngFor="let gi of grupoComplete; let i = index">
                     <td>{{i+1}}</td>
-                    <td>{{ getNombreGrupo(solicitud.idGrupoInv) }}</td>
-                    <td>{{coordinador.nombre}}</td>
-                    <td>{{ solicitud.fechaCreacionPeticion | date }}</td>
+                    <td>{{gi.invGroup.nombreGrupoInv  }}</td>
+                    <td>{{gi.coordinador.nombre}}</td>
+                    <td>{{ gi.invGroup.fechaCreacion| date }}</td>
                     <td>
-                        <button class="edit" mat-mini-fab color="primary" aria-label="Example icon button with a delete icon" (click)="validar(solicitud.idPeticionCreacion)">
+                        <button class="edit" mat-mini-fab color="primary" aria-label="Example icon button with a delete icon" (click)="validar(gi.invGroup.idGrupoInv)">
                             <i class="fa fa-folder-open" aria-hidden="true"></i>
                           </button>
                         

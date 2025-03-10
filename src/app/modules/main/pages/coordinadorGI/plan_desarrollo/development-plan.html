@@ -174,50 +174,64 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let objetivo of objetivos.controls; let i = index; trackBy: trackByIndex" [formGroupName]="i">
+                <tr
+                  *ngFor="let objetivo of objetivos.controls; let i = index; trackBy: trackByIndex"
+                  [formGroupName]="i">
                   <td>
                     <mat-form-field>
-                      <textarea matInput placeholder="Objetivo Específico" formControlName="objetivo" rows="3"></textarea>
+                      <textarea matInput placeholder="Objetivo Específico"
+                        formControlName="objetivo" rows="3"></textarea>
                     </mat-form-field>
-                    <button class="btn_add" type="button" mat-icon-button (click)="openDialogObj(i)" matTooltip="Añadir nuevas Estrategias y ODS">
+                    <button class="btn_add" type="button" mat-icon-button
+                      (click)="openDialogObj(i)"
+                      matTooltip="Añadir nuevas Estrategias y ODS">
                       <mat-icon class="material-symbols-outlined">add</mat-icon>
                     </button>
-                    <button class="btn_delete" type="button" mat-icon-button (click)="eliminarObjetivo(i)" matTooltip="Eliminar Objetivo">
-                      <mat-icon class="material-symbols-outlined">delete</mat-icon>
+                    <button class="btn_delete" type="button" mat-icon-button
+                      (click)="eliminarObjetivo(i)"
+                      matTooltip="Eliminar Objetivo">
+                      <mat-icon
+                        class="material-symbols-outlined">delete</mat-icon>
                     </button>
                   </td>
-              
+
                   <!-- Estrategias en una columna -->
                   <td class="strategies">
-                    <div class="list" *ngFor="let estrategia of objetivo.value.estrategias; let j = index">
+                    <div class="list"
+                      *ngFor="let estrategia of objetivo.value.estrategias; let j = index">
                       {{ estrategia.descripcion }}
-                      
+
                     </div>
                   </td>
-              
+
                   <!-- ODS en otra columna -->
                   <td class="strategies">
-                    <div class="list" *ngFor="let ods of objetivo.value.ods; let j = index">
+                    <div class="list"
+                      *ngFor="let ods of objetivo.value.ods; let j = index">
                       {{ ods.descripcion }}
-                   
+
                     </div>
                   </td>
                   <td class="strategies">
-                    <div class="list" *ngFor="let ods of objetivo.value.ods; let j = index">
-                     
-                      <button class="btn_delete" type="button" mat-icon-button (click)="eliminarOds(i, j) "matTooltip="Eliminar Estrategia y ODS">
-                        <mat-icon class="material-symbols-outlined">delete</mat-icon>
+                    <div class="list"
+                      *ngFor="let ods of objetivo.value.ods; let j = index">
+
+                      <button class="btn_delete" type="button" mat-icon-button
+                        (click)="eliminarOds(i, j) "
+                        matTooltip="Eliminar Estrategia y ODS">
+                        <mat-icon
+                          class="material-symbols-outlined">delete</mat-icon>
                       </button>
                     </div>
                   </td>
                 </tr>
               </tbody>
-              
-              
+
             </table>
             <!-- Botón para añadir nuevos objetivos -->
             <button type="button" mat-raised-button color="primary"
-              (click)="agregarObjetivo()" matTooltip="Agregar nuevo Objetivo">Añadir Objetivo</button>
+              (click)="agregarObjetivo()"
+              matTooltip="Agregar nuevo Objetivo">Añadir Objetivo</button>
             <div class="grid-container">
 
               <div class="grid-item">
@@ -237,55 +251,60 @@
           </div>
         </mat-step>
 
-
         <mat-step [stepControl]="grupoInv2_1"
-        class="centrado-y-mayusculas"
-        label="Alineación Estratégica">
-        <ng-template matStepLabel>Alineación
+          class="centrado-y-mayusculas"
+          label="Alineación Estratégica">
+          <ng-template matStepLabel>Alineación
             Estratégica</ng-template>
 
-        <div formGroupName="grupoInv2_1"
+          <div formGroupName="grupoInv2_1"
             class="centrado-form-group">
-
 
             <h1>Alineación Estratégica</h1>
             <mat-form-field appearance="fill">
-                <mat-label class="multiline-label">Contribución
-                    a los objetivos nacionales o
-                    internacionales:
-                    Describir cómo las actividades del grupo
-                    responderán a los desafíos nacionales y a
-                    los Objetivos de Desarrollo Sostenible
-                    (ODS).
-                    Coherencia con la planificación
-                    institucional: Describir cómo el grupo está
-                    alineado con las metas
-                    y planes estratégicos de la institución.
-                </mat-label>
-                <textarea matInput
-                    formControlName="alineacionEstrategica"
-                    class="textarea" rows="15" required
-                    maxlength="4000"></textarea>
+              <textarea matInput
+                [value]="informacionObjetivos" readonly
+                class="textarea" rows="15" required
+                maxlength="4000">
+</textarea>
+
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label class="multiline-label">Contribución
+                a los objetivos nacionales o
+                internacionales:
+                Describir cómo las actividades del grupo
+                responderán a los desafíos nacionales y a
+                los Objetivos de Desarrollo Sostenible
+                (ODS).
+                Coherencia con la planificación
+                institucional: Describir cómo el grupo está
+                alineado con las metas
+                y planes estratégicos de la institución.
+              </mat-label>
+              <textarea matInput
+                formControlName="alineacionEstrategica"
+                class="textarea" rows="15" required
+                maxlength="4000"></textarea>
             </mat-form-field>
 
             <div class="grid-container">
-                <div class="grid-item">
-                    <button type="button" mat-raised-button
-                        color="primary"
-                        matStepperPrevious>Regresar</button>
-                    <button type="button" mat-raised-button
-                        color="primary"
-                        [disabled]="!myForm.get('grupoInv2_1').valid"
-                        matStepperNext>
-                        Siguiente
-                    </button>
-                </div>
+              <div class="grid-item">
+                <button type="button" mat-raised-button
+                  color="primary"
+                  matStepperPrevious>Regresar</button>
+                <button type="button" mat-raised-button
+                  color="primary"
+                  [disabled]="!myForm.get('grupoInv2_1').valid"
+                  matStepperNext>
+                  Siguiente
+                </button>
+              </div>
             </div>
 
-        </div>
-    </mat-step>
+          </div>
+        </mat-step>
 
-    
         <!-- Step 4: Actividades -->
         <mat-step [stepControl]="planDesarrolloForm4">
           <ng-template matStepLabel>Marco de Control específicos</ng-template>

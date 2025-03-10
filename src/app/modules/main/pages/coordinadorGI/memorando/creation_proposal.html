@@ -1,29 +1,34 @@
+<div *ngIf="loading" class="loading-spinner-overlay">
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+</div>
 <div class="container-fluid">
-    <div class="card">
+  <div class="card">
     <header>
-      <h1> Cargar propuesta de creación del GI (Memorando)</h1>
+      <h1>Cargar propuesta de creación del GI (Memorando)</h1>
     </header>
     <main>
       <form (submit)="onSubmit()">
-        <div class="drag-drop" (drop)="onDrop($event)" (dragover)="onDragOver($event)">
-          <p>Arrastra y suelta el documento aquí o haz clic para seleccionarlo.</p>
+        <div class="drag-drop" (drop)="onDrop($event)"
+          (dragover)="onDragOver($event)">
+          <i *ngIf="selectedFile"
+            class="{{ getFileIcon(selectedFile.type) }}"></i>
+          <p *ngIf="!selectedFile">Arrastra y suelta el documento aquí o haz
+            clic para seleccionarlo.</p>
+          <p *ngIf="selectedFile">{{ originalFileName }}</p>
           <div class="custom-file-input">
-            <label for="fileInput">Seleccionar archivo</label>
-            <input id="fileInput" type="file" (change)="onFileSelected($event)" accept=".pdf" />
+            <label *ngIf="!selectedFile" for="fileInput">Seleccionar
+              archivo</label>
+            <label *ngIf="selectedFile" for="fileInput">Cambiar archivo</label>
+            <input id="fileInput" type="file" (change)="onFileSelected($event)"
+              accept=".pdf" />
           </div>
         </div>
-        <button class="boton" type="submit" [disabled]="!selectedFile">Enviar</button>
-        <div *ngIf="selectedFile" class="file-info">
-          <span>{{ selectedFile.name }} </span>
-          <i class="{{ getFileIcon(selectedFile.type) }}"></i>
-          <p *ngIf="fileUploaded" class="success-message">El anexo se ha cargado con éxito.</p>
-        </div>
+        <button class="boton" type="submit"
+          [disabled]="!selectedFile">Enviar</button>
       </form>
-  
       <section class="acciones">
-        <button class="boton" (click)="goBack()">REGRESAR</button>
+        <button class="boton" (click)="goBack()">Regresar</button>
       </section>
     </main>
   </div>
-  </div>
-  
+</div>

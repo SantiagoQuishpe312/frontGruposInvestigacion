@@ -30,6 +30,7 @@ import { InvGroup_line } from 'src/app/types/invGroup_line';
 import { InvGroup_academicDomain } from 'src/app/types/invGroup_academicDomain';
 import { CreationReqForm } from 'src/app/types/creationReq.types';
 import { CreationReqService } from 'src/app/core/http/creation-req/creation-req.service';
+import { forkJoin, switchMap } from 'rxjs';
 
 @Component({
   selector: 'vex-sol-creacion',
@@ -312,10 +313,9 @@ export class SolCreacionComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((data: { user: any, usuarioValue: any }) => {
       let numeroDeGruposVinculados = 0;
-      console.log(data.user, data.user.idBd, data.user.id)
-      this.apiInvMemberService.getByUsername(data.usuarioValue).subscribe((response) => {
+      /*this.apiInvMemberService.getByUsername(data.usuarioValue).subscribe((response) => {
         numeroDeGruposVinculados = response.length;
-      })
+      })*/
       if (data?.usuarioValue) {
         if (numeroDeGruposVinculados >= 2) {
           this.snackBar.open('No puedes agregar a este miembro, ya pertenece a dos grupos de investigación de la Universidad.', 'Cerrar', { duration: 3000 });
@@ -382,10 +382,11 @@ export class SolCreacionComponent implements OnInit {
       // Actualizar el rol en la lista de selectedUsers
       const index = this.selectedUsers.findIndex(user => user.userId === this.selectedMember.userId);
       if (index !== -1) {
-        this.selectedUsers[index].rol = 'Miembro-Secretario'; // Cambiar el rol a "Miembro"
+        this.selectedUsers[index].rol = 'Miembro-Secretario'; // Cambiar el rol a "Miembro-Secretario"
       }
     }
   }
+  
 
   borrarInvestigador(index: number) {
     console.log(this.selectedUsers)
@@ -466,18 +467,18 @@ export class SolCreacionComponent implements OnInit {
     this.cambiarRol;
     this.loadingData = true;
     if (this.myForm.valid) {
-      const partes = this.userCoordinador.departamento.split(" - ");
-      const departamento = partes[1].trim();
-      const sede = partes[0].trim();
+      //const partes = this.userCoordinador.departamento.split(" - ");
+      //const departamento = partes[1].trim();
+      //const sede = partes[0].trim();
       const grupoInvData: InvGroupForm = {
         idGrupoInv: null,
         idCoordinador: this.currentUserId,
         nombreGrupoInv: this.myForm.value.grupoInv1.nombreGrupoInv,
         estadoGrupoInv: "pendiente",
         acronimoGrupoinv: this.myForm.value.grupoInv1.acronimoGrupoinv,
-        departamento: departamento,
+        departamento: this.userCoordinador.departamento,
         proceso: "1",
-        sede: sede,
+        sede: this.userCoordinador.sede,
         usuarioCreacion: this.currentUser,
         fechaCreacion: this.currentDate,
         usuarioModificacion: null,
@@ -492,10 +493,7 @@ export class SolCreacionComponent implements OnInit {
           this.saveArea(idGrupoCreado);
           this.saveLine(idGrupoCreado);
           this.saveMember(idGrupoCreado);
-          setTimeout(() => {
-            this.router.navigateByUrl('main/principal');
-            this.loadingData = false;
-          }, 4000);
+          sessionStorage.setItem('invGroup', idGrupoCreado.toString());
 
           const reqFormData: CreationReqForm = {
             idPeticionCreacion: null,
@@ -509,9 +507,7 @@ export class SolCreacionComponent implements OnInit {
           };
           this.creationReqService.createCreationRequestForm(reqFormData).subscribe(
             (reqFormResponse) => {
-              setTimeout(() => {
-                window.location.reload();
-              }, 8000);
+              localStorage.setItem('invGroup', idGrupoCreado);
             },
             (reqFormError) => {
             }
@@ -675,9 +671,7 @@ export class SolCreacionComponent implements OnInit {
 
       })
     }
-    this.snackBar.open('Enviado con éxito', 'Cerrar', {
-      duration: 4000, // Duración del toast en milisegundos
-    });
+    
   }
   private saveCurriculums(idGrupo: number, user: string, date: Date) {
 
@@ -686,97 +680,113 @@ export class SolCreacionComponent implements OnInit {
 
     const cv = this.selectedCv;
     const img = this.selectedImg;
-    this.documentService.saveDocument(token, img, sistema).subscribe(response => {
-      const annexes: Annexes = {
-        idAnexo: null,
-        idDocumento: 3,
-        idGrupo: idGrupo,
-        nombreAnexo: response.fileName,
-        rutaAnexo: response.uuid,
-        usuarioCreacionAnexo: user,
-        fechaCreacionAnexo: date,
-        usuarioModificacionAnexo: null,
-        fechaModificacionAnexo: null
-      }
+    let observables = [];
 
-      this.annexesServices.createAnnexesForm(annexes).subscribe((response) => {
-        console.log(response);
+    const imgObservable = this.documentService.saveDocument(token, img, sistema).pipe(
+      switchMap(response => {
+        const annexes: Annexes = {
+          idAnexo: null,
+          idDocumento: 3,
+          idGrupo: idGrupo,
+          nombreAnexo: response.fileName,
+          rutaAnexo: response.uuid,
+          usuarioCreacionAnexo: user,
+          fechaCreacionAnexo: date,
+          usuarioModificacionAnexo: null,
+          fechaModificacionAnexo: null
+        };
+        return this.annexesServices.createAnnexesForm(annexes);
       })
-    }), (error) => {
-      console.log(error);
-    }
+    );
 
-    this.documentService.saveDocument(token, cv, sistema).subscribe(response => {
-      const annexes: Annexes = {
-        idAnexo: null,
-        idDocumento: 2,
-        idGrupo: idGrupo,
-        nombreAnexo: response.fileName,
-        rutaAnexo: response.uuid,
-        usuarioCreacionAnexo: user,
-        fechaCreacionAnexo: date,
-        usuarioModificacionAnexo: null,
-        fechaModificacionAnexo: null
-      }
-      this.annexesServices.createAnnexesForm(annexes).subscribe((response) => {
-
+    observables.push(imgObservable);
+    const cvObservable = this.documentService.saveDocument(token, cv, sistema).pipe(
+      switchMap(response => {
+        const annexes: Annexes = {
+          idAnexo: null,
+          idDocumento: 2,
+          idGrupo: idGrupo,
+          nombreAnexo: response.fileName,
+          rutaAnexo: response.uuid,
+          usuarioCreacionAnexo: user,
+          fechaCreacionAnexo: date,
+          usuarioModificacionAnexo: null,
+          fechaModificacionAnexo: null
+        };
+        return this.annexesServices.createAnnexesForm(annexes);
       })
-    }), (error) => {
-      console.log(error);
-    }
+    );
+
+    observables.push(cvObservable);
+
     for (let index in this.selectedFileByUser) {
       if (this.selectedFileByUser.hasOwnProperty(index)) {
         const archivo = this.selectedFileByUser[index];
-        this.documentService.saveDocument(token, archivo, sistema).subscribe(response => {
-          const annexes: Annexes = {
-            idAnexo: null,
-            idDocumento: 2,
-            idGrupo: idGrupo,
-            nombreAnexo: response.fileName,
-            rutaAnexo: response.uuid,
-            usuarioCreacionAnexo: user,
-            fechaCreacionAnexo: date,
-            usuarioModificacionAnexo: null,
-            fechaModificacionAnexo: null
-          }
-
-          this.annexesServices.createAnnexesForm(annexes).subscribe((response) => {
-
+        const archivoObservable = this.documentService.saveDocument(token, archivo, sistema).pipe(
+          switchMap(response => {
+            const annexes: Annexes = {
+              idAnexo: null,
+              idDocumento: 2,
+              idGrupo: idGrupo,
+              nombreAnexo: response.fileName,
+              rutaAnexo: response.uuid,
+              usuarioCreacionAnexo: user,
+              fechaCreacionAnexo: date,
+              usuarioModificacionAnexo: null,
+              fechaModificacionAnexo: null
+            };
+            return this.annexesServices.createAnnexesForm(annexes);
           })
-        }), (err) => {
-          console.log(err);
-        }
+        );
 
-
+        observables.push(archivoObservable);
       }
     }
 
     for (let index in this.selectedFileByUserExtern) {
       if (this.selectedFileByUserExtern.hasOwnProperty(index)) {
         const archivo = this.selectedFileByUserExtern[index];
-        this.documentService.saveDocument(token, archivo, sistema).subscribe(response => {
-          const annexes: Annexes = {
-            idAnexo: null,
-            idDocumento: 1,
-            idGrupo: idGrupo,
-            nombreAnexo: response.fileName,
-            rutaAnexo: response.uuid,
-            usuarioCreacionAnexo: user,
-            fechaCreacionAnexo: date,
-            usuarioModificacionAnexo: null,
-            fechaModificacionAnexo: null
-          }
-
-          this.annexesServices.createAnnexesForm(annexes).subscribe((response) => {
-
+        const archivoObservable = this.documentService.saveDocument(token, archivo, sistema).pipe(
+          switchMap(response => {
+            const annexes: Annexes = {
+              idAnexo: null,
+              idDocumento: 1,
+              idGrupo: idGrupo,
+              nombreAnexo: response.fileName,
+              rutaAnexo: response.uuid,
+              usuarioCreacionAnexo: user,
+              fechaCreacionAnexo: date,
+              usuarioModificacionAnexo: null,
+              fechaModificacionAnexo: null
+            };
+            return this.annexesServices.createAnnexesForm(annexes);
           })
-        }), (err) => {
-          console.log(err);
-        }
+        );
 
-
+        observables.push(archivoObservable);
       }
     }
+
+    // Usamos forkJoin para esperar a que todos los observables se completen
+    forkJoin(observables).subscribe({
+      next: (responses) => {
+        // Si todo ha sido exitoso, navegamos a la siguiente página
+        this.router.navigateByUrl('main/principal');
+        this.loadingData = false;
+        this.snackBar.open('Enviado con éxito', 'Cerrar', {
+          duration: 4000, // Duración del toast en milisegundos
+        });
+        window.location.reload();
+      },
+      error: (err) => {
+        console.log(err);
+        // Si ocurre un error, puedes manejarlo aquí, por ejemplo, habilitar loadingData para permitir reintentos
+        this.loadingData = false;
+      }
+    });
+
+    // Si deseas poner el estado de loadingData en true antes de iniciar las cargas de documentos, puedes hacerlo al inicio del método:
+    this.loadingData = true;
 
 
   }

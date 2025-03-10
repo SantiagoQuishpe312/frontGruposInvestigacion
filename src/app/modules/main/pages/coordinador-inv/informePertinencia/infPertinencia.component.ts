@@ -26,8 +26,6 @@ export class InfPertinenciaComponent implements OnInit {
   myForm: FormGroup;
   currentUser: string;
   currentDate: any;
-  
-
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -39,17 +37,17 @@ export class InfPertinenciaComponent implements OnInit {
     private invGroupService: InvGroupService,
     private creationReqService: CreationReqService,
   ) {
-         
+
   }
 
   ngOnInit() {
     this.iniciarForm();
-    this.idGroup = Number(sessionStorage.getItem("idGrupoSol"));
+    this.idGroup = Number(localStorage.getItem("GI"));
     this.currentUser = this.authService.getUserName();
     this.currentDate = this.datePipe.transform(new Date(), 'yyyy-MM-ddTHH:mm:ss');
   }
 
-  iniciarForm(){
+  iniciarForm() {
     this.myForm = this.fb.group({
       form1: this.fb.group({
         numeroMemo: ['', Validators.required],
@@ -72,7 +70,7 @@ export class InfPertinenciaComponent implements OnInit {
         recomendaciones: ['', Validators.required],
       }),
     });
-    this.loading=false;
+    this.loading = false;
   }
   get form1() {
     return this.myForm.get('form1') as FormGroup;
@@ -92,83 +90,75 @@ export class InfPertinenciaComponent implements OnInit {
 
   guardarReporte() {
     const relevanceReport: RelevanceReport = {
-        idInformePertinencia: 0,
-        idGrupo: this.idGroup,
-        numeroMemo: this.myForm.value.form1.numeroMemo,
-        formularioCreacion: this.myForm.value.form1.formularioCreacion ? 1 : 0,
-        planDesarrollo: this.myForm.value.form1.planDesarrollo ? 1 : 0,
-        documentosAdicionales: this.myForm.value.form1.documentosAdicionales ? 1 : 0,
-        objetivos: this.myForm.value.form2.objetivos,
-        planEstrategico: this.myForm.value.form3.planEstrategico ? 1 : 0,
-        pertinenciaAcademicaAporte: this.myForm.value.form3.pertenenciaAcademicaAporte ? 1 : 0,
-        coordinador: this.myForm.value.form3.coordinador ? 1 : 0,
-        miembros: this.myForm.value.form3.miembros ? 1 : 0,
-        objetivosPlanDesarrollo: this.myForm.value.form3.objetivosPlanDesarrollo ? 1 : 0,
-        conclusiones: this.myForm.value.form4.conclusiones,
-        recomendaciones: this.myForm.value.form4.recomendaciones,
-        usuarioCreacion: this.currentUser,
-        fechaCreacion: this.currentDate,
-        usuarioModificacion: undefined,
-        fechaModificacion: undefined
+      idInformePertinencia: 0,
+      idGrupo: this.idGroup,
+      numeroMemo: this.myForm.value.form1.numeroMemo,
+      formularioCreacion: this.myForm.value.form1.formularioCreacion ? 1 : 0,
+      planDesarrollo: this.myForm.value.form1.planDesarrollo ? 1 : 0,
+      documentosAdicionales: this.myForm.value.form1.documentosAdicionales ? 1 : 0,
+      objetivos: this.myForm.value.form2.objetivos,
+      planEstrategico: this.myForm.value.form3.planEstrategico ? 1 : 0,
+      pertinenciaAcademicaAporte: this.myForm.value.form3.pertenenciaAcademicaAporte ? 1 : 0,
+      coordinador: this.myForm.value.form3.coordinador ? 1 : 0,
+      miembros: this.myForm.value.form3.miembros ? 1 : 0,
+      objetivosPlanDesarrollo: this.myForm.value.form3.objetivosPlanDesarrollo ? 1 : 0,
+      conclusiones: this.myForm.value.form4.conclusiones,
+      recomendaciones: this.myForm.value.form4.recomendaciones,
+      usuarioCreacion: this.currentUser,
+      fechaCreacion: this.currentDate,
+      usuarioModificacion: undefined,
+      fechaModificacion: undefined
     };
 
     this.actualizarEstados();
-    console.log(relevanceReport);
     this.relevaceReportService.createRelevanceReport(relevanceReport).subscribe(
-        (response) => {
-            setTimeout(() => {
-                this.router.navigateByUrl('main/solicitudes');
-            }, 8000);
-            console.log('Reporte de relevancia creado:', response);
-        },
-        (error) => {
-            console.error('Error al crear el plan de desarrollo:', error); // Manejo de errores
-        }
-    );
-}
-  actualizarEstados(){
-    this.creationReqService.getByGroup(this.idGroup).subscribe(data=>{
-      const creationReq:CreationReqForm={
-         idPeticionCreacion:data.idPeticionCreacion,
-         idGrupoInv:data.idGrupoInv,
-         alineacionEstrategica: data.alineacionEstrategica,
-          estado:"6", 
-          usuarioCreacionPeticion:data.usuarioCreacionPeticion,
-          fechaCreacionPeticion:data.fechaCreacionPeticion,
-          usuarioModificacionPeticion:this.currentUser,
-          fechaModificacionPeticion:this.currentDate
-      }
-      this.creationReqService.update(data.idPeticionCreacion,creationReq).subscribe(
-        (response)=>{console.log("Enviado" + response)
+      (response) => {
+        this.actualizarEstados();
+      },
+      (error) => {
+        this.snackBar.open('Ocurrió un error inesperado al crear el informe de pertinencia. Por favor, inténtelo de nuevo.', 'Cerrar', {
+          duration: 3000,
         });
-    })
-    this.invGroupService.getById(this.idGroup).subscribe(data=>{
-      const invGroup:InvGroupForm={
-        idGrupoInv:this.idGroup,
-        idCoordinador:data.idCoordinador,
-        nombreGrupoInv:data.nombreGrupoInv,
-        estadoGrupoInv:"resolucion",
-        acronimoGrupoinv:data.acronimoGrupoinv,
-        usuarioCreacion:data.usuarioCreacion,
-        fechaCreacion:data.fechaCreacion,
-        usuarioModificacion:this.currentUser,
-        fechaModificacion:this.currentDate
+        this.loading = false;
+      }
+    );
+  }
+  actualizarEstados() {
+
+    this.invGroupService.getById(this.idGroup).subscribe(data => {
+      const invGroup: InvGroupForm = {
+        idGrupoInv: this.idGroup,
+        idCoordinador: data.idCoordinador,
+        nombreGrupoInv: data.nombreGrupoInv,
+        estadoGrupoInv: data.estadoGrupoInv,
+        acronimoGrupoinv: data.acronimoGrupoinv,
+        usuarioCreacion: data.usuarioCreacion,
+        fechaCreacion: data.fechaCreacion,
+        usuarioModificacion: this.currentUser,
+        fechaModificacion: this.currentDate,
+        proceso: '5',
 
       }
-      this.invGroupService.update(this.idGroup,invGroup).subscribe(
-        (response)=>{console.log("Enviado grupo" + response)
+      this.invGroupService.update(this.idGroup, invGroup).subscribe(
+        (response) => {
+
+          this.snackBar.open('Reporte de relevancia creado correctamente.', 'Cerrar', {
+            duration: 3000,
+          });
+          setTimeout(() => {
+            this.loading = false;
+            this.router.navigateByUrl('main/solicitudes');
+          }, 1000);
         });
     })
   }
 
 
   HandleSubmit() {
+    this.loading = true;
     if (this.myForm.valid) {
       this.guardarReporte();
 
-      this.snackBar.open('Solicitudes enviadas correctamente.', 'Cerrar', {
-        duration: 3000,
-      });
     } else {
       this.snackBar.open('Por favor, complete todos los campos requeridos.', 'Cerrar', {
         duration: 3000,

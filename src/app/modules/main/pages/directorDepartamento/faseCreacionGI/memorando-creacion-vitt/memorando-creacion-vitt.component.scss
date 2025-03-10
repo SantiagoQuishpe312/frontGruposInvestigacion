@@ -4,6 +4,11 @@
     background-color: #F4FAFE;
     padding: 20px;
   }
+  .drag-drop i {
+    margin-right: 8px;
+    color: #d9534f; /* Rojo para PDF */
+    font-size: 5rem;
+  }
   .loading-spinner-overlay {
     position: fixed; /* Para que el div esté posicionado en relación a la pantalla */
     top: 0;

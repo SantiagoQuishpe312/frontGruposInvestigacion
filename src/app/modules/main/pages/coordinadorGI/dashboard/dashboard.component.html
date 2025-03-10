@@ -17,19 +17,19 @@
                 <header
                     *ngIf="invGroupExists  && grupo && grupo.proceso==='1' ">
 
-                    <h1>Para complementar la información y continuar con la
-                        solicitud de creación del grupo de investigación se debe
-                        cargar el plan de desarrollo del grupo de
-                        Investigación</h1>
+                    <h1>Plan de Desarrollo</h1>
                 </header>
 
                 <!--  Carga del memrando de creacion del grupo de -->
                 <header
                     *ngIf="invGroupExists  && grupo && grupo.proceso==='2' ">
 
-                    <h1>Mediante memorando presentar la propuesta de creación
-                        del GI al Departamento.</h1>
+                    <h1>Propuesta de Creación del Grupo de Investigación</h1>
                 </header>
+                <header *ngIf="invGroupExists && grupo && (grupo.proceso === '3' || grupo.proceso === '4' || grupo.proceso === '5')">
+                    <h1>Solicitudes en Trámite</h1>
+                  </header>
+                  
 
                 <!-- Aparece cuando se solicita Informe de Seguimiento -->
                 <header
@@ -68,21 +68,25 @@
             </div>
 
             <div *ngIf="!invGroupExists" class="info-proceso">
-                <h1 class="titulos-procesos">Para empezar el proceso de creación debe llenar el
+                <h1 class="titulos-procesos">Para empezar el proceso de creación
+                    debe llenar el
                     Formulario de Solicitud
                     de Creación de Grupo de Investigación</h1>
                 <p>
                     El personal académico interesado en formar un GI
                     multidisciplinario, presenta la solicitud de creación de GI
-                    con base a los requisitos establecidos en el 
-                    <a href="https://usgn.espe.edu.ec/wp-content/uploads/2024/04/RESOLUCION-ESPE-HCU-RES-2024-035.pdf" target="_blank" rel="noopener noreferrer">Reglamento de
-                        Investigación.</a> 
+                    con base a los requisitos establecidos en el
+                    <a
+                        href="https://usgn.espe.edu.ec/wp-content/uploads/2024/04/RESOLUCION-ESPE-HCU-RES-2024-035.pdf"
+                        target="_blank" rel="noopener noreferrer">Reglamento de
+                        Investigación.</a>
                 </p>
                 👉<button type="button" (click)="enlace('creation_request')"
                     mat-raised-button
-                    matTooltip="Formulario"><span>Formulario de Solicitud de Creación de Grupo de Investigación</span></button>
+                    matTooltip="Formulario"><span>Formulario de Solicitud de
+                        Creación de Grupo de Investigación</span></button>
             </div>
-            
+
             <div class="presentacionGrupo"
                 *ngIf=" !loadingData  && grupo.estadoGrupoInv==='revDirDep' || grupo.estadoGrupoInv==='revInfPer' "
                 style="text-align: center;">
@@ -161,20 +165,37 @@
                 *ngIf=" !loadingData  && grupo.proceso==='1' "
                 style="text-align: center;">
                 <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-
+                <h2>Para complementar la información y continuar con la
+                    solicitud de creación del grupo de investigación se debe
+                    cargar el Plan de Desarrollo del Grupo de
+                    Investigación</h2>
                 <button type="button" (click)="enlace('developPlan')"
                     color="primary" mat-raised-button>Cargar plan de
                     Desarrollo</button>
+                <app-progress [id]="idGrupo"></app-progress>
+
             </div>
 
             <div class="presentacionGrupo"
                 *ngIf=" !loadingData  && grupo.proceso==='2' "
                 style="text-align: center;">
                 <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-
+                <h2>Mediante memorando presentar la propuesta de creación
+                    del Grupo de Investigación al Departamento.</h2>
+                    
                 <button type="button" (click)="enlace('propuesta')"
                     color="primary" mat-raised-button>Cargar memorando</button>
+                <app-progress [id]="idGrupo"></app-progress>
+
             </div>
+            <div class="presentacionGrupo"
+            *ngIf=" !loadingData  && (grupo.proceso === '3' || grupo.proceso === '4' || grupo.proceso === '5') "
+            style="text-align: center;">
+            <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+            <h2>Su solicitud se encuentra en revisión</h2>
+            <app-progress [id]="idGrupo"></app-progress>
+
+        </div>
 
             <div class="presentacionGrupo"
                 *ngIf=" !loadingData  && grupo.estadoGrupoInv==='Activo' && grupo.proceso!=='SolicitaPlanAnual'"

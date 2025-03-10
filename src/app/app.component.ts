@@ -515,6 +515,7 @@ export class AppComponent implements OnInit {
         const userId = usuario.id;
         this.getIdGroup(userId);
         sessionStorage.setItem('userId', userId.toString());
+        sessionStorage.setItem('departamento', usuario.departamento);
         this.navigationService.items;
       },
       error => {}

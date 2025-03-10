@@ -25,6 +25,13 @@ export class InvGroupService {
   getByIdAll(id: number): Observable<InvGroupCompleteForm> {
     return this.http.get<InvGroupCompleteForm>(`${this.URL}/all/${id}`);
   }
+  getByProcess(process: string): Observable<InvGroupCompleteForm[]> {
+    return this.http.get<InvGroupCompleteForm[]>(`${this.URL}/process/${process}`);
+  }
+  getByProcessDepartment(process: string, department: string): Observable<InvGroupCompleteForm[]> {
+    const encodedDepartment = encodeURIComponent(department);  // Codificar el parámetro `department`
+    return this.http.get<InvGroupCompleteForm[]>(`${this.URL}/getprocessDepartment?process=${process}&department=${encodedDepartment}`);
+  }
   createInvGroupForm(formData: InvGroupForm): Observable<any> {
     return this.http.post(`${this.URL}/create`, formData);
   }
