@@ -41,8 +41,8 @@ import { GestionMenuComponent } from './pages/administracion/gestion-roles/gesti
 import { GestionRolesPrincipalComponent } from './pages/administracion/gestion-roles/gestion-crea/gestion-roles-principal.component';
 import { SolicitudesForVicerectorComponent } from './pages/vicerectorDeInvestigacion/solicitudes-de-creacion/obtenerSolicitudes.component';
 import { MostrarSolicitudForVicerector } from './pages/vicerectorDeInvestigacion/solicitudes-de-creacion/mostrarSolicitud.component';
-import { SolicitudesForAnalistaComponent } from './pages/analistaGestion/solicitudes-de-creacion/obtenerSolicitudes.component';
-import { MostrarSolicitudForAnalista } from './pages/analistaGestion/solicitudes-de-creacion/mostrarSolicitud.component';
+import { SolicitudesForAnalistaComponent } from './pages/analistaGestion/fase-creacion/solicitudes-de-creacion/obtenerSolicitudes.component';
+import { MostrarSolicitudForAnalista } from './pages/analistaGestion/fase-creacion/solicitudes-de-creacion/mostrarSolicitud.component';
 import { FichaFormComponent } from './pages/analistaGestion/FichaDeRegistro/ficha.component';
 import { CargaMemoVicComponent } from './pages/vicerectorDeInvestigacion/memorandosSolicitudCreacion/memorando.component';
 import { SolicitudesForComisionComponent } from './pages/comisionDeTecnologia/solicitudes-de-creacion/obtenerSolicitudes.component';
@@ -92,6 +92,13 @@ import { AnnualPlanComponent } from './pages/coordinadorGI/seguimiento/PlanAnual
 import { SolCreacionComponent } from './pages/coordinadorGI/sol-creacion/sol-creacion.component';
 import { ReportesGIComponent } from './pages/administracion/grupos-investigacion/reportes-gi/reportes-gi.component';
 import { MemorandoCreacionVITTComponent } from './pages/directorDepartamento/faseCreacionGI/memorando-creacion-vitt/memorando-creacion-vitt.component';
+import { MemorandoOchoComponent } from './pages/analistaGestion/fase-creacion/memorando-ocho/memorando-ocho.component';
+import { SolicitudesFaseNueveComponent } from './pages/comite-investigacion/fase-creacion/solicitudes-fase-nueve/solicitudes-fase-nueve.component';
+import { MostrarGrupoFaseNueveComponent } from './pages/comite-investigacion/fase-creacion/mostrar-grupo-fase-nueve/mostrar-grupo-fase-nueve.component';
+import { MemorandoNueveComponent } from './pages/comite-investigacion/fase-creacion/memorando-nueve/memorando-nueve.component';
+import { GruposAprobadosComponent } from './pages/analistaGestion/fase-creacion/solicitudes-resolucion/grupos-aprobados/grupos-aprobados.component';
+import path from 'path';
+import { SolicitudGruposFaseDiezComponent } from './pages/analistaGestion/fase-creacion/solicitudes-resolucion/solicitud-grupos-fase-diez/solicitud-grupos-fase-diez.component';
 const routes: Routes = [
   {
     path: 'principal',
@@ -443,6 +450,30 @@ component: MemorandoCreacionVITTComponent
   {
     path: 'strategiesInst',
     component: StrategiesComponent
+  },
+  {
+    path:'memorando-8',
+    component:MemorandoOchoComponent
+  },
+  {
+    path:'solicitudes-comite',
+    component:SolicitudesFaseNueveComponent
+  },
+  {
+    path:'presentar-grupo-comite',
+    component:MostrarGrupoFaseNueveComponent
+  },
+  {
+    path:'memorando-9',
+    component:MemorandoNueveComponent
+  },
+  {
+    path:'solicitud-aprobada',
+    component:GruposAprobadosComponent
+  },
+  {
+    path:'solicitudes-aprobadas',
+    component:SolicitudGruposFaseDiezComponent
   }
 ];
 

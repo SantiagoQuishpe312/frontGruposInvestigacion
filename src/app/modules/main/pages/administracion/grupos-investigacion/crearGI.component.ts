@@ -370,18 +370,20 @@ export class CrearGIComponent implements OnInit {
       this.loadingData = true;
       const partes = this.selectedUserCoord.ubicacion.split(" - ");
       const departamento = partes[1].trim();
+      const sede=partes[0].trim();
       const grupoInvData: InvGroupForm = {
         idGrupoInv: null,
         idCoordinador: this.selectedUserCoord.idBd,
         nombreGrupoInv: this.myForm.value.grupoInv1.nombreGrupoInv,
-        estadoGrupoInv: "inicialpp",
+        estadoGrupoInv: "activo",
         acronimoGrupoinv: this.myForm.value.grupoInv1.acronimoGrupoinv,
         departamento: departamento,
-        proceso:"activo",
+        proceso:"",
         usuarioCreacion: this.currentUser,
         fechaCreacion: this.currentDate,
         usuarioModificacion: null,
-        fechaModificacion: null
+        fechaModificacion: null,
+        sede:sede,
       }
       console.log("datos antes de enviar", grupoInvData)
       this.solCreaGIFormService.createInvGroup(grupoInvData).subscribe(

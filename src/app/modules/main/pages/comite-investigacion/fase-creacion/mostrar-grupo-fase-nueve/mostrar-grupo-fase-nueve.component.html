@@ -1,0 +1,133 @@
+
+<div class="container-fluid">
+  <div class="card">
+    <header>
+      <h1>Solicitud Pendiente de Delegar revisión y análisis al Comité de Investigación.</h1>
+    </header>
+    <div
+      style="width: 100%;display: flex;justify-self: center;justify-items: center;justify-content: center; align-items: center;"
+      *ngIf="loadingData">
+      <mat-spinner diameter="150" color="primary"
+        class="overlay-spinner"></mat-spinner>
+
+    </div>
+    <main *ngIf="!loadingData">
+      <mat-stepper #stepper>
+        <mat-step>
+          <ng-template matStepLabel>Memorando de Solicitud de Creación del GI por parte del Director de Departamento</ng-template>
+          <div *ngIf="memoUrl">
+            <iframe [src]="memoUrl" width="100%" height="600px"></iframe>
+
+          </div>
+          <div class="grid-container">
+            <div class="grid-item"></div>
+            <div class="grid-item">
+              <div>
+              
+              <button type="button" mat-raised-button color="primary"
+                matStepperNext>
+                Siguiente
+              </button></div>
+            </div> </div>
+          
+        </mat-step>
+        <mat-step>
+          <ng-template matStepLabel>Solicitud de Creación del Grupo de
+            Investigación</ng-template>
+          <app-creation-request-form [id]="creationReqForm.idPeticionCreacion"></app-creation-request-form>
+          <div style="width: 100%;display: flex;
+      justify-content: right;
+      align-items: right;" *ngIf="creationReqForm || invGroup || usuario">
+            <button
+              mat-raised-button color="primary" type="button"
+              style="left: 0px;"
+              matStepperNext>
+              Siguiente
+            </button>
+          </div>
+
+        </mat-step>
+        <mat-step>
+          <ng-template matStepLabel>Plan de Desarrollo</ng-template>
+        
+          <!-- 1. Encabezado -->
+          <app-developmentPlanForm-component [id]="creationReqForm.idGrupoInv"></app-developmentPlanForm-component>
+         
+          <div class="grid-container">
+            <div class="grid-item"></div>
+            <div class="grid-item">
+              <div>
+              <button type="button" mat-raised-button color="primary"
+                matStepperPrevious>Regresar</button>
+              <button type="button" mat-raised-button color="primary"
+                matStepperNext>
+                Siguiente
+              </button>
+            </div> </div></div>
+        </mat-step>
+
+        
+        <mat-step>
+          <ng-template matStepLabel>Hoja de Vida del Coordinador del Grupo de Investigación</ng-template>
+          <div *ngIf="cvUrl">
+            <iframe [src]="cvUrl" width="100%" height="600px"></iframe>
+          </div>
+          <div class="grid-container">
+            <div class="grid-item"></div>
+            <div class="grid-item">
+              <div>
+              <button type="button" mat-raised-button color="primary"
+                matStepperPrevious>Regresar</button>
+              <button type="button" mat-raised-button color="primary"
+                matStepperNext>
+                Siguiente
+              </button></div>
+            </div> </div>
+          
+        </mat-step>
+        <mat-step>
+          <ng-template matStepLabel>Hojas de Vida de los miembros del grupo</ng-template>
+          <app-cv-component [id]="invGroupId"></app-cv-component>
+          <div class="grid-container">
+            <div class="grid-item"></div>
+            <div
+              class="grid-item"
+              *ngIf="creationReqForm || invGroup || usuario"
+            >
+              <div>
+                <button type="button" mat-raised-button color="primary" matStepperPrevious>
+                  Regresar
+                </button>
+                <button
+                  type="button"
+                  mat-raised-button
+                  color="primary"
+                  *ngIf="pdfUrlInforme"
+                  matStepperNext
+                >
+                  Siguiente
+                </button>
+              <button
+                type="button"
+                mat-raised-button
+                color="primary"
+                matStepperPrevious
+                (click)="validarGrupo('memorando-9')"
+                *ngIf="!pdfUrlInforme"
+              >
+               Emitir Criterio de Solicitud
+              </button>
+            </div>              </div>
+
+          </div>
+        </mat-step>
+        
+      </mat-stepper>
+      <div >
+        
+        
+      </div>
+
+    </main>
+  </div>
+</div>

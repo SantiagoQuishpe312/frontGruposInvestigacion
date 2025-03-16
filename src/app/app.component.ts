@@ -465,6 +465,18 @@ export class AppComponent implements OnInit {
                 route: 'main/fase9',
                 icon: 'mat:school'
               });
+            }else if (r.idRol ===11) {
+              roleItem.children.push({
+                type: 'link',
+                label: 'Cómite de Investigación',
+                route: 'main/solicitudes-comite',
+                icon: 'mat:school'
+              },{
+                type: 'link',
+                label: 'Remitir Recomendaciones',
+                route: 'main/solicitudes-aprobadas',
+                icon: 'mat:school'
+              });
             } else if (r.idRol === 10) {
               roleItem.children.push(
                 {

@@ -4,7 +4,8 @@
 
 
     <header>
-        <h1>Solicitudes Pendientes de Validación</h1>
+        <h1>Solicitudes Pendientes de Delegar revisión y análisis al Comité de Investigación        </h1>
+
     </header>
     <main>
         <div *ngIf="noSolicitudesPendientes" class="no-data-message">
@@ -17,25 +18,26 @@
         <table *ngIf="!noSolicitudesPendientes && !loadingData" class="solicitudes-table">
             <thead>
                 <tr>
+                    <th  colspan="5">Solicitudes Pendientes de Delegar revisión y análisis al Comité de Investigación 
+
+                    </th>
+                </tr>
+                <tr>
                     <th style="width: 10%;">#</th>
                     <th style="width: 35%;">Nombre de Grupo</th>
                     <th style="width: 30%;">Nombre del Coordinador</th>
                     <th style="width: 25%;">Fecha de Creación</th>
                     <th>Validar</th>
-
                 </tr>
             </thead>
-            
             <tbody>
-
-
-                <tr *ngFor="let solicitud of solicitudesFiltradas; let i = index">
+                <tr *ngFor="let gi of grupoComplete; let i = index">
                     <td>{{i+1}}</td>
-                    <td>{{ getNombreGrupo(solicitud.idGrupoInv) }}</td>
-                    <td>{{coordinador.nombre}}</td>
-                    <td>{{ solicitud.fechaCreacionPeticion | date }}</td>
+                    <td>{{ gi.invGroup.nombreGrupoInv}}</td>
+                    <td>{{ gi.coordinador.nombre }}</td>
+                    <td>{{ gi.invGroup.fechaCreacion | date}}</td>
                     <td>
-                        <button class="edit" mat-mini-fab color="primary" aria-label="Example icon button with a delete icon" (click)="validar(solicitud.idPeticionCreacion)">
+                        <button class="edit" mat-mini-fab color="primary" aria-label="Example icon button with a delete icon" (click)="validar(gi.invGroup.idGrupoInv)">
                             <i class="fa fa-folder-open" aria-hidden="true"></i>
                           </button>
                         

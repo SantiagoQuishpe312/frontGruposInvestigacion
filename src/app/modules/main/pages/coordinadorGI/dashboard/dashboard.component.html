@@ -30,36 +30,16 @@
                     <h1>Solicitudes en Trámite</h1>
                   </header>
                   
-
+                  <header *ngIf="invGroupExists && grupo && (grupo.proceso === '7' || grupo.proceso === '8')">
+                    <h1>Solicitudes en Trámite Fase de Criterios de Aceptación</h1>
+                  </header>
+                  <header *ngIf="invGroupExists && grupo && grupo.proceso === '9' ">
+                    <h1>Su solicitud ha sido aprobada por el Comité de Investigación</h1>
+                  </header>
                 <!-- Aparece cuando se solicita Informe de Seguimiento -->
-                <header
-                    *ngIf="invGroupExists  && grupo && grupo.estadoGrupoInv=='SolInforme' ">
+               
+               
 
-                    <h1>La Unidad de Gestión de Grupos de Investigación a
-                        solicitado
-                        que cargue la documentación habilitante para el
-                        seguimiento</h1>
-                </header>
-                <!-- Aparece cuando se envia la solicitud de creación junto con el plan de desarrollo y muestra el status de su solicitud -->
-
-                <header
-                    *ngIf="invGroupExists  && grupo && grupo.estadoGrupoInv=='revDirDep' || grupo.estadoGrupoInv==='revInfPer' 
-                        || grupo.estadoGrupoInv==='revVITT' || grupo.estadoGrupoInv==='solInfPer'
-                        || grupo.estadoGrupoInv==='revCom'|| grupo.estadoGrupoInv==='revCon'|| grupo.estadoGrupoInv==='Registro' ">
-
-                    <h1>Se esta procesando su solicitud</h1>
-                </header>
-                <header
-                    *ngIf="invGroupExists  && grupo && grupo.estadoGrupoInv=='Favorable' ">
-
-                    <h1>Su solicitud se proceso co un resultado Favorable</h1>
-                </header>
-
-                <header
-                    *ngIf="grupo && grupo.estadoGrupoInv==='Activo'&& grupo.proceso!=='SolicitaPlanAnual'">
-                    <h1>Bienvenido al Módulo de Gestión de Grupos de
-                        Investigación</h1>
-                </header>
                 <!-- Seguimiento -->
                 <header *ngIf="grupo && grupo.proceso==='SolicitaPlanAnual'">
                     <h1>Elaborar y remitir los planes</h1>
@@ -87,79 +67,9 @@
                         Creación de Grupo de Investigación</span></button>
             </div>
 
-            <div class="presentacionGrupo"
-                *ngIf=" !loadingData  && grupo.estadoGrupoInv==='revDirDep' || grupo.estadoGrupoInv==='revInfPer' "
-                style="text-align: center;">
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-
-                Su solicitud se encuentra actualmente en revisión por parte del
-                Director del Departamento
-                <p *ngIf="grupo.estadoGrupoInv==='revInfPer'">Sus documentos han
-                    sido revisados por el Coordinador de Investigación</p>
-            </div>
-            <div class="presentacionGrupo"
-                *ngIf=" !loadingData  &&  grupo.estadoGrupoInv==='revVITT' "
-                style="text-align: center;">
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-
-                Su solicitud se encuentra remitida al Vicerrectorado de
-                Investigación
-            </div>
-            <div class="presentacionGrupo"
-                *ngIf=" !loadingData  &&  grupo.estadoGrupoInv==='revCom' "
-                style="text-align: center;">
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-
-                Su solicitud se encuentra remitida al Comité de Investigación
-            </div>
-            <div class="presentacionGrupo"
-                *ngIf=" !loadingData  && grupo.estadoGrupoInv==='revVITT' "
-                style="text-align: center;">
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-
-                Su solicitud se encuentra actualmente en revisión por parte del
-                VITT
-            </div>
-
-            <div class="presentacionGrupo"
-                *ngIf=" !loadingData  && grupo.estadoGrupoInv==='Favorable' "
-                style="text-align: center;">
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-                El Comité de Investigación ha emitido un criterio favorable de
-                su solicitud
-            </div>
-            <div class="presentacionGrupo"
-                *ngIf=" !loadingData  && grupo.estadoGrupoInv==='Registro' "
-                style="text-align: center;">
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-                El Consejo Académico emitirá el acta de resolución de creación
-                del GI al VITT y al Departamento proponente. </div>
-            <div class="presentacionGrupo"
-                *ngIf=" !loadingData  && grupo.estadoGrupoInv==='revCon' "
-                style="text-align: center;">
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-                El Consejo Académico emitirá el acta de resolución de creación
-                del GI al VITT y al Departamento proponente
-            </div>
-            <div class="presentacionGrupo"
-                *ngIf=" !loadingData  && grupo.estadoGrupoInv==='sol_documentacion' "
-                style="text-align: center;">
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-
-                <button type="button" (click)="enlace('seguimiento')"
-                    color="primary" mat-raised-button>Cargar
-                    documentacion</button>
-            </div>
-
-            <div class="presentacionGrupo"
-                *ngIf=" !loadingData  && grupo.estadoGrupoInv==='solInfPer' "
-                style="text-align: center;">
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-                <h1>El Director de Departamento ha solicitado que remita el
-                    respectivo Informe de Pertinencia para validar la
-                    información</h1>
-
-            </div>
+           
+            
+            
 
             <div class="presentacionGrupo"
                 *ngIf=" !loadingData  && grupo.proceso==='1' "
@@ -196,18 +106,24 @@
             <app-progress [id]="idGrupo"></app-progress>
 
         </div>
+        <div class="presentacionGrupo"
+        *ngIf="invGroupExists && grupo && (grupo.proceso === '7' || grupo.proceso === '8')"
+        style="text-align: center;">
+        <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+        <h2>Su solicitud se encuentra en revisión</h2>
+        <app-progress [id]="idGrupo"></app-progress>
 
-            <div class="presentacionGrupo"
-                *ngIf=" !loadingData  && grupo.estadoGrupoInv==='Activo' && grupo.proceso!=='SolicitaPlanAnual'"
-                style="text-align: center;">
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-            </div>
-            <div class="presentacionGrupo"
-                *ngIf=" !loadingData  && grupo.estadoGrupoInv==='revDirDep' || grupo.estadoGrupoInv==='solInfPer' "
-                style="text-align: center;">
-                <app-progress [id]="idGrupo"></app-progress>
+    </div>
+           
+    <div class="presentacionGrupo"
+        *ngIf="invGroupExists && grupo && grupo.proceso === '9' "
+               style="text-align: center;">
+        <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+        <h1>Su solicitud ha sido aprobada por el Comité de Investigación</h1>
+        <app-progress [id]="idGrupo"></app-progress>
 
-            </div>
+    </div>
+
             <!-- FASE DE SEGUIMIENTO DEL GRUPO DE INVESTIGACIÓN (FORMULARIO CUANDO SE ENVÍA LA SOLICITUD POR PRIMERA VEZ) -->
             <div class="presentacionGrupo"
                 *ngIf=" !loadingData  && grupo.estadoGrupoInv==='Activo' && grupo.proceso==='SolicitaPlanAnual' "

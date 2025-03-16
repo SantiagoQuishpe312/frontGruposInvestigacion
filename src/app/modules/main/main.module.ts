@@ -78,8 +78,8 @@ import { AgregarEjecucionComponent } from './pages/reporte-actividades/ejecucion
 import { EditarEjecucionComponent } from './pages/reporte-actividades/ejecucion-presupuestaria-modal/editar-ejecucion.component';
 import { SolicitudesForVicerectorComponent } from './pages/vicerectorDeInvestigacion/solicitudes-de-creacion/obtenerSolicitudes.component';
 import { MostrarSolicitudForVicerector } from './pages/vicerectorDeInvestigacion/solicitudes-de-creacion/mostrarSolicitud.component';
-import { SolicitudesForAnalistaComponent } from './pages/analistaGestion/solicitudes-de-creacion/obtenerSolicitudes.component';
-import { MostrarSolicitudForAnalista } from './pages/analistaGestion/solicitudes-de-creacion/mostrarSolicitud.component';
+import { SolicitudesForAnalistaComponent } from './pages/analistaGestion/fase-creacion/solicitudes-de-creacion/obtenerSolicitudes.component';
+import { MostrarSolicitudForAnalista } from './pages/analistaGestion/fase-creacion/solicitudes-de-creacion/mostrarSolicitud.component';
 import { FichaFormComponent } from './pages/analistaGestion/FichaDeRegistro/ficha.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { Avances } from './pages/analistaGestion/FichaDeRegistro/registroAvances.component';
@@ -158,6 +158,12 @@ import { SolCreacionComponent } from './pages/coordinadorGI/sol-creacion/sol-cre
 import { ReportesGIComponent } from './pages/administracion/grupos-investigacion/reportes-gi/reportes-gi.component';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { MemorandoCreacionVITTComponent } from './pages/directorDepartamento/faseCreacionGI/memorando-creacion-vitt/memorando-creacion-vitt.component';
+import { MemorandoOchoComponent } from './pages/analistaGestion/fase-creacion/memorando-ocho/memorando-ocho.component';
+import { SolicitudesFaseNueveComponent } from './pages/comite-investigacion/fase-creacion/solicitudes-fase-nueve/solicitudes-fase-nueve.component';
+import { MostrarGrupoFaseNueveComponent } from './pages/comite-investigacion/fase-creacion/mostrar-grupo-fase-nueve/mostrar-grupo-fase-nueve.component';
+import { MemorandoNueveComponent } from './pages/comite-investigacion/fase-creacion/memorando-nueve/memorando-nueve.component';
+import { SolicitudGruposFaseDiezComponent } from './pages/analistaGestion/fase-creacion/solicitudes-resolucion/solicitud-grupos-fase-diez/solicitud-grupos-fase-diez.component';
+import { GruposAprobadosComponent } from './pages/analistaGestion/fase-creacion/solicitudes-resolucion/grupos-aprobados/grupos-aprobados.component';
 
 @NgModule({
   declarations: [
@@ -281,6 +287,12 @@ import { MemorandoCreacionVITTComponent } from './pages/directorDepartamento/fas
     ReportesGIComponent,
    ConfirmDialogComponent,
    MemorandoCreacionVITTComponent,
+   MemorandoOchoComponent,
+   SolicitudesFaseNueveComponent,
+   MostrarGrupoFaseNueveComponent,
+   MemorandoNueveComponent,
+   SolicitudGruposFaseDiezComponent,
+   GruposAprobadosComponent,
   ],
   imports: [
     MatButtonToggleModule,  
