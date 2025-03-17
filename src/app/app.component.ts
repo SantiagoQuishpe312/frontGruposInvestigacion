@@ -420,8 +420,19 @@ export class AppComponent implements OnInit {
                 },
                 {
                   type: 'link',
-                  label: 'Inscribir Fichas',
+                  label: 'Delegar revisión y análisis al Comité de Investigación',
                   route: 'main/solicitudesA',
+                  icon: 'mat:school'
+                }
+                ,{
+                  type: 'link',
+                  label: 'Remitir Recomendaciones',
+                  route: 'main/solicitudes-aprobadas',
+                  icon: 'mat:school'
+                },{
+                  type: 'link',
+                  label: 'Inscribir Grupos',
+                  route: 'main/grupos-resoluciones',
                   icon: 'mat:school'
                 },
                 {
@@ -470,11 +481,6 @@ export class AppComponent implements OnInit {
                 type: 'link',
                 label: 'Cómite de Investigación',
                 route: 'main/solicitudes-comite',
-                icon: 'mat:school'
-              },{
-                type: 'link',
-                label: 'Remitir Recomendaciones',
-                route: 'main/solicitudes-aprobadas',
                 icon: 'mat:school'
               });
             } else if (r.idRol === 10) {

@@ -158,12 +158,16 @@ import { SolCreacionComponent } from './pages/coordinadorGI/sol-creacion/sol-cre
 import { ReportesGIComponent } from './pages/administracion/grupos-investigacion/reportes-gi/reportes-gi.component';
 import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { MemorandoCreacionVITTComponent } from './pages/directorDepartamento/faseCreacionGI/memorando-creacion-vitt/memorando-creacion-vitt.component';
-import { MemorandoOchoComponent } from './pages/analistaGestion/fase-creacion/memorando-ocho/memorando-ocho.component';
+import { MemorandoOchoComponent } from './pages/analistaGestion/fase-creacion/solicitudes-de-creacion/memorando-ocho/memorando-ocho.component';
 import { SolicitudesFaseNueveComponent } from './pages/comite-investigacion/fase-creacion/solicitudes-fase-nueve/solicitudes-fase-nueve.component';
 import { MostrarGrupoFaseNueveComponent } from './pages/comite-investigacion/fase-creacion/mostrar-grupo-fase-nueve/mostrar-grupo-fase-nueve.component';
 import { MemorandoNueveComponent } from './pages/comite-investigacion/fase-creacion/memorando-nueve/memorando-nueve.component';
 import { SolicitudGruposFaseDiezComponent } from './pages/analistaGestion/fase-creacion/solicitudes-resolucion/solicitud-grupos-fase-diez/solicitud-grupos-fase-diez.component';
 import { GruposAprobadosComponent } from './pages/analistaGestion/fase-creacion/solicitudes-resolucion/grupos-aprobados/grupos-aprobados.component';
+import { MemorandoDiezComponent } from './pages/analistaGestion/fase-creacion/solicitudes-resolucion/memorando-diez/memorando-diez.component';
+import { SolicitudesParaResolucionComponent } from './pages/analistaGestion/fase-creacion/Solicitudes-para-resolucion/solicitudes-para-resolucion/solicitudes-para-resolucion.component';
+import { GruposParaResolucionComponent } from './pages/analistaGestion/fase-creacion/Solicitudes-para-resolucion/grupos-para-resolucion/grupos-para-resolucion.component';
+import { MemorandoDoceComponent } from './pages/analistaGestion/fase-creacion/Solicitudes-para-resolucion/memorando-doce/memorando-doce.component';
 
 @NgModule({
   declarations: [
@@ -293,6 +297,10 @@ import { GruposAprobadosComponent } from './pages/analistaGestion/fase-creacion/
    MemorandoNueveComponent,
    SolicitudGruposFaseDiezComponent,
    GruposAprobadosComponent,
+   MemorandoDiezComponent,
+   SolicitudesParaResolucionComponent,
+   GruposParaResolucionComponent,
+   MemorandoDoceComponent,
   ],
   imports: [
     MatButtonToggleModule,  

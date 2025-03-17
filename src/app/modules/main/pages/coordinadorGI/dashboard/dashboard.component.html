@@ -116,7 +116,7 @@
     </div>
            
     <div class="presentacionGrupo"
-        *ngIf="invGroupExists && grupo && grupo.proceso === '9' "
+        *ngIf="invGroupExists && grupo && (grupo.proceso === '9'|| grupo.proceso === '10' || grupo.proceso === '11')"
                style="text-align: center;">
         <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
         <h1>Su solicitud ha sido aprobada por el Comité de Investigación</h1>

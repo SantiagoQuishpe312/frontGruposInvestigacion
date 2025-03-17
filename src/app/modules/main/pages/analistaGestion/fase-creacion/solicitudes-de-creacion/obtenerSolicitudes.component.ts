@@ -11,7 +11,6 @@ import { InvGroupService } from 'src/app/core/http/inv-group/inv-group.service';
     styleUrls: ['./obtenerSolicitudes.component.scss'],
 })
 export class SolicitudesForAnalistaComponent implements OnInit {
-    creationReq: CreationReqForm[] = [];
     grupos: InvGroupForm[] = [];
     usuarios: any[] = [];
     loadingData: boolean = true;

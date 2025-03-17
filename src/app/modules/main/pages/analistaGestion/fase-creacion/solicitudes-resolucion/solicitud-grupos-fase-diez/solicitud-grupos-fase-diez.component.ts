@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CreationReqForm } from 'src/app/types/creationReq.types';
 import { InvGroupCompleteForm, InvGroupForm } from 'src/app/types/invGroup.types';
 import { InvGroupService } from 'src/app/core/http/inv-group/inv-group.service';
 
@@ -10,15 +9,11 @@ import { InvGroupService } from 'src/app/core/http/inv-group/inv-group.service';
   styleUrls: ['./solicitud-grupos-fase-diez.component.scss']
 })
 export class SolicitudGruposFaseDiezComponent implements OnInit {
-
-  creationReq: CreationReqForm[] = [];
   grupos: InvGroupForm[] = [];
   usuarios: any[] = [];
   loadingData: boolean = true;
   coordinador: any[] = [];
   grupoComplete: InvGroupCompleteForm[];
-  grupoComplete2: InvGroupCompleteForm[];
-  nombreCoor: string;
   departmentUser: string;
   noSolicitudesPendientes: boolean = false;
   constructor(
@@ -41,6 +36,7 @@ export class SolicitudGruposFaseDiezComponent implements OnInit {
             this.loadingData = false;
         }
     });
+    
 
 }
 
