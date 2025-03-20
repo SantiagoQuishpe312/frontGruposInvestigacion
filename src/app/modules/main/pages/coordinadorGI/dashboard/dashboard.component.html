@@ -44,6 +44,11 @@
                 <header *ngIf="grupo && grupo.proceso==='SolicitaPlanAnual'">
                     <h1>Elaborar y remitir los planes</h1>
                 </header>
+                <header
+                *ngIf="invGroupExists  && grupo && grupo.proceso==='12' ">
+
+                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+            </header>
 
             </div>
 
@@ -123,6 +128,23 @@
         <app-progress [id]="idGrupo"></app-progress>
 
     </div>
+    <div class="presentacionGrupo"
+        *ngIf="invGroupExists && grupo && (grupo.proceso === '9'|| grupo.proceso === '10' || grupo.proceso === '11')"
+               style="text-align: center;">
+        <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+        <h1>Su solicitud ha sido aprobada por el Comité de Investigación</h1>
+        <app-progress [id]="idGrupo"></app-progress>
+
+    </div>
+
+    <div class="presentacionGrupo"
+                *ngIf=" !loadingData  && grupo.proceso==='12' "
+                style="text-align: center;">
+                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+                <h2>Felicidades Mediante memorando se ha inscrito el grupo de Investigación</h2>
+                 "Poner el formulario" 
+
+            </div>
 
             <!-- FASE DE SEGUIMIENTO DEL GRUPO DE INVESTIGACIÓN (FORMULARIO CUANDO SE ENVÍA LA SOLICITUD POR PRIMERA VEZ) -->
             <div class="presentacionGrupo"

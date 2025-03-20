@@ -15,169 +15,139 @@ import { Chart, registerables } from 'chart.js';
 })
 export class GruposControlComponent implements OnInit {
   displayedColumns: string[] = [
-    'index', 'nombreGrupoInv', 'acronimoGrupoinv', 'departamento', 'coordinador', 'abrir'
+    'index', 'nombreGrupoInv', 'acronimoGrupoinv', 'departamento', 'sede', 'coordinador', 'abrir'
   ];
-  chart: Chart | undefined;
-  gruposPorDepartamento:{ [key: string]: number } = {};
-  
+  chartDepartamento: Chart | undefined;
+  chartSede: Chart | undefined;
+  gruposPorDepartamento: { [key: string]: number } = {};
+  gruposPorSede: { [key: string]: number } = {};
+
   dataSource = new MatTableDataSource<InvGroupForm>();
   fullDataSource: InvGroupForm[] = [];
   isLoading: boolean = true;
-  searchControl = new FormControl(); // Campo de búsqueda reactivo
+
+  searchControl = new FormControl(); 
   departmentControl = new FormControl('');
+  sedeControl = new FormControl('');
+  
   usuarioNombre: { [key: number]: string } = {};
   totalGrupos: number = 0;
   departments: string[] = [];
+  sedes: string[] = [];
 
+  departmentsCountDataSource = new MatTableDataSource<{ departamento: string, cantidad: number }>([]);
+  sedesCountDataSource = new MatTableDataSource<{ sede: string, cantidad: number }>([]);
 
-
-  @ViewChild(MatSort) sort!: MatSort; // Habilitar ordenamiento
+  totalSedesCount: number = 0;
+  totalDepartamentosCount: number = 0;
+  
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private router: Router,
     private giService: InvGroupService,
     private usuarioService: UsuarioService
-  ) {Chart.register(...registerables)}
+  ) { Chart.register(...registerables); }
 
   ngOnInit() {
     this.get();
+
+    this.searchControl.valueChanges.subscribe(value => this.applyFilters());
+    this.departmentControl.valueChanges.subscribe(() => this.applyFilters());
+    this.sedeControl.valueChanges.subscribe(() => this.applyFilters());
     
-    // Aplicar filtro en tiempo real
-    this.searchControl.valueChanges.subscribe(value => {
-      const searchValue = value?.trim().toLowerCase() || '';
-      this.dataSource.filter = searchValue;
-    });
-
-   
-    /*
-    this.departmentControl.valueChanges.subscribe(value => {
-      if (value) {
-        this.dataSource.filter = value.trim().toLowerCase();
-      }
-    });*/
-
-    this.departmentControl.valueChanges.subscribe(value => {
-      if (value === '') {
-        // Restaurar todos los datos originales cuando se selecciona "Todos los departamentos"
-        this.dataSource.data = [...this.fullDataSource];
-        
-        // Aplicar el filtro de búsqueda si existe
-        const searchValue = this.searchControl.value?.trim().toLowerCase() || '';
-        if (searchValue) {
-          this.dataSource.filter = searchValue;
-        }
-      } else {
-        // Filtrar por departamento seleccionado
-        this.dataSource.data = this.fullDataSource.filter(item => 
-          item.departamento === value
-        );
-        
-        // Aplicar filtro de búsqueda si existe
-        const searchValue = this.searchControl.value?.trim().toLowerCase() || '';
-        if (searchValue) {
-          this.dataSource.filter = searchValue;
-        }
-      }
-      
-      // Actualizar contador de grupos
-      this.totalGrupos = this.dataSource.filteredData.length;
-    });
   }
-  calcularTotal(datos:{[key: string]: number}):number{
-      return Object.values(datos).reduce((acc,curr)=>acc+curr,0);
-  }
-/*
+
   get() {
     this.giService.getAll().subscribe((data) => {
       this.totalGrupos = data.length;
-      
-      this.departments = Array.from(new Set(data.map(grupo => grupo.departamento)))
-        .filter(Boolean)
-        .sort();
-      
-      data.forEach((grupo) => {
+      this.gruposPorDepartamento = this.contarPorCategoria(data, 'departamento');
+      this.gruposPorSede = this.contarPorCategoria(data, 'sede');
+
+      this.actualizarConteoDepartamentos(data);
+      this.actualizarConteoSedes(data);
+
+      this.departments = Array.from(new Set(data.map(grupo => grupo.departamento))).filter(Boolean).sort();
+      this.sedes = Array.from(new Set(data.map(grupo => grupo.sede))).filter(Boolean).sort();
+
+      const promises = data.map((grupo) =>
         this.getCoordinador(grupo.idCoordinador).then(nombre => {
-          grupo['nombreCoordinador'] = nombre; // Agregar el nombre del coordinador al objeto
-          this.dataSource.data = data;
-          this.dataSource.sort = this.sort;
+          grupo['nombreCoordinador'] = nombre;
+          return grupo;
+        })
+      );
 
-          this.dataSource.filterPredicate = (data: InvGroupForm, filter: string) => {
-            return data.departamento.toLowerCase().includes(filter) || 
-                   data.nombreGrupoInv.toLowerCase().includes(filter);
-          };
+      Promise.all(promises).then(() => {
+        this.fullDataSource = [...data];
+        this.dataSource.data = data;
+        this.dataSource.sort = this.sort;
 
-        });
+        this.dataSource.filterPredicate = (data: InvGroupForm, filter: string) => {
+          return data.nombreGrupoInv.toLowerCase().includes(filter);
+        };
+
+        this.isLoading = false;
       });
-
-      this.isLoading = false;
     });
   }
-*/
-get() {
-  this.giService.getAll().subscribe((data) => {
-    this.totalGrupos = data.length;
-    this.gruposPorDepartamento=this.contarPorCategoria(data,'departamento');
-    // Extraer la lista única de departamentos
-    this.departments = Array.from(new Set(data.map(grupo => grupo.departamento)))
-      .filter(Boolean)
-      .sort();
-      
-    const promises = data.map((grupo) => {
-      return this.getCoordinador(grupo.idCoordinador).then(nombre => {
-        grupo['nombreCoordinador'] = nombre; // Agregar el nombre del coordinador al objeto
-        return grupo;
-      });
-    });
-    
-    Promise.all(promises).then(() => {
-      this.fullDataSource = [...data]; // Guardar copia de todos los datos
-      this.dataSource.data = data;
-      this.dataSource.sort = this.sort;
-      
-      // Configurar filterPredicate para el filtro de búsqueda por nombre
-      this.dataSource.filterPredicate = (data: InvGroupForm, filter: string) => {
-        return data.nombreGrupoInv.toLowerCase().includes(filter);
-      };
-      
-      this.isLoading = false;
-    });
-  });
-  this.crearGraficoDepartamentoPorGrupo();
-}
-contarPorCategoria(data: any[], campo: string): { [key: string]: number } {
-  return data.reduce((acc, item) => {
-    const key = item[campo] || 'Desconocido';
-    acc[key] = (acc[key] || 0) + 1;
-    return acc;
-  }, {} as { [key: string]: number });
-}
 
-crearGraficoDepartamentoPorGrupo() {
-  if (this.chart) this.chart.destroy();
+  applyFilters() {
+    let filteredData = [...this.fullDataSource];
 
-    const labels = Object.keys(this.gruposPorDepartamento);
-    const values = Object.values(this.gruposPorDepartamento);
+    const searchValue = this.searchControl.value?.trim().toLowerCase() || '';
+    if (searchValue) {
+      filteredData = filteredData.filter(item => item.nombreGrupoInv.toLowerCase().includes(searchValue));
+    }
 
-    this.chart = new Chart('grupoPorDepartamentoChart', {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Grupos por Departamento',
-          data: values,
-          backgroundColor: 'rgba(54, 162, 235, 0.5)',
-          borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: true } },
-        scales: { y: { beginAtZero: true } }
-      }
-    });
-}
+    const selectedDepartment = this.departmentControl.value;
+    if (selectedDepartment) {
+      filteredData = filteredData.filter(item => item.departamento === selectedDepartment);
+    }
 
+    const selectedSede = this.sedeControl.value;
+    if (selectedSede) {
+      filteredData = filteredData.filter(item => item.sede === selectedSede);
+    }
+
+    this.dataSource.data = filteredData;
+    this.actualizarConteoDepartamentos(filteredData);
+    this.actualizarConteoSedes(filteredData);
+    this.totalGrupos = filteredData.length;
+  }
+
+  actualizarConteoDepartamentos(data: InvGroupForm[]) {
+    const conteo = this.contarPorCategoria(data, 'departamento');
+    this.totalDepartamentosCount = Object.values(conteo).reduce((sum, value) => sum + value, 0);
+    this.departmentsCountDataSource.data = [
+      ...Object.keys(conteo).map(departamento => ({
+        departamento,
+        cantidad: conteo[departamento]
+      })),
+      //{ departamento: 'Total', cantidad: this.totalDepartamentosCount }
+    ];
+  }
+  
+  actualizarConteoSedes(data: InvGroupForm[]) {
+    const conteo = this.contarPorCategoria(data, 'sede');
+    this.totalSedesCount = Object.values(conteo).reduce((sum, value) => sum + value, 0);
+    this.sedesCountDataSource.data = [
+      ...Object.keys(conteo).map(sede => ({
+        sede,
+        cantidad: conteo[sede]
+      })),
+      //{ sede: 'Total', cantidad: this.totalSedesCount }
+    ];
+  }
+  
+  contarPorCategoria(data: any[], campo: string): { [key: string]: number } {
+    return data.reduce((acc, item) => {
+      const key = item[campo] || 'Desconocido';
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {} as { [key: string]: number });
+  }
+
+  
   async getCoordinador(id: number): Promise<string> {
     if (this.usuarioNombre[id]) {
       return this.usuarioNombre[id];
@@ -195,6 +165,7 @@ crearGraficoDepartamentoPorGrupo() {
     sessionStorage.setItem('selectedId', id.toString());
     this.router.navigate(['/main/detalleGrupo']);
   }
+
   add() {
     this.router.navigate(['/main/crearGI']);
   }

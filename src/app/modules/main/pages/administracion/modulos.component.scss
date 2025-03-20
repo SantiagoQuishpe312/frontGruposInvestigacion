@@ -63,6 +63,12 @@ table {
   border-collapse: collapse;
   text-align: left; 
 }
+/* Clase para permitir el ajuste de texto */
+.word-wrap-cell {
+  word-wrap: break-word;
+  white-space: normal;  /* Permite que el texto se ajuste en varias líneas */
+}
+
 
 thead {
   background-color: #2e8041;
@@ -164,6 +170,9 @@ tr:nth-child(odd) {
 }
 
 .full-width {
+  width: 80%;
+
+}.full-width1 {
   width: 80%;
 
 }
@@ -363,4 +372,34 @@ gap: 50px;
 .members-table{
   flex: 1; /* Esto hace que las tablas ocupen el mismo espacio disponible */
 
+}
+.tablas-container {
+  padding: 20px;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px; // Espacio entre las dos tablas
+  flex-wrap: wrap; // Permite que las tablas se acomoden si la pantalla es pequeña
+}
+
+.tabla {
+  flex: 1; // Ocupa el mismo espacio para ambas tablas
+  min-width: 300px; // Asegura que las tablas no se encojan demasiado
+}
+
+
+.tabla-conteo {
+  width: 100%;
+  font-size: 12px; // Reduce el tamaño de la fuente para que entren mejor
+}
+
+th, td {
+  padding: 5px !important; // Reduce el espacio interno de las celdas
+  font-size: 5px;
+}
+
+.total-row {
+  background-color: #f1f1f1;
+  font-weight: bold;
 }

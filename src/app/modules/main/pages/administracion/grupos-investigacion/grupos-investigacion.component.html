@@ -14,16 +14,11 @@
 
       <div class="search-row">
       <!-- Campo de búsqueda -->
-      <div class="search-container">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Buscar por nombre del grupo</mat-label>
-          <input matInput [formControl]="searchControl">
-        </mat-form-field>
-      </div>
+      
 
       <!-- Select para departamentos -->
       <div class="search-container">
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="outline" class="full-width1">
           <mat-label>Buscar por departamento</mat-label>
           <mat-select [formControl]="departmentControl">
             <mat-option value="">Todos los departamentos</mat-option>
@@ -33,16 +28,70 @@
           </mat-select>
         </mat-form-field>
       </div>
+      <div class="search-container">
+        <mat-form-field appearance="outline" class="full-width1">
+          <mat-label>Buscar por sede</mat-label>
+          <mat-select [formControl]="sedeControl">
+            <mat-option value="">Todas las sedes</mat-option>
+            <mat-option *ngFor="let sede of sedes" [value]="sede">
+              {{ sede }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
     
-      <div class="rep">
-              <p><strong>Reporte General:</strong>  {{ totalGrupos }} Grupos</p>
-      </div>        
-      <div class="chart-container">
-          <!-- <canvas id="grupoPorDepartamentoChart" width="400" height="300">
-        </canvas>-->
-      </div>
-      
+  
+    <div class="search-container">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Buscar por nombre del grupo</mat-label>
+        <input matInput [formControl]="searchControl">
+      </mat-form-field>
+    </div>
+    <div class="tablas-container">
+      <!-- Tabla de conteo de departamentos -->
+      <div class="tabla">       
+     <!-- Tabla de conteo de departamentos -->
+     <h3>Conteo de Grupos por Departamento</h3>
+     <table mat-table [dataSource]="departmentsCountDataSource" class="mat-elevation-z8">
+       <ng-container matColumnDef="departamento">
+         <th mat-header-cell *matHeaderCellDef>Departamento</th>
+         <td mat-cell *matCellDef="let element">{{ element.departamento }}</td>
+         <td mat-footer-cell *matFooterCellDef><strong>Total</strong></td>
+       </ng-container>
+     
+       <ng-container matColumnDef="cantidad">
+         <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+         <td mat-cell *matCellDef="let element">{{ element.cantidad }}</td>
+         <td mat-footer-cell *matFooterCellDef><strong>{{ totalDepartamentosCount }}</strong></td>
+       </ng-container>
+     
+       <tr mat-header-row *matHeaderRowDef="['departamento', 'cantidad']"></tr>
+       <tr mat-row *matRowDef="let row; columns: ['departamento', 'cantidad'];"></tr>
+       <tr mat-footer-row *matFooterRowDef="['departamento', 'cantidad']"></tr>
+     </table>
+    </div>      <div class="tabla">       
+
+     <h3>Conteo de Grupos por Sede</h3>
+     <table mat-table [dataSource]="sedesCountDataSource" class="mat-elevation-z8">
+       <ng-container matColumnDef="sede">
+         <th mat-header-cell *matHeaderCellDef>Sede</th>
+         <td mat-cell *matCellDef="let element">{{ element.sede }}</td>
+         <td mat-footer-cell *matFooterCellDef><strong>Total</strong></td>
+       </ng-container>
+     
+       <ng-container matColumnDef="cantidad">
+         <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+         <td mat-cell *matCellDef="let element">{{ element.cantidad }}</td>
+         <td mat-footer-cell *matFooterCellDef><strong>{{ totalSedesCount }}</strong></td>
+       </ng-container>
+     
+       <tr mat-header-row *matHeaderRowDef="['sede', 'cantidad']"></tr>
+       <tr mat-row *matRowDef="let row; columns: ['sede', 'cantidad'];"></tr>
+       <tr mat-footer-row *matFooterRowDef="['sede', 'cantidad']"></tr>
+     </table>
+     
+    </div> </div>
       
       <!-- Tabla -->
       <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
@@ -50,46 +99,53 @@
         <!-- Índice -->
         <ng-container matColumnDef="index">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-          <td mat-cell *matCellDef="let g; let i = index">{{ i + 1 }}</td>
+          <td mat-cell *matCellDef="let g; let i = index" class="word-wrap-cell">{{ i + 1 }}</td>
         </ng-container>
-
+      
         <!-- Nombre del Grupo -->
         <ng-container matColumnDef="nombreGrupoInv">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre del Grupo</th>
-          <td mat-cell *matCellDef="let g">{{ g.nombreGrupoInv }}</td>
+          <td mat-cell *matCellDef="let g" class="word-wrap-cell">{{ g.nombreGrupoInv }}</td>
         </ng-container>
-
+      
         <!-- Acrónimo -->
         <ng-container matColumnDef="acronimoGrupoinv">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Acrónimo</th>
-          <td mat-cell *matCellDef="let g">{{ g.acronimoGrupoinv }}</td>
+          <td mat-cell *matCellDef="let g" class="word-wrap-cell">{{ g.acronimoGrupoinv }}</td>
         </ng-container>
-
+      
         <!-- Departamento -->
         <ng-container matColumnDef="departamento">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Departamento</th>
-          <td mat-cell *matCellDef="let g">{{ g.departamento }}</td>
+          <td mat-cell *matCellDef="let g" class="word-wrap-cell">{{ g.departamento }}</td>
         </ng-container>
-
+      
+        <ng-container matColumnDef="sede">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Sede</th>
+          <td mat-cell *matCellDef="let g" class="word-wrap-cell">{{ g.sede }}</td>
+        </ng-container>
+      
         <!-- Coordinador -->
         <ng-container matColumnDef="coordinador">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Coordinador</th>
-          <td mat-cell *matCellDef="let g">{{ g.nombreCoordinador }}</td>
+          <td mat-cell *matCellDef="let g" class="word-wrap-cell">{{ g.nombreCoordinador }}</td>
         </ng-container>
-
+      
         <!-- Botón Abrir -->
         <ng-container matColumnDef="abrir">
           <th mat-header-cell *matHeaderCellDef>Abrir</th>
           <td mat-cell *matCellDef="let g">
             <button mat-mini-fab color="primary" (click)="open(g.idGrupoInv)">
-              <i class="fa fa-folder-open"></i>            </button>
+              <i class="fa fa-folder-open"></i>
+            </button>
           </td>
         </ng-container>
-
+      
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
+      
       </table>
+      
     </div>
   </div>
 </div>
