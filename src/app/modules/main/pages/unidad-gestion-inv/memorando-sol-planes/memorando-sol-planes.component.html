@@ -1,0 +1,40 @@
+<div *ngIf="loading" class="loading-spinner-overlay">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+</div>
+<div class="container-fluid">
+    <div class="card">
+        <header>
+            <h1>Delegar la revisión y el análisis a la Unidad Responsable de la Gestión de la Investigación</h1>
+        </header>
+        <main>
+            <p><br>Mediante memorando la Unidad Responsable de la Gestión de la Investigación, delegar la revisión y
+                el análisis del Plan de desarrollo a 4 años y la
+                Planificación operativa anual de los Grupos de Investigacióna los Coordinadores.
+            </p>
+            <p><br>Adjunte el memorando</p>
+            <form (submit)="onSubmit()">
+                <div class="drag-drop" (drop)="onDrop($event)" (dragover)="onDragOver($event)">
+                    <i *ngIf="selectedFile" class="{{ getFileIcon(selectedFile.type) }}"></i>
+                    <p *ngIf="!selectedFile">Arrastra y suelta el documento aquí o haz
+                        clic para seleccionarlo.</p>
+                    <p *ngIf="selectedFile">{{ originalFileName }}</p>
+                    <div class="custom-file-input">
+                        <label *ngIf="!selectedFile" for="fileInput">Seleccionar
+                            archivo</label>
+                        <label *ngIf="selectedFile" for="fileInput">Cambiar archivo</label>
+                        <input id="fileInput" type="file" (change)="onFileSelected($event)" accept=".pdf" />
+                    </div>
+                </div>
+                <button class="boton" type="submit" [disabled]="!selectedFile">Delegar Revisión y Análisis</button>
+                <div *ngIf="selectedFile" class="file-info">
+                    <p *ngIf="fileUploaded" class="success-message">El anexo se ha cargado con éxito.</p>
+                </div>
+            </form>
+
+            <section class="acciones">
+                <button class="boton" (click)="goBack()">Regresar</button>
+            </section>
+
+        </main>
+    </div>
+</div>

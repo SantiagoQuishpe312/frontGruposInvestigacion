@@ -510,6 +510,13 @@ export class AppComponent implements OnInit {
                   icon: 'mat:description'
                 },
               );
+            }else if (r.idRol ===12) {
+              roleItem.children.push({
+                type: 'link',
+                label: 'Solicitud Planes',
+                route: 'main/solicitudes-planes',
+                icon: 'mat:school'
+              });
             }
             menuItems.push(roleItem);
           }

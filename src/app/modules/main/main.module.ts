@@ -168,6 +168,8 @@ import { MemorandoDiezComponent } from './pages/analistaGestion/fase-creacion/so
 import { SolicitudesParaResolucionComponent } from './pages/analistaGestion/fase-creacion/Solicitudes-para-resolucion/solicitudes-para-resolucion/solicitudes-para-resolucion.component';
 import { GruposParaResolucionComponent } from './pages/analistaGestion/fase-creacion/Solicitudes-para-resolucion/grupos-para-resolucion/grupos-para-resolucion.component';
 import { MemorandoDoceComponent } from './pages/analistaGestion/fase-creacion/Solicitudes-para-resolucion/memorando-doce/memorando-doce.component';
+import { SolicitudPlanesComponent } from './pages/unidad-gestion-inv/solicitud-planes.component';
+import { MemorandoSolPlanesComponent } from './pages/unidad-gestion-inv/memorando-sol-planes/memorando-sol-planes.component';
 
 @NgModule({
   declarations: [
@@ -301,6 +303,8 @@ import { MemorandoDoceComponent } from './pages/analistaGestion/fase-creacion/So
    SolicitudesParaResolucionComponent,
    GruposParaResolucionComponent,
    MemorandoDoceComponent,
+   SolicitudPlanesComponent,
+   MemorandoSolPlanesComponent,
   ],
   imports: [
     MatButtonToggleModule,  

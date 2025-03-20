@@ -1,0 +1,51 @@
+<div class="container-fluid">
+    <div class="card">
+        <header>
+            <h1>Solicitud Plan de Desarrollo y Planificación Anual </h1>
+
+        </header>
+        <main>
+            <div *ngIf="noSolicitudesPendientes" class="no-data-message">
+                No existen Solicitudes por Validar Pendientes
+            </div>
+            <div style="width: 100%;display: flex;justify-self: center;justify-items: center;justify-content: center; align-items: center;"
+                *ngIf="loadingData">
+                <mat-spinner diameter="150" color="primary" class="overlay-spinner"></mat-spinner>
+
+            </div>
+            <table *ngIf="!noSolicitudesPendientes && !loadingData" class="solicitudes-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Solicitud Plan de Desarrollo y Planificación Anual
+
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="width: 10%;">#</th>
+                        <th style="width: 35%;">Nombre de Grupo</th>
+                        <th style="width: 30%;">Nombre del Coordinador</th>
+                        <th style="width: 25%;">Fecha de Creación</th>
+                        <th>Solicitar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let gi of grupoComplete; let i = index">
+                        <td>{{i+1}}</td>
+                        <td>{{ gi.invGroup.nombreGrupoInv}}</td>
+                        <td>{{ gi.coordinador.nombre }}</td>
+                        <td>{{ gi.invGroup.fechaCreacion | date}}</td>
+                        <td>
+                            <button class="edit" mat-mini-fab color="primary"
+                                aria-label="Example icon button with a delete icon"
+                                (click)="solicitar(gi.invGroup.idGrupoInv)">
+                                <i class="fa fa-folder-open" aria-hidden="true"></i>
+                            </button>
+
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+    </div>
+</div>
