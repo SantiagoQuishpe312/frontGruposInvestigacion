@@ -516,7 +516,16 @@ export class AppComponent implements OnInit {
                 label: 'Solicitud Planes',
                 route: 'main/solicitudes-planes',
                 icon: 'mat:school'
-              });
+              },
+              {
+                type: 'link',
+                label: 'Solicitud Informes',
+                route: 'main/solicitudes-informes',
+                icon: 'mat:school'
+              }
+            
+            
+            );
             }
             menuItems.push(roleItem);
           }

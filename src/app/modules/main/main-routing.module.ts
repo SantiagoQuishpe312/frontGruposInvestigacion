@@ -105,6 +105,8 @@ import { GruposParaResolucionComponent } from './pages/analistaGestion/fase-crea
 import { MemorandoDoceComponent } from './pages/analistaGestion/fase-creacion/Solicitudes-para-resolucion/memorando-doce/memorando-doce.component';
 import { SolicitudPlanesComponent } from './pages/unidad-gestion-inv/solicitud-planes.component';
 import { MemorandoSolPlanesComponent } from './pages/unidad-gestion-inv/memorando-sol-planes/memorando-sol-planes.component';
+import { SolicitudInformesComponent } from './pages/unidad-gestion-inv/solicitud-informes/solicitud-informes.component';
+import { MemorandoSolInformesComponent } from './pages/unidad-gestion-inv/solicitud-informes/memorando-sol-informes/memorando-sol-informes.component';
 const routes: Routes = [
   {
     path: 'principal',
@@ -380,6 +382,17 @@ component: MemorandoCreacionVITTComponent
     path: 'memorando-sol-planes',
     component: MemorandoSolPlanesComponent
   },
+
+  //fase de evaluación
+  {
+    path: 'solicitudes-informes',
+    component: SolicitudInformesComponent
+  },
+  {
+    path: 'memorando-sol-informes',
+    component: MemorandoSolInformesComponent
+  },
+
   //procesos de vinculacion desvinculacion
   {
     path: 'sol-vinc-c',
