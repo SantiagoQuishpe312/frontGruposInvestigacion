@@ -14,11 +14,11 @@
       </thead>
       <tbody>
         <tr *ngFor="let u of invGroup?.users">
-          <td>{{ u.nombre }}</td>
-          <td>{{ u.cargo }}</td>
-          <td>{{ u.institucion }}</td>
+          <td>{{ u.user.nombre }}</td>
+          <td>{{ u.user.cargo }}</td>
+          <td>{{ u.user.institucion }}</td>
           <td>
-            <button class="delete" mat-mini-fab (click)="deleteMember(u.id)">
+            <button class="delete" mat-mini-fab (click)="deleteMember(u.idUsuario)">
               <i class="fas fa-trash-alt" inert></i> 
             </button>
           </td>

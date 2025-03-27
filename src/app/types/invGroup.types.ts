@@ -2,6 +2,7 @@ import { AcademicDomain } from "./academicDomain.types";
 import { Area } from "./area.types";
 import { Usuario } from "./usuario.types";
 import { Line } from "./line.types";
+import { InvMemberForm } from "./invMember.types";
 export interface InvGroupForm {
     idGrupoInv: number;
     idCoordinador: number;
@@ -24,7 +25,7 @@ export interface InvGroupForm {
 export interface InvGroupCompleteForm{
     invGroup: InvGroupForm;
     area:Area[];
-    users:Usuario[];
+    users:InvMemberForm[];
     academicDomain:AcademicDomain[];
     line:Line[];
     coordinador:Usuario;

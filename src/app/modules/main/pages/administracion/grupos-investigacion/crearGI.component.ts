@@ -378,7 +378,7 @@ export class CrearGIComponent implements OnInit {
         estadoGrupoInv: "activo",
         acronimoGrupoinv: this.myForm.value.grupoInv1.acronimoGrupoinv,
         departamento: departamento,
-        proceso:"",
+        proceso:"12",
         usuarioCreacion: this.currentUser,
         fechaCreacion: this.currentDate,
         usuarioModificacion: null,
@@ -510,7 +510,7 @@ export class CrearGIComponent implements OnInit {
           const member: InvMemberForm = {
             idGrupoInv: idGrupo,
             idUsuario: data.id,
-            estado: true, tipo: 'Externo',
+            fechaVinculacion: null, tipo: 'Externo',
             usuarioCreacion: this.currentUser,
             fechaCreacion: this.currentDate,
             usuarioModificacion: null,
@@ -547,7 +547,8 @@ export class CrearGIComponent implements OnInit {
         const member: InvMemberForm = {
           idGrupoInv: idGrupo,
           idUsuario: user.id,
-          estado: true, tipo: 'Externo',
+          fechaVinculacion: null, 
+          tipo: 'Externo',
           usuarioCreacion: this.currentUser,
           fechaCreacion: this.currentDate,
           usuarioModificacion: null,

@@ -598,7 +598,7 @@ export class SolCreacionComponent implements OnInit {
         const member: InvMemberForm = {
           idGrupoInv: idGrupo,
           idUsuario: user.user.idBd,
-          estado: true,
+          fechaVinculacion: null,
           tipo: user.rol,
           status: "Interno",
           usuarioCreacion: this.currentUser,
@@ -639,7 +639,7 @@ export class SolCreacionComponent implements OnInit {
         const member: InvMemberForm = {
           idGrupoInv: idGrupo,
           idUsuario: user.id,
-          estado: true,
+          fechaVinculacion: null,
           tipo: user.rol,
           status: "Externo",
           usuarioCreacion: this.currentUser,

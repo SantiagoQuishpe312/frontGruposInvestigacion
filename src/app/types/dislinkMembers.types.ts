@@ -1,6 +1,4 @@
-import { Usuario } from "./usuario.types";
-
-export interface InvMemberForm {
+export interface DislinkMembers {
     idGrupoInv: number;
     idUsuario: number;
     fechaVinculacion: Date;
@@ -10,6 +8,4 @@ export interface InvMemberForm {
     fechaCreacion: Date;
     usuarioModificacion: string;
     fechaModificacion: Date;
-    user?:Usuario;
-
 }

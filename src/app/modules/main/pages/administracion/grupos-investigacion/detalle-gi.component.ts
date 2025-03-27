@@ -13,6 +13,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DocumentsService } from 'src/app/core/http/documentos/documents.service';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-grupos-investigacion-crud',
@@ -30,14 +31,29 @@ export class DetalleGIComponent implements OnInit {
   imagenUrl: SafeResourceUrl | undefined;
   @ViewChild(MatSort) sort!: MatSort;
   usuariosPorFuncion: { [key: string]: number } = {};
-  usuariosPorGradoAcademico:{};
-  availableGeneros: string[] = [];
-  availableGrados: string[] = [];
+  usuariosPorGradoAcademico:{ [key: string]: number } = {};
+  usuariosPorGenero: { [key: string]: number } = {};
+  usuariosPorDepartamento: { [key: string]: number } = {};
+  fullDataSource: any[] = [];
+  totalUsuarios: number = 0;
+  funcionControl=new FormControl('');
+  gradoControl=new FormControl('');
+  generoControl=new FormControl('');
+  departamentoControl=new FormControl('');
+  funcion:string[]=[];
+  grado:string[] = [];
+  genero:string[]=[];
+  departamento:string[] = [];
 
+  funcionCountDataSource = new MatTableDataSource<{ funcion: string, cantidad: number }>([]);
+  gradoCountDataSource = new MatTableDataSource<{ grado: string, cantidad: number }>([]);
+  generoCountDataSource = new MatTableDataSource<{ genero: string, cantidad: number }>([]);
+  departamentoCountDataSource = new MatTableDataSource<{ departamento: string, cantidad: number }>([]);
+  totalFuncionCount: number = 0;
+  totalGradoCount: number = 0;
+  totalGeneroCount: number = 0; 
+  totalDepartamentoCount: number = 0;
   // Variables para los filtros:
-  selectedFuncion: string = '';
-  selectedGenero: string = '';
-  selectedGrado: string = '';
 
   constructor(
     private router: Router,
@@ -53,11 +69,19 @@ export class DetalleGIComponent implements OnInit {
     this.token = sessionStorage.getItem('access_token')!;
     this.get(this.id);
     this.getImage();
+    this.funcionControl.valueChanges.subscribe(() => this.aplicarFiltro());
+    this.gradoControl.valueChanges.subscribe(() => this.aplicarFiltro());
+    this.generoControl.valueChanges.subscribe(() => this.aplicarFiltro());
+    this.departamentoControl.valueChanges.subscribe(() => this.aplicarFiltro());
   }
 
   get(id: number) {
     this.giService.getByIdAll(id).subscribe((data) => {
-      this.invGroup = data;
+      this.totalUsuarios=data.users.length+1;
+     // this.usuariosPorDepartamento=this.contarPorCategoria(data.users)
+     this.usuariosPorFuncion=this.contarPorCategoria(data.users,'funcion'); 
+     {//data.users.user este arreglo contiene la }
+     this.invGroup = data;
       const dataGroup = [
         ...data.users.map(user => ({
           ...user,
@@ -65,30 +89,16 @@ export class DetalleGIComponent implements OnInit {
         })),
         { ...data.coordinador, funcion: 'Coordinador' }
       ];
-  
-      this.availableGeneros = Array.from(new Set(
-        dataGroup.map((user: any) => user.genero).filter(Boolean)
-      ));
-      this.availableGrados = Array.from(new Set(
-        dataGroup.map((user: any) => user.grado).filter(Boolean)
-      ));
-      
+    
 
-      this.usuariosPorGradoAcademico = dataGroup.reduce((acc, usuario) => {
-        const grado = usuario.grado;
-        if (!acc[grado]) {
-          acc[grado] = 0;
-        }
-        acc[grado]++;
-        return acc;
-      }, {});
+      
       // Contar usuarios por función
       this.contarUsuariosPorFuncion(dataGroup);
   
       this.dataSource = new MatTableDataSource(dataGroup);
       this.dataSource.sort = this.sort;
       this.dataSource.filterPredicate = (data: any, filter: string) =>
-        data.nombreDocente.toLowerCase().includes(filter);
+        data.nombreDocente.toLowerCase().includes(filter);}
     });
   }
   
@@ -114,21 +124,79 @@ export class DetalleGIComponent implements OnInit {
 
 
   aplicarFiltro() {
-    const filtroFuncion = this.selectedFuncion.toLowerCase().trim();
-    const filtroGenero = this.selectedGenero.toLowerCase().trim();
-    const filtroGrado = this.selectedGrado.toLowerCase().trim();
-
-    // Filtro combinado que evalúa cada propiedad de forma independiente:
-    this.dataSource.filterPredicate = (data: any, filter: string) => {
-      const matchesFuncion = !filtroFuncion || data.funcion?.toLowerCase().includes(filtroFuncion);
-      const matchesGenero = !filtroGenero || data.genero?.toLowerCase().includes(filtroGenero);
-      const matchesGrado = !filtroGrado || data.grado?.toLowerCase().includes(filtroGrado);
-
-      return matchesFuncion && matchesGenero && matchesGrado;
-    };
-
-    // Forzar la actualización del filtro:
-    this.dataSource.filter = '' + Math.random();
+    let filterData=[...this.fullDataSource];
+    const selectedDepartment=this.departamentoControl.value?.trim().toLowerCase||'';
+    if (selectedDepartment) {
+      filterData = filterData.filter(item => item.departamento === selectedDepartment);
+    }
+    const selectedGenero=this.generoControl.value?.trim().toLowerCase||'';
+    if (selectedGenero) {
+      filterData = filterData.filter(item => item.genero === selectedGenero);
+    }
+    const selectedGrado=this.gradoControl.value?.trim().toLowerCase||'';
+    if (selectedGrado) {
+      filterData = filterData.filter(item => item.grado === selectedGrado);
+    }
+    const selectedFuncion=this.funcionControl.value?.trim().toLowerCase||'';
+    if (selectedFuncion) {
+      filterData = filterData.filter(item => item.funcion === selectedFuncion);
+    }
+    this.dataSource.data = filterData;
+    this.actualizarConteoFuncion(filterData);
+    this.actualizarConteoGrado(filterData);
+    this.actualizarConteoGenero(filterData);
+    this.actualizarConteoDepartamento(filterData);
+  }
+  actualizarConteoDepartamento(filterData: any[]) {
+    const conteo=this.contarPorCategoria(filterData,'departamento');
+    this.totalDepartamentoCount=Object.values(conteo).reduce((sum, value) => sum + value, 0);
+    this.departamentoCountDataSource.data = [
+      ...Object.keys(conteo).map(departamento => ({
+        departamento,
+        cantidad: conteo[departamento]
+      })),
+      //{ departamento: 'Total', cantidad: this.totalDepartamentoCount }
+    ];
+  }
+  contarPorCategoria(data: any[], campo: string):{[key: string]: number} {
+    return data.reduce((acc, item) => {
+      const key = item[campo] || 'Desconocido';
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {} as { [key: string]: number });
+  }
+  actualizarConteoGenero(filterData: any[]) {
+    const conteo=this.contarPorCategoria(filterData,'genero');
+    this.totalGeneroCount=Object.values(conteo).reduce((sum, value) => sum + value, 0);
+    this.generoCountDataSource.data = [
+      ...Object.keys(conteo).map(genero => ({
+        genero,
+        cantidad: conteo[genero]
+      })),
+      //{ genero: 'Total', cantidad: this.totalGeneroCount }
+    ];
+  }
+  actualizarConteoGrado(filterData: any[]) {
+    const conteo=this.contarPorCategoria(filterData,'grado');
+    this.totalGradoCount=Object.values(conteo).reduce((sum, value) => sum + value, 0);
+    this.gradoCountDataSource.data = [
+      ...Object.keys(conteo).map(grado => ({
+        grado,
+        cantidad: conteo[grado]
+      })),
+      //{ grado: 'Total', cantidad: this.totalGradoCount }
+    ];
+  }
+  actualizarConteoFuncion(filterData: any[]) {
+    const conteo=this.contarPorCategoria(filterData,'funcion');
+    this.totalFuncionCount=Object.values(conteo).reduce((sum, value) => sum + value, 0);
+    this.funcionCountDataSource.data = [
+      ...Object.keys(conteo).map(funcion => ({
+        funcion,
+        cantidad: conteo[funcion]
+      })),
+      //{ funcion: 'Total', cantidad: this.totalFuncionCount }
+    ];
   }
 
 

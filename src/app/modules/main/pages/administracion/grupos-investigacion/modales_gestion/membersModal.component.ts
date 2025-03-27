@@ -189,7 +189,7 @@ AgregarMiembro(id: number){
     const data:InvMemberForm={
         idGrupoInv:this.groupId,
         idUsuario:id,
-        estado:true,
+        fechaVinculacion:null,
         tipo:'Externo',
         usuarioCreacion:this.currentUser,
         fechaCreacion:this.currentDate,
