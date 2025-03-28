@@ -21,11 +21,10 @@ export class EditarLibrosComponent implements OnInit {
   ngOnInit(): void {
     this.librosForm = this.formBuilder.group({
       idInformeActividades: [this.data.idInformeActividades],
-      numero: [this.data.numero, Validators.required],
       titulo: [this.data.titulo, Validators.required],
       autor: [this.data.autor, Validators.required],
-      libro: [this.data.libro, Validators.required],
-      indice: [this.data.indice, Validators.required],
+      editorial: [this.data.editorial, Validators.required],
+      isbn: [this.data.isbn, Validators.required],
       usuarioCreacion: [''],
       fechaCreacion: [''],
       usuarioModificacion: [''],

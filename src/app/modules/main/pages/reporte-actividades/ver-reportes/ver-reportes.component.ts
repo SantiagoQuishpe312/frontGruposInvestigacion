@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { ActivityReportService } from 'src/app/core/http/activity-report/activity-report.service';
-import { InvgActiService } from 'src/app/core/http/invg-acti/invg-acti.service';
+//import { InvgActiService } from 'src/app/core/http/invg-acti/invg-acti.service';
 import { ObjStrategiesService } from 'src/app/core/http/obj-strategies/obj-strategies.service';
 import { EventsService } from 'src/app/core/http/events/events.service';
 import { ActivityReport } from 'src/app/types/activityReport.types';
@@ -24,7 +24,7 @@ export class VerReportesComponent implements OnInit {
   reportes: ActivityReport[] = [];
   repAct: any[];
   reporteForm: FormGroup;
-  invgActiForm: FormGroup;
+  //invgActiForm: FormGroup;
   activityReports: any[];
   objetivos: any[];
   eventos: any[];
@@ -36,11 +36,11 @@ export class VerReportesComponent implements OnInit {
   congresos: any[];
   presupuestos: any[];
   informeActividadId: number;
-  idGrupoInv: number;
+  idGrupo: number;
 
   constructor(
     private activityReportService: ActivityReportService,
-    private invgActiService: InvgActiService,
+    //private invgActiService: InvgActiService,
     private objStrategiesService: ObjStrategiesService,
     private eventsService: EventsService,
     private datePipe: DatePipe,
@@ -63,15 +63,17 @@ export class VerReportesComponent implements OnInit {
     this.invGroupService.getAll().subscribe(groups => {
       const userGroup = groups.find(group => group.idCoordinador === userId);
       if (userGroup) {
-        this.idGrupoInv = userGroup.idGrupoInv;
-        this.getInvgActiAndLoadReports();
+        this.idGrupo = userGroup.idGrupoInv;
+        //this.getInvgActiAndLoadReports();
+        this.loadReportsForGroup();
+
       } else {
       }
     }, error => {
     });
   }
 
-
+/*
   getInvgActiAndLoadReports() {
     this.invgActiService.getAll().subscribe(invgActis => {
       const invgActiGroupIds = invgActis.filter(acti => acti.idGrupoInv === this.idGrupoInv)
@@ -87,7 +89,26 @@ export class VerReportesComponent implements OnInit {
     }, error => {
     });
   }
+*/
 
+loadReportsForGroup() {
+  this.activityReportService.getAll().subscribe(reports => {
+    // Filter reports for the current group
+    this.activityReports = reports.filter(report => report.idGrupo === this.idGrupo);
+    
+    if (this.activityReports.length > 0) {
+      // Set the first report as default
+      this.informeActividadId = this.activityReports[0].idInformeActividades;
+      this.loadRelatedData();
+    } else {
+      // Handle case where no reports found
+    }
+  }, error => {
+    // Handle error
+  });
+}
+
+/*
   loadReportsAndRelatedData(informeActividadIds: number[]) {
     this.activityReportService.getAll().subscribe(reports => {
       this.activityReports = reports.filter(rep => informeActividadIds.includes(rep.idInformeActividades));
@@ -110,7 +131,13 @@ export class VerReportesComponent implements OnInit {
     this.activityReportService.getAll().subscribe(repAct => {
       this.repAct = repAct.filter(rep => rep.idInformeActividades === this.informeActividadId);
     });
-  }
+  }*/
+
+    loadReports() {
+      this.activityReportService.getAll().subscribe(reports => {
+        this.repAct = reports.filter(rep => rep.idInformeActividades === this.informeActividadId);
+      });
+    }
 
   loadEvents() {
     this.eventsService.getAll().subscribe(events => {
@@ -124,6 +151,7 @@ export class VerReportesComponent implements OnInit {
   loadObjectives() {
     this.objStrategiesService.getAll().subscribe(objetivos => {
       this.objetivos = objetivos.filter(obj => obj.idInformeActividades === this.informeActividadId);
+      console.log('Objetivos:', this.objetivos);
     });
   }
 

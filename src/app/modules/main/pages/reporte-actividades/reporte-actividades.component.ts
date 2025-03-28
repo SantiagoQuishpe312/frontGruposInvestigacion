@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { ActivityReportService } from 'src/app/core/http/activity-report/activity-report.service';
-import { InvgActiService } from 'src/app/core/http/invg-acti/invg-acti.service';
 import { ObjStrategiesService } from 'src/app/core/http/obj-strategies/obj-strategies.service';
 import { EventsService } from 'src/app/core/http/events/events.service';
 import { ActivityReport } from 'src/app/types/activityReport.types';
@@ -46,7 +45,6 @@ import { SolCreaGiService } from 'src/app/core/http/sol-crea-gi/sol-crea-gi.serv
 export class ReporteActividadesComponent implements OnInit {
   reporteForm: FormGroup;
   conclusionesRecomendacionesForm: FormGroup;
-  invgActiForm: FormGroup;
   objStrategiesForms: FormGroup[] = [];
   eventsForm: FormGroup[] = [];
   currentStep: number = 0;
@@ -61,12 +59,11 @@ export class ReporteActividadesComponent implements OnInit {
   congresosForms: FormGroup[] = [];
   ejecucionForms: FormGroup[] = [];
   informeActividadId: number;
-  idGrupoInvId: number;
+  idGrupo: number;
   invGroupExists: boolean = false;
   constructor(
     private formBuilder: FormBuilder,
     private activityReportService: ActivityReportService,
-    private invgActiService: InvgActiService,
     private objStrategiesService: ObjStrategiesService,
     private eventsService: EventsService,
     private authService: AuthService,
@@ -90,6 +87,7 @@ export class ReporteActividadesComponent implements OnInit {
     const userId = Number(sessionStorage.getItem('userId'));
 
     this.reporteForm = this.formBuilder.group({
+      idGrupo: [''],
       antecedentes: ['', Validators.required],
       conclusiones: [''],
       recomendaciones: [''],
@@ -102,24 +100,14 @@ export class ReporteActividadesComponent implements OnInit {
 
     this.solCreaGiService.getAll().subscribe(groups => {
       const userGroup = groups.find(group => group.idCoordinador === userId);
-      let idGroupInv: number;
-
       if (userGroup) {
-        idGroupInv = userGroup.idGrupoInv;
-        this.invgActiForm = this.formBuilder.group({
-          idGrupoInv: [idGroupInv],
-          idInformeActividades: [''],
-          usuarioCreacion: [currentUser],
-          fechaCreacion: [currentDate],
-          usuarioModificacion: [currentUser],
-          fechaModificacion: [currentDate]
+        this.idGrupo = userGroup.idGrupoInv;
+        this.reporteForm.patchValue({
+          idGrupo: this.idGrupo
         });
-      } else {
       }
-
-    }, error => {
     });
-
+    
     this.subscribeToFieldChanges('antecedentes');
     this.subscribeToFieldChanges('conclusiones');
     this.subscribeToFieldChanges('recomendaciones');
@@ -143,7 +131,7 @@ export class ReporteActividadesComponent implements OnInit {
   openAgregarObjetivosModal() {
     const dialogRef: MatDialogRef<AgregarObjetivosComponent> = this.dialog.open(AgregarObjetivosComponent, {
       width: '400px',
-      data: { idInformeActividades: this.invgActiForm.get('idInformeActividades').value }
+      data: { idInformeActividades: this.informeActividadId }
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
@@ -199,7 +187,7 @@ export class ReporteActividadesComponent implements OnInit {
   openAgregarEventosModal() {
     const dialogRef: MatDialogRef<AgregarEventosComponent> = this.dialog.open(AgregarEventosComponent, {
       width: '400px',
-      data: { idInformeActividades: this.invgActiForm.get('idInformeActividades').value }
+      data: { idInformeActividades: this.informeActividadId }
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
@@ -257,7 +245,7 @@ export class ReporteActividadesComponent implements OnInit {
     const dialogRef: MatDialogRef<AgregarProyectosComponent> = this.dialog.open(AgregarProyectosComponent, {
       width: '600px',
 
-      data: { idInformeActividades: this.invgActiForm.get('idInformeActividades').value }
+      data: { idInformeActividades: this.informeActividadId }
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
@@ -335,7 +323,7 @@ export class ReporteActividadesComponent implements OnInit {
   openAgregarPosgradoModal() {
     const dialogRef: MatDialogRef<AgregarPosgradoComponent> = this.dialog.open(AgregarPosgradoComponent, {
       width: '400px',
-      data: { idInformeActividades: this.invgActiForm.get('idInformeActividades').value }
+      data: { idInformeActividades: this.informeActividadId }
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
@@ -388,7 +376,7 @@ export class ReporteActividadesComponent implements OnInit {
   openAgregarTitulacionModal() {
     const dialogRef: MatDialogRef<AgregarTitulacionComponent> = this.dialog.open(AgregarTitulacionComponent, {
       width: '400px',
-      data: { idInformeActividades: this.invgActiForm.get('idInformeActividades').value }
+      data: { idInformeActividades: this.informeActividadId }
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
@@ -439,7 +427,7 @@ export class ReporteActividadesComponent implements OnInit {
   openAgregarCapitulosLibrosModal() {
     const dialogRef: MatDialogRef<AgregarLibrosComponent> = this.dialog.open(AgregarLibrosComponent, {
       width: '400px',
-      data: { idInformeActividades: this.invgActiForm.get('idInformeActividades').value }
+      data: { idInformeActividades: this.informeActividadId }
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
@@ -449,11 +437,11 @@ export class ReporteActividadesComponent implements OnInit {
 
         const libroForm = this.formBuilder.group({
           idInformeActividades: [''],
-          numero: [result.numero, Validators.required],
+          //numero: [result.numero, Validators.required],
           titulo: [result.titulo, Validators.required],
           autor: [result.autor, Validators.required],
-          libro: [result.libro, Validators.required],
-          indice: [result.indice, Validators.required],
+          editorial: [result.editorial, Validators.required],
+          isbn: [result.isbn, Validators.required],
           usuarioCreacion: [currentUser],
           fechaCreacion: [currentDate],
           usuarioModificacion: [currentUser],
@@ -469,22 +457,22 @@ export class ReporteActividadesComponent implements OnInit {
     const dialogRef = this.dialog.open(EditarLibrosComponent, {
       width: '400px',
       data: {
-        numero: this.librosForms[index].get('numero').value,
+        //numero: this.librosForms[index].get('numero').value,
         titulo: this.librosForms[index].get('titulo').value,
         autor: this.librosForms[index].get('autor').value,
-        libro: this.librosForms[index].get('libro').value,
-        indice: this.librosForms[index].get('indice').value,
+        editorial: this.librosForms[index].get('editorial').value,
+        isbn: this.librosForms[index].get('isbn').value,
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.librosForms[index].patchValue({
-          numero: result.numero,
+          //numero: result.numero,
           titulo: result.titulo,
           autor: result.autor,
-          libro: result.libro,
-          indice: result.indice,
+          editorial: result.editorial,
+          isbn: result.isbn,
         });
       }
     });
@@ -500,7 +488,7 @@ export class ReporteActividadesComponent implements OnInit {
   openAgregarRevistasModal() {
     const dialogRef: MatDialogRef<AgregarRevistaComponent> = this.dialog.open(AgregarRevistaComponent, {
       width: '400px',
-      data: { idInformeActividades: this.invgActiForm.get('idInformeActividades').value }
+      data: { idInformeActividades: this.informeActividadId }
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
@@ -510,12 +498,12 @@ export class ReporteActividadesComponent implements OnInit {
 
         const revistaForm = this.formBuilder.group({
           idInformeActividades: [''],
-          numero: [result.numero, Validators.required],
+          //numero: [result.numero, Validators.required],
           titulo: [result.titulo, Validators.required],
           autores: [result.autores, Validators.required],
           revista: [result.revista, Validators.required],
           indice: [result.indice, Validators.required],
-          ifjrc: [result.ifjrc, Validators.required],
+          doi: [result.doi, Validators.required],
           ifsjr: [result.ifsjr, Validators.required],
           usuarioCreacion: [currentUser],
           fechaCreacion: [currentDate],
@@ -532,12 +520,12 @@ export class ReporteActividadesComponent implements OnInit {
     const dialogRef = this.dialog.open(EditarRevistaComponent, {
       width: '400px',
       data: {
-        numero: this.revistasForms[index].get('numero').value,
+        //numero: this.revistasForms[index].get('numero').value,
         titulo: this.revistasForms[index].get('titulo').value,
         autores: this.revistasForms[index].get('autores').value,
         revista: this.revistasForms[index].get('revista').value,
         indice: this.revistasForms[index].get('indice').value,
-        ifjrc: this.revistasForms[index].get('ifjrc').value,
+        doi: this.revistasForms[index].get('doi').value,
         ifsjr: this.revistasForms[index].get('ifsjr').value,
       }
     });
@@ -545,12 +533,12 @@ export class ReporteActividadesComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.revistasForms[index].patchValue({
-          numero: result.numero,
+          //numero: result.numero,
           titulo: result.titulo,
           autores: result.autores,
           revista: result.revista,
           indice: result.indice,
-          ifjrc: result.ifjrc,
+          doi: result.doi,
           ifsjr: result.ifsjr,
         });
       }
@@ -566,7 +554,7 @@ export class ReporteActividadesComponent implements OnInit {
   openAgregarCongresosModal() {
     const dialogRef: MatDialogRef<AgregarCongresoComponent> = this.dialog.open(AgregarCongresoComponent, {
       width: '400px',
-      data: { idInformeActividades: this.invgActiForm.get('idInformeActividades').value }
+      data: { idInformeActividades: this.informeActividadId }
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
@@ -580,8 +568,9 @@ export class ReporteActividadesComponent implements OnInit {
           titulo: [result.titulo, Validators.required],
           autores: [result.autores, Validators.required],
           congreso: [result.congreso, Validators.required],
-          indice: [result.indice, Validators.required],
-          ifJcrSjr: [result.ifJcrSjr, Validators.required],
+          //indice: [result.indice, Validators.required],
+          doi: [result.doi, Validators.required],
+          ifSjr: [result.ifSjr, Validators.required],
           cuartil: [result.cuartil, Validators.required],
           usuarioCreacion: [currentUser],
           fechaCreacion: [currentDate],
@@ -602,8 +591,8 @@ export class ReporteActividadesComponent implements OnInit {
         titulo: this.congresosForms[index].get('titulo').value,
         autores: this.congresosForms[index].get('autores').value,
         congreso: this.congresosForms[index].get('congreso').value,
-        indice: this.congresosForms[index].get('indice').value,
-        ifJcrSjr: this.congresosForms[index].get('ifJcrSjr').value,
+        doi: this.congresosForms[index].get('doi').value,
+        ifSjr: this.congresosForms[index].get('ifSjr').value,
         cuartil: this.congresosForms[index].get('cuartil').value,
       }
     });
@@ -615,8 +604,8 @@ export class ReporteActividadesComponent implements OnInit {
           titulo: result.titulo,
           autores: result.autores,
           congreso: result.congreso,
-          indice: result.indice,
-          ifJcrSjr: result.ifJcrSjr,
+          doi: result.doi,
+          ifSjr: result.ifSjr,
           cuartil: result.cuartil,
         });
       }
@@ -632,7 +621,7 @@ export class ReporteActividadesComponent implements OnInit {
   openAgregarEjecucionModal() {
     const dialogRef: MatDialogRef<AgregarEjecucionComponent> = this.dialog.open(AgregarEjecucionComponent, {
       width: '400px',
-      data: { idInformeActividades: this.invgActiForm.get('idInformeActividades').value }
+      data: { idInformeActividades: this.informeActividadId }
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
@@ -701,12 +690,12 @@ export class ReporteActividadesComponent implements OnInit {
         (reporteResponse: ActivityReport) => {
           this.informeActividadId = reporteResponse.idInformeActividades;
 
-          this.invgActiForm.patchValue({
+          this.reporteForm.patchValue({
             idInformeActividades: reporteResponse,
           });
 
-          this.invgActiService.createInvgActiForm(this.invgActiForm.value).subscribe(
-            () => {
+          //this.activityReportService.createActivityReportForm(this.reporteForm.value).subscribe(
+           // () => {
               this.objStrategiesForms.forEach(objStrategiesForm => {
                 objStrategiesForm.patchValue({
                   idInformeActividades: reporteResponse
@@ -845,10 +834,10 @@ export class ReporteActividadesComponent implements OnInit {
               setTimeout(() => {
                 this.router.navigateByUrl('main/principal');
               }, 3000);
-            },
-            (error) => {
-            }
-          );
+            //},
+            //(error) => {
+            //}
+          //);
         },
         (error) => {
         }

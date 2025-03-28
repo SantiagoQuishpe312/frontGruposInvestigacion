@@ -46,11 +46,17 @@
                     <mat-label>Ingresar Horas</mat-label>
                     <input
                       matInput
-                      type="text"
+                      type="number"
+                      min="0"
                       placeholder="Horas"
                       formControlName="horas"
-                      pattern="[0-9]*"
-                      onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" />
+                      (keypress)="numericOnly($event)" />
+                    <mat-error *ngIf="projectsForm.get('horas').hasError('required')">
+                      Horas es requerido
+                    </mat-error>
+                    <mat-error *ngIf="projectsForm.get('horas').hasError('min')">
+                      Las horas deben ser positivas
+                    </mat-error>
                   </mat-form-field>
                 </div>
               </td>
@@ -61,11 +67,18 @@
                     <mat-label>Ingresar Minutos</mat-label>
                     <input
                       matInput
-                      type="text"
+                      type="number"
+                      min="0"
+                      max="59"
                       placeholder="Minutos"
                       formControlName="minutos"
-                      pattern="[0-9]*"
-                      onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" />
+                      (keypress)="numericOnly($event)" />
+                    <mat-error *ngIf="projectsForm.get('minutos').hasError('required')">
+                      Minutos es requerido
+                    </mat-error>
+                    <mat-error *ngIf="projectsForm.get('minutos').hasError('min') || projectsForm.get('minutos').hasError('max')">
+                      Los minutos deben estar entre 0 y 59
+                    </mat-error>
                   </mat-form-field>
                 </div>
               </td>
@@ -79,10 +92,18 @@
                     <mat-label>Ingresar Presupuesto</mat-label>
                     <input
                       matInput
-                      type="text"
+                      type="number"
+                      min="0"
+                      step="0.01"
                       placeholder="Presupuesto"
                       formControlName="presupuesto"
-                      oninput="this.value = this.value.replace(/[^0-9.,]/g, '');" />
+                      (keypress)="numericDecimalOnly($event)" />
+                    <mat-error *ngIf="projectsForm.get('presupuesto').hasError('required')">
+                      Presupuesto es requerido
+                    </mat-error>
+                    <mat-error *ngIf="projectsForm.get('presupuesto').hasError('min')">
+                      El presupuesto debe ser positivo
+                    </mat-error>
                   </mat-form-field>
                 </div>
               </td>

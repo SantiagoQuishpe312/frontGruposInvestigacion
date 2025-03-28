@@ -21,12 +21,13 @@ export class AgregarRevistaComponent implements OnInit {
   ngOnInit(): void {
     this.revistaForm = this.formBuilder.group({
       idInformeActividades: [this.data.idInformeActividades],
-      numero: ['', Validators.required],
+      //numero: ['', Validators.required],
       titulo: ['', Validators.required],
       autores: ['', Validators.required],
       revista: ['', Validators.required],
       indice: ['', Validators.required],
-      ifjrc: ['', Validators.required],
+      //ifjrc: ['', Validators.required],
+      doi: ['', Validators.required],
       ifsjr: ['', Validators.required],
       usuarioCreacion: [''],
       fechaCreacion: [''],

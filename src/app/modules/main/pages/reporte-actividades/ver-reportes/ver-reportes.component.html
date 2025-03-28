@@ -258,7 +258,7 @@
                 text-align: justify;
                 text-align-last: left;
               ">
-              <strong>LIBRO</strong>
+              <strong>EDITORIAL</strong>
             </td>
             <td style="
                 width: 20%;
@@ -266,16 +266,16 @@
                 text-align: justify;
                 text-align-last: left;
               ">
-              <strong>ÍNDICE</strong>
+              <strong>ISBN</strong>
             </td>
           </tr>
 
           <tr *ngFor="let capitulo of capitulosLibros">
-            <td style="border: solid 0.5px #dce0e2">{{ capitulo.numero }}</td>
+            <td style="border: solid 0.5px #dce0e2">{{ capitulo.idLibroCapitulo }}</td>
             <td style="border: solid 0.5px #dce0e2">{{ capitulo.titulo }}</td>
             <td style="border: solid 0.5px #dce0e2">{{ capitulo.autor }}</td>
-            <td style="border: solid 0.5px #dce0e2">{{ capitulo.libro }}</td>
-            <td style="border: solid 0.5px #dce0e2">{{ capitulo.indice }}</td>
+            <td style="border: solid 0.5px #dce0e2">{{ capitulo.editorial }}</td>
+            <td style="border: solid 0.5px #dce0e2">{{ capitulo.isbn }}</td>
           </tr>
         </tbody>
       </table>
@@ -331,7 +331,7 @@
                 text-align: justify;
                 text-align-last: left;
               ">
-              <strong>ÍNDICE</strong>
+              <strong>BASE DE INDEXACIÓN</strong>
             </td>
             <td style="
                 width: 12%;
@@ -339,7 +339,7 @@
                 text-align: justify;
                 text-align-last: left;
               ">
-              <strong>QUARTIL IF JCR</strong>
+              <strong>DOI/ISSN</strong>
             </td>
             <td style="
                 width: 12%;
@@ -352,12 +352,12 @@
           </tr>
 
           <tr *ngFor="let revista of revistas">
-            <td style="border: solid 0.5px #dce0e2">{{ revista.numero }}</td>
+            <td style="border: solid 0.5px #dce0e2">{{ revista.idRevista }}</td>
             <td style="border: solid 0.5px #dce0e2">{{ revista.titulo }}</td>
             <td style="border: solid 0.5px #dce0e2">{{ revista.autores }}</td>
             <td style="border: solid 0.5px #dce0e2">{{ revista.revista }}</td>
             <td style="border: solid 0.5px #dce0e2">{{ revista.indice }}</td>
-            <td style="border: solid 0.5px #dce0e2">{{ revista.ifjrc }}</td>
+            <td style="border: solid 0.5px #dce0e2">{{ revista.doi }}</td>
             <td style="border: solid 0.5px #dce0e2">{{ revista.ifsjr }}</td>
           </tr>
         </tbody>
@@ -414,7 +414,7 @@
                 text-align: justify;
                 text-align-last: left;
               ">
-              <strong>ÍNDICE</strong>
+              <strong>DOI</strong>
             </td>
             <td style="
                 width: 12%;
@@ -422,7 +422,7 @@
                 text-align: justify;
                 text-align-last: left;
               ">
-              <strong>IF JCR/SJR</strong>
+              <strong>IF SJR</strong>
             </td>
             <td style="
                 width: 12%;
@@ -439,8 +439,8 @@
             <td style="border: solid 0.5px #dce0e2">{{ congreso.titulo }}</td>
             <td style="border: solid 0.5px #dce0e2">{{ congreso.autores }}</td>
             <td style="border: solid 0.5px #dce0e2">{{ congreso.congreso }}</td>
-            <td style="border: solid 0.5px #dce0e2">{{ congreso.indice }}</td>
-            <td style="border: solid 0.5px #dce0e2">{{ congreso.ifJcrSjr }}</td>
+            <td style="border: solid 0.5px #dce0e2">{{ congreso.doi }}</td>
+            <td style="border: solid 0.5px #dce0e2">{{ congreso.ifSjr }}</td>
             <td style="border: solid 0.5px #dce0e2">{{ congreso.cuartil }}</td>
           </tr>
         </tbody>
