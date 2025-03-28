@@ -61,46 +61,46 @@
         <div class="filters-container">
           <!-- Filtro por función -->
           <!-- Filtro por función (opciones fijas) -->
-          <mat-form-field>
+          <!--<mat-form-field>
             <mat-label>Filtrar por función</mat-label>
             <mat-select [(value)]="selectedFuncion"
               (selectionChange)="aplicarFiltro()">
-              <mat-option [value]="''">Todos</mat-option>
+              <mat-option [value]="''">Todos</mat-option>-->
               <!-- Opción para mostrar todos -->
-              <mat-option
+               <!--<mat-option
                 *ngFor="let funcion of ['Miembro', 'Coordinador', 'Colaborador', 'Secretario']"
                 [value]="funcion">
                 {{ funcion }}
               </mat-option>
             </mat-select>
-          </mat-form-field>
+          </mat-form-field>-->
 
           <!-- Filtro por género (opciones dinámicas desde la API) -->
-          <mat-form-field>
+          <!-- <mat-form-field>
             <mat-label>Filtrar por género</mat-label>
             <mat-select [(value)]="selectedGenero"
               (selectionChange)="aplicarFiltro()">
-              <mat-option [value]="''">Todos</mat-option>
+              <mat-option [value]="''">Todos</mat-option>-->
               <!-- Opción para mostrar todos -->
-              <mat-option *ngFor="let genero of availableGeneros"
+            <!--  <mat-option *ngFor="let genero of availableGeneros"
                 [value]="genero">
                 {{ genero }}
               </mat-option>
             </mat-select>
-          </mat-form-field>
+          </mat-form-field>-->
 
           <!-- Filtro por grado académico (opciones dinámicas desde la API) -->
-          <mat-form-field>
+        <!--  <mat-form-field>
             <mat-label>Filtrar por grado académico</mat-label>
             <mat-select [(value)]="selectedGrado"
               (selectionChange)="aplicarFiltro()">
-              <mat-option [value]="''">Todos</mat-option>
+              <mat-option [value]="''">Todos</mat-option>-->
               <!-- Opción para mostrar todos -->
-              <mat-option *ngFor="let grado of availableGrados" [value]="grado">
+             <!-- <mat-option *ngFor="let grado of availableGrados" [value]="grado">
                 {{ grado }}
               </mat-option>
             </mat-select>
-          </mat-form-field>
+          </mat-form-field>-->
 
         </div>
         <div class="tables-container3">
