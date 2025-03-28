@@ -7,20 +7,6 @@
       <div mat-dialog-content>
         <form [formGroup]="librosForm">
           <div class="grid-item">
-            <h2>Número</h2>
-            <mat-form-field>
-              <mat-label>Ingresar Número</mat-label>
-              <input
-                matInput
-                type="number"
-                placeholder="Número"
-                formControlName="numero"
-                pattern="[0-9]*"
-                onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
-                min="0" />
-            </mat-form-field>
-          </div>
-          <div class="grid-item">
             <h2>Título</h2>
             <mat-form-field>
               <mat-label>Ingresar Título</mat-label>
@@ -28,24 +14,24 @@
             </mat-form-field>
           </div>
           <div class="grid-item">
-            <h2>Libro</h2>
+            <h2>Autor(es)</h2>
             <mat-form-field>
-              <mat-label>Ingresar Libro</mat-label>
-              <input matInput placeholder="Libro" formControlName="libro" />
+              <mat-label>Ingresar Autor(es)</mat-label>
+              <input matInput placeholder="Autor(es)" formControlName="autor" />
             </mat-form-field>
           </div>
           <div class="grid-item">
-            <h2>Autor</h2>
+            <h2>Editorial</h2>
             <mat-form-field>
-              <mat-label>Ingresar Autor</mat-label>
-              <input matInput placeholder="Autor" formControlName="autor" />
+              <mat-label>Ingresar editorial</mat-label>
+              <input matInput placeholder="Editorial" formControlName="editorial" />
             </mat-form-field>
           </div>
           <div class="grid-item">
-            <h2>Índice</h2>
+            <h2>ISBN</h2>
             <mat-form-field>
-              <mat-label>Ingresar Índice</mat-label>
-              <input matInput placeholder="Índice" formControlName="indice" />
+              <mat-label>Ingresar ISBN</mat-label>
+              <input matInput placeholder="ISBN" formControlName="isbn" />
             </mat-form-field>
           </div>
         </form>

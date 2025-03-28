@@ -10,6 +10,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class EditarProyectosComponent implements OnInit {
   projectsForm: FormGroup;
+  tipoOpciones = ['Interno', 'Externo', 'Investigación', 'Vinculación'];
+  estadoOpciones = ['En ejecución', 'Finalizado'];
 
   constructor(
     private dialogRef: MatDialogRef<EditarProyectosComponent>,

@@ -1,5 +1,6 @@
 export interface ActivityReport {
     idInformeActividades: number;
+    idGrupo: number;
     antecedentes: string;
     conclusiones: string;
     recomendaciones: string;

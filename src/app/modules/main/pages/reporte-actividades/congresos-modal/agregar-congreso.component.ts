@@ -21,12 +21,12 @@ export class AgregarCongresoComponent implements OnInit {
   ngOnInit(): void {
     this.congresoForm = this.formBuilder.group({
       idInformeActividad: [this.data.idInformeActividades],
-      numero: ['', Validators.required],
+      numero: [''],
       titulo: ['', Validators.required],
       autores: ['', Validators.required],
       congreso: ['', Validators.required],
-      indice: ['', Validators.required],
-      ifJcrSjr: ['', Validators.required],
+      doi: ['', Validators.required],
+      ifSjr: ['', Validators.required],
       cuartil: ['', Validators.required],
       usuarioCreacion: [''],
       fechaCreacion: [''],

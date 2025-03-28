@@ -21,12 +21,12 @@ export class EditarRevistaComponent implements OnInit {
   ngOnInit(): void {
     this.revistaForm = this.formBuilder.group({
       idInformeActividades: [this.data.idInformeActividades],
-      numero: [this.data.numero, Validators.required],
+      //numero: [this.data.numero, Validators.required],
       titulo: [this.data.titulo, Validators.required],
       autores: [this.data.autores, Validators.required],
       revista: [this.data.revista, Validators.required],
       indice: [this.data.indice, Validators.required],
-      ifjrc: [this.data.ifjrc, Validators.required],
+      doi: [this.data.doi, Validators.required],
       ifsjr: [this.data.ifsjr, Validators.required],
       usuarioCreacion: [''],
       fechaCreacion: [''],

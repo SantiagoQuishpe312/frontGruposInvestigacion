@@ -5,8 +5,11 @@ export interface Congress {
     titulo: string;
     autores: string;
     congreso: string;
-    indice: string;
-    ifJcrSjr: string;
+    //indice: string;
+    doi: string;
+    ifSjr: string;
+
+    //ifJcrSjr: string;
     cuartil: string;
     usuarioCreacion: string;
     fechaCreacion: Date;

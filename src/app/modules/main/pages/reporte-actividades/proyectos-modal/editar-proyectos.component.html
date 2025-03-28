@@ -113,8 +113,12 @@
                 <div class="grid-item">
                   <h2>Tipo</h2>
                   <mat-form-field>
-                    <mat-label>Ingresar Tipo</mat-label>
-                    <input matInput placeholder="Tipo" formControlName="tipo" />
+                    <mat-label>Seleccionar Tipo</mat-label>
+                    <mat-select formControlName="tipo">
+                      <mat-option *ngFor="let tipo of tipoOpciones" [value]="tipo">
+                        {{ tipo }}
+                      </mat-option>
+                    </mat-select>
                   </mat-form-field>
                 </div>
               </td>
@@ -122,14 +126,15 @@
                 <div class="grid-item">
                   <h2>Estado</h2>
                   <mat-form-field>
-                    <mat-label>Ingresar Estado</mat-label>
-                    <input
-                      matInput
-                      placeholder="Estado"
-                      formControlName="estado" />
+                    <mat-label>Seleccionar Estado</mat-label>
+                    <mat-select formControlName="estado">
+                      <mat-option *ngFor="let estado of estadoOpciones" [value]="estado">
+                        {{ estado }}
+                      </mat-option>
+                    </mat-select>
                   </mat-form-field>
                 </div>
-              </td>
+              </td>  
             </tr>
           </table>
         </form>

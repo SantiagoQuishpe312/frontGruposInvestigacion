@@ -472,21 +472,19 @@
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Número</th>
                   <th>Título</th>
-                  <th>Libro</th>
                   <th>Autor</th>
-                  <th>Índice</th>
+                  <th>Editorial</th>
+                  <th>Isbn</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let form of librosForms; let i = index">
                   <td>{{ i + 1 }}</td>
-                  <td>{{ form.get('numero').value }}</td>
                   <td>{{ form.get('titulo').value }}</td>
-                  <td>{{ form.get('libro').value }}</td>
                   <td>{{ form.get('autor').value }}</td>
-                  <td>{{ form.get('indice').value }}</td>
+                  <td>{{ form.get('editorial').value }}</td>
+                  <td>{{ form.get('isbn').value }}</td>
                   <td>
                     <div class="action-buttons">
                       <button
@@ -551,24 +549,22 @@
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Número</th>
                   <th>Título</th>
                   <th>Revista</th>
                   <th>Autores</th>
                   <th>Índice</th>
-                  <th>Quartil IFJRC</th>
+                  <th>DOI</th>
                   <th>Quartil IFSJR</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let form of revistasForms; let i = index">
                   <td>{{ i + 1 }}</td>
-                  <td>{{ form.get('numero').value }}</td>
                   <td>{{ form.get('titulo').value }}</td>
                   <td>{{ form.get('revista').value }}</td>
                   <td>{{ form.get('autores').value }}</td>
                   <td>{{ form.get('indice').value }}</td>
-                  <td>{{ form.get('ifjrc').value }}</td>
+                  <td>{{ form.get('doi').value }}</td>
                   <td>{{ form.get('ifsjr').value }}</td>
                   <td>
                     <div class="action-buttons">
@@ -636,10 +632,10 @@
                   <th>#</th>
                   <th>Número</th>
                   <th>Título</th>
-                  <th>Congreso</th>
                   <th>Autores</th>
-                  <th>Índice</th>
-                  <th>Quartil IFJCRSJR</th>
+                  <th>Congreso</th>
+                  <th>DOI</th>
+                  <th>Quartil IF SJR</th>
                   <th>Quartil</th>
                 </tr>
               </thead>
@@ -648,10 +644,10 @@
                   <td>{{ i + 1 }}</td>
                   <td>{{ form.get('numero').value }}</td>
                   <td>{{ form.get('titulo').value }}</td>
-                  <td>{{ form.get('congreso').value }}</td>
                   <td>{{ form.get('autores').value }}</td>
-                  <td>{{ form.get('indice').value }}</td>
-                  <td>{{ form.get('ifJcrSjr').value }}</td>
+                  <td>{{ form.get('congreso').value }}</td>
+                  <td>{{ form.get('doi').value }}</td>
+                  <td>{{ form.get('ifSjr').value }}</td>
                   <td>{{ form.get('cuartil').value }}</td>
                   <td>
                     <div class="action-buttons">

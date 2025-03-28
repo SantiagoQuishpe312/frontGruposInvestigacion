@@ -6,7 +6,7 @@
       </header>
       <div mat-dialog-content>
         <form [formGroup]="congresoForm">
-          <div class="grid-item">
+          <!-- <div class="grid-item">
             <h2>Número</h2>
             <mat-form-field>
               <mat-label>Ingresar Número</mat-label>
@@ -19,7 +19,7 @@
                 onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
                 min="0" />
             </mat-form-field>
-          </div>
+          </div> -->
           <div class="grid-item">
             <h2>Título</h2>
             <mat-form-field>
@@ -48,20 +48,20 @@
             </mat-form-field>
           </div>
           <div class="grid-item">
-            <h2>Índice</h2>
+            <h2>DOI</h2>
             <mat-form-field>
-              <mat-label>Ingresar Índice</mat-label>
-              <input matInput placeholder="Índice" formControlName="indice" />
+              <mat-label>Ingresar DOI</mat-label>
+              <input matInput placeholder="DOI" formControlName="doi" />
             </mat-form-field>
           </div>
           <div class="grid-item">
-            <h2>Quartil IFJCRSJR</h2>
+            <h2>Quartil IF SJR</h2>
             <mat-form-field>
-              <mat-label>Ingresar Quartil IFJCRSJR</mat-label>
+              <mat-label>Ingresar Quartil IF SJR</mat-label>
               <input
                 matInput
-                placeholder="Quartil IFJCRSJR"
-                formControlName="ifJcrSjr" />
+                placeholder="Quartil IF SJR"
+                formControlName="ifSjr" />
             </mat-form-field>
           </div>
           <div class="grid-item">

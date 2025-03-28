@@ -6,7 +6,7 @@
       </header>
       <div mat-dialog-content>
         <form [formGroup]="revistaForm">
-          <div class="grid-item">
+          <!-- <div class="grid-item">
             <h2>Número</h2>
             <mat-form-field>
               <mat-label>Ingresar Número</mat-label>
@@ -19,7 +19,7 @@
                 onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
                 min="0" />
             </mat-form-field>
-          </div>
+          </div> -->
           <div class="grid-item">
             <h2>Título</h2>
             <mat-form-field>
@@ -45,20 +45,20 @@
             </mat-form-field>
           </div>
           <div class="grid-item">
-            <h2>Índice</h2>
+            <h2>Base de Indexación</h2>
             <mat-form-field>
-              <mat-label>Ingresar Índice</mat-label>
-              <input matInput placeholder="Índice" formControlName="indice" />
+              <mat-label>Ingresar base de indexación</mat-label>
+              <input matInput placeholder="Base de indexación" formControlName="indice" />
             </mat-form-field>
           </div>
           <div class="grid-item">
-            <h2>Quartil IFJRC</h2>
+            <h2>DOI/ISSN</h2>
             <mat-form-field>
-              <mat-label>Ingresar Quartil IFJRC</mat-label>
+              <mat-label>Ingresar DOI/ISSN</mat-label>
               <input
                 matInput
-                placeholder="Quartil IFJRC"
-                formControlName="ifjrc" />
+                placeholder="DOI/ISSN"
+                formControlName="doi" />
             </mat-form-field>
           </div>
           <div class="grid-item">
@@ -67,7 +67,7 @@
               <mat-label>Ingresar Quartil IFSJR</mat-label>
               <input
                 matInput
-                placeholder="Quartil IFSJR"
+                placeholder="Quartil IF SJR"
                 formControlName="ifsjr" />
             </mat-form-field>
           </div>

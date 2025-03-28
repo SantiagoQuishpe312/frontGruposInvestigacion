@@ -21,11 +21,10 @@ export class AgregarLibrosComponent implements OnInit {
   ngOnInit(): void {
     this.librosForm = this.formBuilder.group({
       idInformeActividades: [this.data.idInformeActividades], 
-      numero: ['', Validators.required],
       titulo: ['', Validators.required], 
       autor: ['', Validators.required],
-      libro: ['', Validators.required], 
-      indice: ['', Validators.required], 
+      editorial: ['', Validators.required],
+      isbn: ['', Validators.required],
       usuarioCreacion: [''],
       fechaCreacion: [''],
       usuarioModificacion: [''],

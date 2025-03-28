@@ -21,12 +21,12 @@ export class EditarCongresoComponent implements OnInit {
   ngOnInit(): void {
     this.congresoForm = this.formBuilder.group({
       idInformeActividad: [this.data.idInformeActividades],
-      numero: [this.data.numero, Validators.required],
+      numero: [this.data.numero],
       titulo: [this.data.titulo, Validators.required],
       autores: [this.data.autores, Validators.required],
       congreso: [this.data.congreso, Validators.required],
-      indice: [this.data.indice, Validators.required],
-      ifJcrSjr: [this.data.ifJcrSjr, Validators.required],
+      doi: [this.data.doi, Validators.required],
+      ifSjr: [this.data.ifSjr, Validators.required],
       cuartil: [this.data.cuartil, Validators.required],
       usuarioCreacion: [''],
       fechaCreacion: [''],
