@@ -12,6 +12,7 @@ import { InvGroupCompleteForm } from 'src/app/types/invGroup.types';
 import { InvGroup_line } from 'src/app/types/invGroup_line';
 import { InvGroup_area } from 'src/app/types/invGroup_area.types';
 import { forkJoin } from 'rxjs';
+import { AcademicDomainService } from 'src/app/core/http/academic-domain/academic-domain.service';
 
 @Component({
   selector: 'app-members',
@@ -25,16 +26,18 @@ export class LineModalEdit implements OnInit {
   userNotFound = false;
   lineas: any[] = [];
   areas: any[] = [];
+  dominios: any[] = [];
   invGroup: InvGroupCompleteForm;
   loadingData: boolean = true;
 
   areasControl = new FormControl();
   lineasControl = new FormControl();
+  dominiosControl = new FormControl();
   myForm: FormGroup;
   groupId: number;
   currentUser: string;
   currentDate: Date;
-
+  isLoading: boolean=true;
   constructor(
     private fb: FormBuilder,
     private userService: UsuarioService,
@@ -45,6 +48,7 @@ export class LineModalEdit implements OnInit {
     private lineService: LineService,
     private invGroup_areaService: InvGroup_areaService,
     private invGroupService: InvGroupService,
+    private academicDomainService:AcademicDomainService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
@@ -53,6 +57,9 @@ export class LineModalEdit implements OnInit {
     this.currentUser = this.authService.getUserName();
     this.currentDate = new Date();
     this.get(this.groupId);
+    this.dominiosControl.valueChanges.subscribe((selectedDominios: any[]) => {
+      this.updateAreasByDominios(selectedDominios);
+    });
 
     this.areasControl.valueChanges.subscribe((selectedAreas: any[]) => {
       this.updateLineasByAreas(selectedAreas);
@@ -70,9 +77,11 @@ export class LineModalEdit implements OnInit {
 
   cargarFormularios(): void {
     this.loadAreas();
+    this.isLoading = false;
     this.myForm = this.fb.group({
       lineas: this.lineasControl,
       areas: this.areasControl,
+      dominios: this.dominiosControl,
     });
   }
 
@@ -92,6 +101,21 @@ export class LineModalEdit implements OnInit {
       });
     }
   }
+  updateAreasByDominios(selectedDominios: any[]): void {
+    this.areas = [];
+    if (selectedDominios?.length > 0) {
+      selectedDominios.forEach((idDomimioAcademico) => {
+        this.areaService.getAreasByDominio(idDomimioAcademico).subscribe((areasDominio: any[]) => {
+          this.areas = [
+            ...this.areas,
+            ...areasDominio.filter(
+              (area) => !this.areas.some((a) => a.idArea === area.idArea)
+            ),
+          ];
+        });
+      });
+    }
+  }
 
   getLinesByArea(): void {
     if (this.invGroup?.area) {
@@ -100,11 +124,17 @@ export class LineModalEdit implements OnInit {
       });
     }
   }
+  getAreasByDominio(): void {
+    if (this.invGroup?.academicDomain) {
+      this.invGroup.academicDomain.forEach((academicDomain) => {
+        academicDomain.areas = this.invGroup.area.filter((area) => area.idDominio === academicDomain.idDomimioAcademico);
+      });
+    }
+  }
 
   Enviar(): void {
     if (this.myForm.valid) {
-        console.log(this.myForm);
-      this.loadingData = true;
+      this.isLoading = true;
       this.saveArea(this.groupId);
       this.saveLine(this.groupId);
       this.dialogRef.close(true)
@@ -148,6 +178,12 @@ export class LineModalEdit implements OnInit {
   loadAreas(): void {
     this.areaService.getAll().subscribe((data) => {
       this.areas = data.filter((area) => area.estado === true);
+      this.loadingData = false;
+    });
+  }
+  loadDominios(): void {
+    this.academicDomainService.getAll().subscribe((data) => {
+      this.dominios = data.filter((dominio) => dominio.estado === true);
       this.loadingData = false;
     });
   }

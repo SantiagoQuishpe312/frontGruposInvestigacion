@@ -1,4 +1,26 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+.search-container {
+  flex: 1;
+  min-width: 200px; /* Ajusta el tamaño mínimo */
+}
+
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.full-width1 {
+  width: 100%;
+}
+
+/* Para pantallas pequeñas, apila los filtros */
+@media (max-width: 768px) {
+  .filters-container {
+    flex-direction: column;
+  }
+}
 
 .container {
   margin: 20px auto;
@@ -401,4 +423,10 @@ th, td {
 .total-row {
   background-color: #f1f1f1;
   font-weight: bold;
+}
+
+th, td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: left;
 }

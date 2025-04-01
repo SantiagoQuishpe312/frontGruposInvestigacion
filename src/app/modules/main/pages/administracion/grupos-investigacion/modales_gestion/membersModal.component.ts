@@ -5,10 +5,14 @@ import { UsuarioService } from 'src/app/core/http/usuario/usuario.service';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { InvGroupService } from 'src/app/core/http/inv-group/inv-group.service';
 import { InvGroupCompleteForm } from 'src/app/types/invGroup.types';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map, Observable, startWith, switchMap } from 'rxjs';
 import { InvMemberService } from 'src/app/core/http/inv-member/inv-member.service';
 import { Usuario } from 'src/app/types/usuario.types';
 import { InvMemberForm } from 'src/app/types/invMember.types';
+import { DislinkMembersService } from 'src/app/core/http/dislink-members/dislink-members.service.spec';
+import { DislinkMembers } from 'src/app/types/dislinkMembers.types';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-members',
   templateUrl: './membersModal.component.html',
@@ -20,7 +24,7 @@ export class MembersModalEdit implements OnInit {
   isSearchClicked = false;
   userNotFound = false;
   invGroup: InvGroupCompleteForm;
-  loadingData: boolean = true;
+  isLoading: boolean = true;
   myForm: FormGroup;
   groupId: number;
   currentUser: string;
@@ -30,7 +34,12 @@ export class MembersModalEdit implements OnInit {
   internalForm: FormGroup;
   externalForm: FormGroup;
   miembro: FormGroup;
-
+  miembroForm: FormGroup;
+  userDataForm: FormGroup;
+  isEdit: boolean = false;
+  nacionalidades: string[] = [];
+  nacionalidadesFiltradas: Observable<string[]>;
+  rolExterno: string;
   constructor(
     private fb: FormBuilder,
     private userService: UsuarioService,
@@ -38,8 +47,12 @@ export class MembersModalEdit implements OnInit {
     public dialogRef: MatDialogRef<MembersModalEdit>,
     private invGroupService: InvGroupService,
     private invMemberService: InvMemberService,
+    private dislinkService: DislinkMembersService,
+    private snackBar: MatSnackBar,
+    private http: HttpClient,
+
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.groupId = Number(sessionStorage.getItem('selectedId'));
@@ -49,25 +62,33 @@ export class MembersModalEdit implements OnInit {
     this.cargarFormularios();
   }
 
+  cancelar() {
+    this.toggleForm(null);
+    this.isEdit = false;
+    this.showExternalForm = false;
+    this.showInternalForm = false;
+  }
   get(id: number): void {
     this.invGroupService.getByIdAll(id).subscribe((data) => {
       this.invGroup = data;
+      this.isLoading = false;
+
     });
-    this.loadingData = false;
   }
 
   cargarFormularios(): void {
     this.myForm = this.fb.group({
-        usuario: ['']
-      });
-  
-      this.miembro = this.fb.group({
-        nombre: ['', Validators.required],
-        telefono: ['', Validators.required],
-        correo: ['', [Validators.required, Validators.email]],
-        cedula: ['', Validators.required],
-        institucion: ['', Validators.required],
-        nacionalidad: ['', Validators.required],
+      usuario: ['']
+    });
+
+    this.miembro = this.fb.group({
+      nombre: ['', Validators.required],
+      correo: ['', Validators.email],
+      cedula: [''],
+      institucion: ['', Validators.required],
+      grado: [''],
+      nacionalidad: ['', Validators.required],
+      genero: ['', Validators.required],
     });
   }
 
@@ -105,68 +126,199 @@ export class MembersModalEdit implements OnInit {
     this.userNotFound = false; // Resetear la bandera de error al limpiar
     this.myForm.reset();
   }
+  onTipoUsuarioChange(event: any) {
+    // Aquí puedes manejar lo que suceda cuando cambie el tipo de usuario
+    if (this.user) {
+      this.user.rolInvestigador = event.value;
 
-   crearUsuario(user): void {
-      const currentUser = this.authService.getUserName();
-      const currentDate = new Date();
-      const token = sessionStorage.getItem('access_token');
-      const userName = this.myForm.get('usuario').value;
-      this.userService.getUserApp(userName, token).subscribe((data) => {
-        this.userService.getByUserName(userName).subscribe((userData) => {
-          if (userData.id != null) {
-            console.log("El usuario ya existe en la bd");
-            this.user.idBd = userData.id;
-            this.AgregarMiembro(userData.id);
-            this.myForm.reset();
-                this.toggleForm(null);
-          } else {
-  
-            const usuario: Usuario = {
-              id: null,
-              usuario: userName,
-              nombre: data.nombres,
-              idInstitucional: data.id,
-              correo: data.correoInstitucional,
-              departamento: data.ubicacion,
-              cedula: data.cedula,
-              fechaCreacion: currentDate,
-              fechaModificacion: null,
-              usuarioCreacion: currentUser,
-              usuarioModificacion: null,
-              institucion: 'UNIVERSIDAD DE LAS FUERZAS ARMADAS – ESPE',
-              cargo: data.escalafon,
-            };
-            this.userService.createUser(usuario).subscribe(
-              (response) => {
-                this.user.idBd = response;
-                console.log("usuario", response);
-                this.AgregarMiembro(response);
-                this.myForm.reset();
-                this.toggleForm(null);
-              }
-            );
-            console.log("user", userData);
-          }
-        });
-      });
     }
+    this.rolExterno = event.value;
+  }
+  crearUsuario(user): void {
+    this.isLoading = true;
 
-  deleteMember(id: number): void {
-    forkJoin([
-      this.invMemberService.deleteUserGroup(id,this.groupId),
-    ]).subscribe({
+    const currentUser = this.authService.getUserName();
+    const currentDate = new Date();
+    const token = sessionStorage.getItem('access_token');
+    const userName = this.myForm.get('usuario').value;
+    this.userService.getUserApp(userName, token).subscribe((data) => {
+      this.userService.getByUserName(userName).subscribe((userData) => {
+        if (userData.id != null) {
+          this.user.idBd = userData.id;
+          this.AgregarMiembro(userData.id, 'INTERNO');
+          this.myForm.reset();
+          this.showExternalForm = false;
+          this.showInternalForm = false;
+        } else {
+          let nacionalidad: string;
+          if (data.nacionalidad === 'E') {
+            nacionalidad = 'ECUADOR';
+          } else {
+            nacionalidad = data.nacionalidad;
+          }
+          const partes = data.ubicacion.split(" - ");
+          const departamento = partes[1].trim();
+          const sede = partes[0].trim();
+          const usuario: Usuario = {
+            id: null,
+            usuario: userName,
+            nombre: data.nombres,
+            idInstitucional: data.id,
+            correo: data.correoInstitucional,
+            departamento: departamento,
+            sede: sede,
+            cedula: data.cedula,
+            fechaCreacion: currentDate,
+            fechaModificacion: null,
+            usuarioCreacion: currentUser,
+            usuarioModificacion: null,
+            institucion: 'UNIVERSIDAD DE LAS FUERZAS ARMADAS – ESPE',
+            cargo: data.escalafon,
+            nacionalidad: nacionalidad,
+            foto: data.urlFoto,
+            genero: data.sexo,
+            grado: data.grado,
+          };
+          this.userService.createUser(usuario).subscribe(
+            (response) => {
+              this.user.idBd = response;
+              this.AgregarMiembro(response, 'INTERNO');
+              this.myForm.reset();
+              this.showExternalForm = false;
+              this.showInternalForm = false;
+            }
+          );
+        }
+      });
+    });
+  }
+
+  deleteMember(user: InvMemberForm, id: number): void {
+    this.isLoading = true;
+    const userData: DislinkMembers = {
+      idGrupoInv: this.groupId,
+      idUsuario: id,
+      fechaVinculacion: user.fechaVinculacion,
+      tipo: user.tipo,
+      status: user.status,
+      usuarioCreacion: this.currentUser,
+      fechaCreacion: this.currentDate,
+      usuarioModificacion: null,
+      fechaModificacion: null
+    };
+    this.dislinkService.createDislinkMember(userData).pipe(
+      switchMap(() => this.invMemberService.deleteUserGroup(id, this.groupId))
+    ).subscribe({
       next: () => {
-        this.get(this.groupId); // Se ejecuta solo después de que ambas eliminaciones terminen
+        this.get(this.groupId);
+        this.snackBar.open('El Investigador ha sido desvinculado del GI', 'Cerrar', {
+          duration: 3000,          // Duración en milisegundos
+        });
+        this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error al eliminar el área y sus líneas asociadas:', err);
+        this.snackBar.open('Ocurrió un error al eliminar al Investigador.', 'Cerrar', {
+          duration: 3000,          // Duración en milisegundos
+        });
+        this.isLoading = false;
       }
     });
   }
-      @ViewChild('apellidoInput') apellidoInput: ElementRef;  // Referencia al campo de apellido
-  
-  
+
+  @ViewChild('apellidoInput') apellidoInput: ElementRef;  // Referencia al campo de apellido
+
+  editMemberInfo(user: InvMemberForm): void {
+    this.cargarFormulariosInfoUser(user);
+    this.isEdit = true;
+
+  }
+  onlyRead;
+  cargarFormulariosInfoUser(user: InvMemberForm): void {
+
+    this.miembroForm = this.fb.group({
+      idGrupoInv: [user.idGrupoInv, Validators.required],
+      idUsuario: [user.idUsuario, Validators.required],
+      fechaVinculacion: [user.fechaVinculacion, Validators.required],
+      tipo: [user.tipo, Validators.required],
+      status: [user.status, Validators.required],
+      usuarioCreacion: [user.usuarioCreacion, Validators.required],
+      fechaCreacion: [user.fechaCreacion, Validators.required],
+      usuarioModificacion: [user.usuarioModificacion, Validators.required],
+      fechaModificacion: [user.fechaModificacion, Validators.required],
+    });
+    this.onlyRead = !!user.user.usuario; // Si existe un valor, el campo será readonly
+
+    this.userDataForm = this.fb.group({
+      id: [user.user.id, Validators.required],
+      usuario: [user.user.usuario ?? 'EXTERNO', Validators.required],
+      nombre: [user.user.nombre, Validators.required],
+      idInstitucional: [user.user.idInstitucional, Validators.required],
+      correo: [user.user.correo, Validators.required],
+      departamento: [user.user.departamento ?? 'EXTERNO', Validators.required],
+      cedula: [user.user.cedula, Validators.required],
+      institucion: [user.user.institucion, Validators.required],
+      cargo: [user.user.cargo, Validators.required],
+      nacionalidad: [user.user.nacionalidad, Validators.required],
+      foto: [user.user.foto, Validators.required],
+      genero: [user.user.genero, Validators.required],
+      grado: [user.user.grado, Validators.required],
+      sede: [user.user.sede, Validators.required],
+      fechaCreacion: [user.user.fechaCreacion, Validators.required],
+      fechaModificacion: [user.user.fechaModificacion, Validators.required],
+      usuarioCreacion: [user.user.usuarioCreacion, Validators.required],
+      usuarioModificacion: [user.user.usuarioModificacion, Validators.required],
+    })
+    this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe(data => {
+      this.nacionalidades = data.map(country => country.translations.spa.common); // Extraer nombres en español
+      this.nacionalidadesFiltradas = this.userDataForm.get('nacionalidad')!.valueChanges.pipe(
+        startWith(''),
+        map(value => this.filtrarNacionalidades(value || ''))
+      );
+    });
+
+  }
+
+
+actualizarInfoMiembro(): void {
+  this.isLoading = true;
+
+  // Llamada concurrente para actualizar miembro y usuario
+  forkJoin([
+    this.invMemberService.update(this.miembroForm.value.idUsuario, this.miembroForm.value.idGrupoInv, this.miembroForm.value),
+    this.userService.update(this.userDataForm.value.id, this.userDataForm.value)
+  ]).subscribe(
+    ([miembroResponse, usuarioResponse]) => {
+      // Recargar datos después de la actualización exitosa
+      this.get(this.groupId);
+      this.isLoading = false;
+      this.isEdit = false;
+
+      // Mostrar mensaje de éxito
+      this.snackBar.open('Información del usuario actualizada con éxito.', 'Cerrar', {
+        duration: 3000,
+        panelClass: ['success-snackbar'],
+      });
+    },
+    (error) => {
+      this.isLoading = false;
+
+      // Mostrar mensaje de error
+      this.snackBar.open('Error al actualizar la información del usuario.', 'Cerrar', {
+        duration: 3000,
+        panelClass: ['error-snackbar'],
+      });
+    }
+  );
+}
+
+
+  private filtrarNacionalidades(valor: string): string[] {
+    const filtro = valor.toLowerCase();
+    return this.nacionalidades.filter(nacionalidad => nacionalidad.toLowerCase().includes(filtro));
+  }
+
   guardarmiembro(): void {
+    this.isLoading = true;
     const apellido = this.apellidoInput.nativeElement.value;
     const nombreCompleto = `${apellido}, ${this.miembro.get('nombre').value}`;
     this.miembro.patchValue({ nombre: nombreCompleto });
@@ -174,37 +326,46 @@ export class MembersModalEdit implements OnInit {
     userData.fechaCreacion = this.currentDate;
     userData.usuarioCreacion = this.currentUser;
     this.userService.createUser(userData).subscribe(
-        (response) => {
-            userData.id=response;
-            this.AgregarMiembro(userData.id);
-            this.miembro.reset();
-            this.toggleForm(null);
-        },
-        (error) => {
-            console.error('Error al crear el usuario', error);
-        }
+      (response) => {
+        this.isLoading = false;
+        userData.id = response;
+        this.AgregarMiembro(userData.id, 'EXTERNO');
+        this.miembro.reset();
+        this.cancelar();
+      },
+      (error) => {
+        console.error('Error al crear el usuario', error);
+      }
     );
-}
-AgregarMiembro(id: number){
-    const data:InvMemberForm={
-        idGrupoInv:this.groupId,
-        idUsuario:id,
-        fechaVinculacion:null,
-        tipo:'Externo',
-        usuarioCreacion:this.currentUser,
-        fechaCreacion:this.currentDate,
-        //imagen:
-        usuarioModificacion:null,
-        fechaModificacion:null
+  }
+  AgregarMiembro(id: number, status: string) {
+    let tipo: string;
+    if (this.user) {
+      tipo = this.user.rolInvestigador;
+    } else {
+      tipo = this.rolExterno;
+    }
+    const data: InvMemberForm = {
+      idGrupoInv: this.groupId,
+      idUsuario: id,
+      fechaVinculacion: this.currentDate,
+      tipo: tipo,
+      status: status,
+      usuarioCreacion: this.currentUser,
+      fechaCreacion: this.currentDate,
+      //imagen:
+      usuarioModificacion: null,
+      fechaModificacion: null
     }
     this.invMemberService.createInvMemberFormForm(data).subscribe(
-        (response) => {
-            console.log(response);
-        },
-        (error) => {
-            console.error('Error al crear el usuario', error);
-        }
+      (response) => {
+        this.get(this.groupId);
+        this.isLoading = false;
+      },
+      (error) => {
+        this.get(this.groupId);
+        this.isLoading = false;
+      }
     );
-    this.get(this.groupId);
-}
+  }
 }

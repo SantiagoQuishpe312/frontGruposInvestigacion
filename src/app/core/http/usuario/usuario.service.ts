@@ -43,4 +43,7 @@ export class UsuarioService {
   createUser(formData: Usuario): Observable<any> {
     return this.http.post(`${this.URL}/create`, formData);
   }
+  update(id: number, formData: Usuario): Observable<any> {
+    return this.http.put(`${this.URL}/update/${id}`, formData);
+  }
 }

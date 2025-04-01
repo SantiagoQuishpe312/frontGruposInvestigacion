@@ -10,7 +10,7 @@ import { Usuario } from 'src/app/types/usuario.types';
 })
 export class DislinkMembersService {
 
-  private readonly URL = environment.appApiUrl + '/dislink-members';
+  private readonly URL = environment.appApiUrl + '/dislinks-members';
 
   constructor(private http: HttpClient) {}
 

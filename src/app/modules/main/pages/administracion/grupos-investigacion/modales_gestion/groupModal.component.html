@@ -1,4 +1,6 @@
-
+<div *ngIf="isLoading" class="loading-spinner-overlay">
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+</div>
 <div class="cont" *ngIf="!mostrar">
     <header>
         <h1>Gestión de Grupos</h1>
@@ -8,11 +10,13 @@
         class="form-container">
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Coordinador</mat-label>
-            <input matInput [value]="coordinatorName" readonly />
-        </mat-form-field>
-        <button mat-icon-button type="button" style="background-color: darkgreen;" (click)="addUser()">
-            <i class="fa-regular fa-pen-to-square"></i>
-        </button>
+            <input matInput [value]="coordinatorName" readonly >
+            <button mat-icon-button type="button" style="background-color: darkgreen; margin: 0%;" (click)="addUser()">
+              <i class="fa fa-chevron-circle-right"></i> 
+          </button>
+          </mat-form-field>
+        
+      
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Nombre del Grupo</mat-label>
             <input matInput formControlName="nombreGrupoInv" />
@@ -44,7 +48,7 @@
     <div class="container-fluid">
       <form [formGroup]="userForm" (ngSubmit)="buscarMiembro()" class="container">
         <header class="header">
-          <h1 class="title">Añadir Investigadores</h1>
+          <h1 class="title">Buscar coordinador por username</h1>
         </header>
         <div class="grid-container">
           <div class="grid-item">
@@ -81,15 +85,16 @@
             </div>
           </div>
         </div>
-        <button mat-icon-button type="button" style="background-color: darkgreen;" (click)="cancelar()">
-            <i class="fa-regular fa-pen-to-square"></i>
+        <button mat-button type="button" style="background-color: darkgreen;color: white;" (click)="cancelar()" matTooltip="Regresar">
+          Regresar/Cancelar
         </button>
+        
       </form>
       <div mat-dialog-actions>
         <button mat-button class="btn-agregar" 
                 (click)="crearUsuario(user)"
                 *ngIf="isSearchClicked && !userNotFound">
-          Añadir
+          Seleccionar
         </button>
       </div>
     </div>

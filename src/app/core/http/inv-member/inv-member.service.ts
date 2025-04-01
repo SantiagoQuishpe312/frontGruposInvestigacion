@@ -41,4 +41,7 @@ export class InvMemberService {
     return this.http.delete(`${this.URL}/${idUser}/group/${idGroup}`);
 
   }
+  update(idUser:number,idGroup:number,formData:InvMemberForm):Observable<any>{
+    return this.http.put(`${this.URL}/update/${idUser}/${idGroup}`,formData);
+  }
 }

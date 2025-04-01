@@ -1,3 +1,6 @@
+<div *ngIf="isLoading" class="loading-spinner-overlay">
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+</div>
 <div class="cont">
     <header>
       <h1>Gestión de Áreas y Líneas de Investigación</h1>
@@ -6,12 +9,20 @@
     <table>
         <thead>
           <tr>
+            <th>Dominio Académico</th>
             <th>Área</th>
             <th>Línea</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
+          <tr *ngFor="let dom of invGroup?.academicDomain">
+            <td [attr.rowspan]="dom.areas?.length">{{ dom.nombreDominioAcademico }}
+              <button class="warn" mat-mini-fab (click)="deleteArea(dom.idDomimioAcademico)">
+                  <i class="fa fa-trash-alt" aria-hidden="true"></i> 
+              </button>
+          </td>
+          </tr>
           <tr *ngFor="let area of invGroup?.area">
             <td [attr.rowspan]="area.lineas?.length">{{ area.nombreArea }}
                 <button class="warn" mat-mini-fab (click)="deleteArea(area.idArea)">
@@ -34,10 +45,7 @@
         </tbody>
       </table>
       
-  
-    <div *ngIf="loadingData">
-      <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
-    </div>
+
   
     <div *ngIf="!loadingData">
       <form [formGroup]="myForm" (ngSubmit)="Enviar()">

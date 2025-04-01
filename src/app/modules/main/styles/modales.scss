@@ -1,4 +1,15 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+/* Estilo para el toast de éxito */
+.success-snackbar {
+  background-color: #4caf50; /* Verde */
+  color: white;
+}
+
+/* Estilo para el toast de error */
+.error-snackbar {
+  background-color: #f44336; /* Rojo */
+  color: white;
+}
 
 .cont{
   padding: 8px;

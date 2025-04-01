@@ -59,125 +59,153 @@
 
         </div>
         <div class="filters-container">
-          <!-- Filtro por función -->
-          <!-- Filtro por función (opciones fijas) -->
-          <!--<mat-form-field>
-            <mat-label>Filtrar por función</mat-label>
-            <mat-select [(value)]="selectedFuncion"
-              (selectionChange)="aplicarFiltro()">
-              <mat-option [value]="''">Todos</mat-option>-->
-              <!-- Opción para mostrar todos -->
-               <!--<mat-option
-                *ngFor="let funcion of ['Miembro', 'Coordinador', 'Colaborador', 'Secretario']"
-                [value]="funcion">
-                {{ funcion }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>-->
-
-          <!-- Filtro por género (opciones dinámicas desde la API) -->
-          <!-- <mat-form-field>
-            <mat-label>Filtrar por género</mat-label>
-            <mat-select [(value)]="selectedGenero"
-              (selectionChange)="aplicarFiltro()">
-              <mat-option [value]="''">Todos</mat-option>-->
-              <!-- Opción para mostrar todos -->
-            <!--  <mat-option *ngFor="let genero of availableGeneros"
-                [value]="genero">
-                {{ genero }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>-->
-
-          <!-- Filtro por grado académico (opciones dinámicas desde la API) -->
-        <!--  <mat-form-field>
-            <mat-label>Filtrar por grado académico</mat-label>
-            <mat-select [(value)]="selectedGrado"
-              (selectionChange)="aplicarFiltro()">
-              <mat-option [value]="''">Todos</mat-option>-->
-              <!-- Opción para mostrar todos -->
-             <!-- <mat-option *ngFor="let grado of availableGrados" [value]="grado">
-                {{ grado }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>-->
-
-        </div>
-        <div class="tables-container3">
-
-          <div *ngIf="usuariosPorFuncion">
-            <table class="members-table">
-              <thead>
-                <tr>
-                  <th>Función</th>
-                  <th>Cantidad</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Miembros</td>
-                  <td>{{ usuariosPorFuncion['Miembro'] }}</td>
-                </tr>
-                <tr>
-                  <td>Coordinadores</td>
-                  <td>{{ usuariosPorFuncion['Coordinador'] }}</td>
-                </tr>
-                <tr>
-                  <td>Colaboradores</td>
-                  <td>{{ usuariosPorFuncion['Colaborador'] }}</td>
-                </tr>
-                <tr>
-                  <td><strong>Total General</strong></td>
-                  <td><strong>{{
-                      (+usuariosPorFuncion['Miembro'] || 0) +
-                      (+usuariosPorFuncion['Coordinador'] || 0) +
-                      (+usuariosPorFuncion['Colaborador'] || 0)
-                      }}</strong></td> </tr>
-              </tbody>
-            </table>
+          <div class="search-container">
+            <mat-form-field appearance="outline" class="full-width1">
+              <mat-label>Buscar por departamento</mat-label>
+              <mat-select [formControl]="departamentoControl">
+                <mat-option value="">Todos los departamentos</mat-option>
+                <mat-option *ngFor="let dept of departamento" [value]="dept">
+                  {{ dept }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
-
-          <div *ngIf="usuariosPorGradoAcademico">
-            <table class="members-table">
-              <thead>
-                <tr>
-                  <th>Grado Académico</th>
-                  <th>Cantidad</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let grado of obtenerGrados()">
-                  <td>{{ grado }}</td>
-                  <td>{{ usuariosPorGradoAcademico[grado] }}</td>
-                </tr>
-                <tr>
-                  <td><strong>Total General</strong></td>
-                  <td><strong>{{ obtenerTotal() }}</strong></td>
-                </tr>
-              </tbody>
-            </table>
+        
+          <div class="search-container">
+            <mat-form-field appearance="outline" class="full-width1">
+              <mat-label>Buscar por función</mat-label>
+              <mat-select [formControl]="funcionControl">
+                <mat-option value="">Todas las Funciones del GI</mat-option>
+                <mat-option *ngFor="let fun of tipo" [value]="fun">
+                  {{ fun }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        
+          <div class="search-container">
+            <mat-form-field appearance="outline" class="full-width1">
+              <mat-label>Filtrar por género</mat-label>
+              <mat-select [formControl]="generoControl">
+                <mat-option value="">Todas</mat-option>
+                <mat-option *ngFor="let gen of genero" [value]="gen">
+                  {{ gen }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        
+          <div class="search-container">
+            <mat-form-field appearance="outline" class="full-width1">
+              <mat-label>Buscar por Grado Académico</mat-label>
+              <mat-select [formControl]="gradoControl">
+                <mat-option value="">Todos</mat-option>
+                <mat-option *ngFor="let grado of grado" [value]="grado">
+                  {{ grado }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
         </div>
+        
+        <div class="tablas-container">
 
-        <div class="modal-buttons">
-          <button color="primary" mat-button (click)="EditLine()">
-            <i class="fa fa-edit"></i>Líneas y áreas
+          <div class="tabla">       
+            <!-- Tabla de conteo de departamentos -->
+            <table mat-table [dataSource]="departamentoCountDataSource" class="mat-elevation-z8">
+              <ng-container matColumnDef="departamento">
+                <th mat-header-cell *matHeaderCellDef>Departamento</th>
+                <td mat-cell *matCellDef="let element">{{ element.departamento }}</td>
+                <td mat-footer-cell *matFooterCellDef><strong>Total</strong></td>
+              </ng-container>
+            
+              <ng-container matColumnDef="cantidad">
+                <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+                <td mat-cell *matCellDef="let element">{{ element.cantidad }}</td>
+                <td mat-footer-cell *matFooterCellDef><strong>{{ totalDepartamentoCount }}</strong></td>
+              </ng-container>
+            
+              <tr mat-header-row *matHeaderRowDef="['departamento', 'cantidad']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['departamento', 'cantidad'];"></tr>
+              <tr mat-footer-row *matFooterRowDef="['departamento', 'cantidad']"></tr>
+            </table>
+          </div>   
+  
+          <div class="tabla">       
+            <!-- Tabla de conteo de departamentos -->
+            <table mat-table [dataSource]="funcionCountDataSource" class="mat-elevation-z8">
+              <ng-container matColumnDef="tipo">
+                <th mat-header-cell *matHeaderCellDef>Función</th>
+                <td mat-cell *matCellDef="let element">{{ element.tipo }}</td>
+                <td mat-footer-cell *matFooterCellDef><strong>Total</strong></td>
+              </ng-container>
+            
+              <ng-container matColumnDef="cantidad">
+                <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+                <td mat-cell *matCellDef="let element">{{ element.cantidad }}</td>
+                <td mat-footer-cell *matFooterCellDef><strong>{{ totalFuncionCount }}</strong></td>
+              </ng-container>
+            
+              <tr mat-header-row *matHeaderRowDef="['tipo', 'cantidad']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['tipo', 'cantidad'];"></tr>
+              <tr mat-footer-row *matFooterRowDef="['tipo', 'cantidad']"></tr>
+            </table>
+          </div>  
+  
+  
+        </div>   
+        <div class="tablas-container">
 
-          </button>
-          <button color="primary" mat-button (click)="EditMembers()">
-            <i class="fa fa-edit"></i>Integrantes
-          </button>
-          <button color="primary" mat-button (click)="EditGroup()">
-            <i class="fa fa-edit"></i>Grupo
-          </button>
-        </div>
-
-        <table class="tablaInvestigadores" mat-table [dataSource]="dataSource"
+          <div class="tabla">       
+            <!-- Tabla de conteo de departamentos -->
+            <table mat-table [dataSource]="generoCountDataSource" class="mat-elevation-z8">
+              <ng-container matColumnDef="genero">
+                <th mat-header-cell *matHeaderCellDef>Genero</th>
+                <td mat-cell *matCellDef="let element">{{ element.genero }}</td>
+                <td mat-footer-cell *matFooterCellDef><strong>Total</strong></td>
+              </ng-container>
+            
+              <ng-container matColumnDef="cantidad">
+                <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+                <td mat-cell *matCellDef="let element">{{ element.cantidad }}</td>
+                <td mat-footer-cell *matFooterCellDef><strong>{{ totalGeneroCount }}</strong></td>
+              </ng-container>
+            
+              <tr mat-header-row *matHeaderRowDef="['genero', 'cantidad']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['genero', 'cantidad'];"></tr>
+              <tr mat-footer-row *matFooterRowDef="['genero', 'cantidad']"></tr>
+            </table>
+          </div>   
+  
+          <div class="tabla">       
+            <!-- Tabla de conteo de departamentos -->
+            <table mat-table [dataSource]="gradoCountDataSource" class="mat-elevation-z8">
+              <ng-container matColumnDef="grado">
+                <th mat-header-cell *matHeaderCellDef>Grado Académico</th>
+                <td mat-cell *matCellDef="let element">{{ element.grado }}</td>
+                <td mat-footer-cell *matFooterCellDef><strong>Total</strong></td>
+              </ng-container>
+            
+              <ng-container matColumnDef="cantidad">
+                <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+                <td mat-cell *matCellDef="let element">{{ element.cantidad }}</td>
+                <td mat-footer-cell *matFooterCellDef><strong>{{ totalGradoCount }}</strong></td>
+              </ng-container>
+            
+              <tr mat-header-row *matHeaderRowDef="['grado', 'cantidad']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['grado', 'cantidad'];"></tr>
+              <tr mat-footer-row *matFooterRowDef="['grado', 'cantidad']"></tr>
+            </table>
+          </div>  
+  
+  
+        </div>   
+          <table class="mat-elevation-z8" mat-table [dataSource]="dataSource"
           matSort>
 
           <ng-container matColumnDef="pais">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> País </th>
-            <td mat-cell *matCellDef="let user">
+            <td mat-cell *matCellDef="let user" class="word-wrap-cell">
               {{ user.nacionalidad === 'E' ? 'Ecuador' : (user.nacionalidad ===
               'E5' ? 'España' : user.nacionalidad) }}
             </td>
@@ -186,18 +214,17 @@
           <ng-container matColumnDef="nombreDocente">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre del
               Docente </th>
-            <td mat-cell *matCellDef="let user"> {{ user.nombre }} </td>
+            <td mat-cell *matCellDef="let user" class="word-wrap-cell"> {{ user.nombre }} </td>
           </ng-container>
 
-          <ng-container matColumnDef="funcion">
+          <ng-container matColumnDef="tipo">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Función </th>
-            <td mat-cell *matCellDef="let user"> {{ user.funcion ? user.funcion
-              : 'Miembro' }} </td>
+            <td mat-cell *matCellDef="let user" class="word-wrap-cell"> {{ user.tipo }} </td>
           </ng-container>
 
-          <ng-container matColumnDef="sede">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Sede </th>
-            <td mat-cell *matCellDef="let user">
+          <ng-container matColumnDef="departamento">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Departamento </th>
+            <td mat-cell *matCellDef="let user" class="word-wrap-cell">
               {{ user.departamento ? user.departamento.split('-')[0] : 'Externo'
               }}
             </td>
@@ -206,14 +233,35 @@
           <ng-container matColumnDef="universidadCentro">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Universidad/Centro </th>
-            <td mat-cell *matCellDef="let user"> {{ user.institucion }} </td>
+            <td mat-cell *matCellDef="let user" class="word-wrap-cell"> {{ user.institucion }} </td>
+          </ng-container>
+          <ng-container matColumnDef="genero">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Género </th>
+            <td mat-cell *matCellDef="let user" class="word-wrap-cell"> {{ user.genero }} </td>
+          </ng-container>
+          <ng-container matColumnDef="grado">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Grado Académico </th>
+            <td mat-cell *matCellDef="let user" class="word-wrap-cell"> {{ user.grado }} </td>
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
         </table>
-        <button type="button" mat-raised-button color="primary"
+        <button type="button" mat-raised-button color="primary" class="btn-container"
+        [disabled]="!invGroup" (click)="EditGroup()">Editar Información del Grupo</button>
+        <button type="button" mat-raised-button color="primary" class="btn-container" 
+          [disabled]="!invGroup" (click)="EditMembers()">
+          Editar Miembros del Grupo
+        </button>
+        <button type="button" mat-raised-button color="primary" class="btn-container" 
+          [disabled]="!invGroup" (click)="EditLine()">
+          Editar Dominios-Áreas-Líneas
+        </button>
+
+        <button type="button" mat-raised-button color="primary" class="btn-container" 
           [disabled]="!invGroup" (click)="enlace('reportesGI')">
           Reportes
         </button>

@@ -20,7 +20,7 @@ export class GroupModalEdit implements OnInit {
   isSearchClicked = false;
   userNotFound = false;
   invGroup: InvGroupCompleteForm;
-  loadingData: boolean = true;
+  isLoading: boolean = true;
   myForm: FormGroup;
   groupId: number;
   currentUser: string;
@@ -59,11 +59,11 @@ export class GroupModalEdit implements OnInit {
         }
         this.invGroup = invGroup;
         this.cargarFormularios(); // Carga el formulario solo cuando los datos estén listos
-        this.loadingData = false; // Indica que ya no estás cargando datos
+        this.isLoading = false; // Indica que ya no estás cargando datos
       },
       (error) => {
         console.error('Error al obtener los datos del grupo:', error);
-        this.loadingData = false; // Asegúrate de no dejar la interfaz en estado de carga
+        this.isLoading = false; // Asegúrate de no dejar la interfaz en estado de carga
       }
     );
   }
@@ -91,8 +91,8 @@ export class GroupModalEdit implements OnInit {
         nombreGrupoInv: [this.grupo.nombreGrupoInv, Validators.required],
         estadoGrupoInv: [this.grupo.estadoGrupoInv, Validators.required],
         acronimoGrupoinv: [this.grupo.acronimoGrupoinv, Validators.required],
-        mision: [this.grupo.mision, Validators.required],
-        vision: [this.grupo.vision, Validators.required],
+        mision: [this.grupo.mision],
+        vision: [this.grupo.vision],
         departamento: [this.grupo.departamento, Validators.required],
         usuarioCreacion: [this.grupo.usuarioCreacion, Validators.required],
         fechaCreacion: [this.grupo.fechaCreacion, Validators.required],
@@ -104,6 +104,19 @@ export class GroupModalEdit implements OnInit {
     }
   }
   onSubmit() {
+    this.invGroupService.update(this.groupId, this.myForm.value).subscribe(
+      (response) => {
+        console.log(response);
+        this.get(this.groupId);
+        this.dialogRef.close(true);
+
+      },
+      (error) => {
+        console.error('Error al actualizar el grupo', error);
+        this.dialogRef.close(true);
+
+      }
+    );
 
   }
   addUser() {
@@ -146,6 +159,7 @@ export class GroupModalEdit implements OnInit {
     this.userForm.reset();
   }
   crearUsuario(user): void {
+    this.isLoading = true;
     const currentUser = this.authService.getUserName();
     const currentDate = new Date();
     const token = sessionStorage.getItem('access_token');
@@ -153,18 +167,27 @@ export class GroupModalEdit implements OnInit {
     this.userService.getUserApp(userName, token).subscribe((data) => {
       this.userService.getByUserName(userName).subscribe((userData) => {
         if (userData.id != null) {
-          console.log("El usuario ya existe en la bd");
           this.user.idBd = userData.id;
           this.ActualizarCoord(userData.id);
           this.userForm.reset();
         } else {
+          let nacionalidad:string;
+          if(data.nacionalidad === 'E'){
+            nacionalidad = 'ECUADOR';
+          }else{
+            nacionalidad = data.nacionalidad;
+          }
+          const partes = data.ubicacion.split(" - ");
+          const departamento = partes[1].trim();
+          const sede = partes[0].trim();
           const usuario: Usuario = {
             id: null,
             usuario: userName,
             nombre: data.nombres,
             idInstitucional: data.id,
             correo: data.correoInstitucional,
-            departamento: data.ubicacion,
+            departamento: departamento,
+            sede:sede,
             cedula: data.cedula,
             fechaCreacion: currentDate,
             fechaModificacion: null,
@@ -172,21 +195,24 @@ export class GroupModalEdit implements OnInit {
             usuarioModificacion: null,
             institucion: 'UNIVERSIDAD DE LAS FUERZAS ARMADAS – ESPE',
             cargo: data.escalafon,
+            nacionalidad: nacionalidad,
+            foto: data.urlFoto,
+            genero: data.sexo,
+            grado: data.grado,
           };
           this.userService.createUser(usuario).subscribe(
             (response) => {
               this.user.idBd = response;
-              console.log("usuario", response);
               this.ActualizarCoord(response);
               this.userForm.reset();
             }
           );
-          console.log("user", userData);
         }
       });
     });
   }
   ActualizarCoord(id: number) {
+    this.isLoading = true;
     const dataGrupo = this.grupo;
     dataGrupo.idCoordinador = id;
     dataGrupo.usuarioModificacion = this.currentUser;
@@ -194,11 +220,13 @@ export class GroupModalEdit implements OnInit {
     this.invGroupService.update(this.groupId, dataGrupo).subscribe(
       (response) => {
         console.log(response);
-        this.loadCoordinatorName(id); // Actualiza el nombre del coordinador
+        this.get(this.groupId); // Actualiza el nombre del coordinador
         this.cancelar();
+        this.isLoading = false;
       },
       (error) => {
         console.error('Error al actualizar el grupo', error);
+        this.isLoading = false;
       }
     );
     this.get(this.groupId);

@@ -10,6 +10,7 @@ export interface UserApp {
   tipo: string;
   ubicacion: string;
   idBd?: number;
+  rolInvestigador?: string;
   //roles: UserRole[]; 
   escalafon:string;
   grado:string;
