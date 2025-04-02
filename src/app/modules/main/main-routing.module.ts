@@ -73,9 +73,9 @@ import { MemoActualizacionVicComponent } from './pages/vicerectorDeInvestigacion
 import { ActualizacionAnaVic } from './pages/analistaGestion/actualizarFicha/mostrarSolicitud.component';
 import { ActualizacionForAnaComponent } from './pages/analistaGestion/actualizarFicha/obtenerSolicitudes.component';
 import { ActivityReportsForCorComponent } from './pages/coordinador-inv/seguimiento/remisionDeInformacion/obtenerSolicitudes.component';
-import { DevelopmentPlanFormComponent } from './pages/coordinadorGI/plan_desarrollo/development-plan';
+import { DevelopmentPlanFormComponent } from './pages/coordinadorGI/faseCreacion/plan_desarrollo/development-plan';
 import { VerReportesComponent } from './pages/reporte-actividades/ver-reportes/ver-reportes.component';
-import { PropuestaGIComponent } from './pages/coordinadorGI/memorando/creation_proposal';
+import { PropuestaGIComponent } from './pages/coordinadorGI/faseCreacion/memorando/creation_proposal';
 import { InformeDePertinenciaComponent } from './pages/coordinadorGI/Informe_Pertinencia/relevance_report';
 import { ResolucionConsejoComponent } from './pages/directorDepartamento/faseCreacionGI/resolucionConsejo/resolucionConsejo.component';
 import { SolicitudesForVicerectorIComponent } from './pages/vicerectorDeInvestigacion/resoluciones copy/solicitudes-de-creacion/obtenerSolicitudes.component';
@@ -89,7 +89,7 @@ import { GruposControlComponent } from './pages/administracion/grupos-investigac
 import { DetalleGIComponent } from './pages/administracion/grupos-investigacion/detalle-gi.component';
 import { CrearGIComponent } from './pages/administracion/grupos-investigacion/crearGI.component';
 import { AnnualPlanComponent } from './pages/coordinadorGI/seguimiento/PlanAnual/planAnual.component';
-import { SolCreacionComponent } from './pages/coordinadorGI/sol-creacion/sol-creacion.component';
+import { SolCreacionComponent } from './pages/coordinadorGI/faseCreacion/sol-creacion/sol-creacion.component';
 import { ReportesGIComponent } from './pages/administracion/grupos-investigacion/reportes-gi/reportes-gi.component';
 import { MemorandoCreacionVITTComponent } from './pages/directorDepartamento/faseCreacionGI/memorando-creacion-vitt/memorando-creacion-vitt.component';
 import { MemorandoOchoComponent } from './pages/analistaGestion/fase-creacion/solicitudes-de-creacion/memorando-ocho/memorando-ocho.component';

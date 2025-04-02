@@ -11,7 +11,7 @@ import { ODS } from 'src/app/types/ods.types';
 @Component({
     selector: 'app-area',
     templateUrl: './modal_objetivos.component.html',
-    styleUrls: ['../../../styles/modales.scss']
+    styleUrls: ['../../../../styles/modales.scss']
 })
 export class ObjControl implements OnInit {
     currentUser: string;
