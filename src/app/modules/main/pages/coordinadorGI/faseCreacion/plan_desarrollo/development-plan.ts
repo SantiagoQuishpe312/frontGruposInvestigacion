@@ -42,7 +42,7 @@ import { SpecificObjetivesService } from 'src/app/core/http/specific-objetives/s
 @Component({
   selector: 'vex-development-plan-form',
   templateUrl: './development-plan.html',
-  styleUrls: ['../creation-form.component.scss'],
+  styleUrls: ['../../creation-form.component.scss'],
 })
 @Injectable({
   providedIn: 'root',

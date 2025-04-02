@@ -29,7 +29,7 @@ import { Usuario } from 'src/app/types/usuario.types';
 @Component({
   selector: 'vex-creation-form',
   templateUrl: './crearGI.component.html',
-  styleUrls: ['../../coordinadorGI/sol-creacion/sol-creacion.component.scss'],
+  styleUrls: ['../../coordinadorGI/faseCreacion/sol-creacion/sol-creacion.component.scss']
 })
 @Injectable({
   providedIn: 'root'

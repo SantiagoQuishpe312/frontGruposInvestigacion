@@ -11,7 +11,7 @@ import { Observable, startWith, map } from 'rxjs';
 @Component({
     selector: 'app-members',
     templateUrl: './externMemberForm.component.html',
-    styleUrls: ['../../coordinadorGI/sol-creacion/sol-creacion.component.scss']
+    styleUrls: ['../../coordinadorGI/faseCreacion/sol-creacion/sol-creacion.component.scss']
 })
 export class ExternMembersGroup implements OnInit {
     @ViewChild('apellidoInput') apellidoInput: ElementRef;  

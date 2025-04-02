@@ -169,7 +169,7 @@ import { SolicitudesParaResolucionComponent } from './pages/analistaGestion/fase
 import { GruposParaResolucionComponent } from './pages/analistaGestion/fase-creacion/Solicitudes-para-resolucion/grupos-para-resolucion/grupos-para-resolucion.component';
 import { MemorandoDoceComponent } from './pages/analistaGestion/fase-creacion/Solicitudes-para-resolucion/memorando-doce/memorando-doce.component';
 import { SolicitudPlanesComponent } from './pages/unidad-gestion-inv/solicitud-planes.component';
-import { MemorandoSolPlanesComponent } from './pages/unidad-gestion-inv/memorando-sol-planes/memorando-sol-planes.component';
+import { MemorandoSolPlanesComponent } from './pages/unidad-gestion-inv/faseSeguimiento/memorando-sol-planes/memorando-sol-planes.component';
 import { SolicitudInformesComponent } from './pages/unidad-gestion-inv/solicitud-informes/solicitud-informes.component';
 import { MemorandoSolInformesComponent } from './pages/unidad-gestion-inv/solicitud-informes/memorando-sol-informes/memorando-sol-informes.component';
 

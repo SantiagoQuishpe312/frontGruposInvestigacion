@@ -12,7 +12,7 @@ import { CreationReqService } from 'src/app/core/http/creation-req/creation-req.
 @Component({
   selector: 'app-solicitud-componente',
   templateUrl: './mostrarSolicitud.component.html',
-  styleUrls: ['./obtenerSolicitudes.component.scss']
+  styleUrls: ['./solicitud-planes.component.scss']
 })
 export class MostrarSolicitud implements OnInit {
   id: number;

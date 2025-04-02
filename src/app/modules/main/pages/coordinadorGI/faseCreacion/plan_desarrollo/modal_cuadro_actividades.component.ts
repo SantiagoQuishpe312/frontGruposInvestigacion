@@ -12,7 +12,7 @@ import { UsuarioService } from "src/app/core/http/usuario/usuario.service";
 @Component({
     selector: 'app-area',
     templateUrl: './modal_cuadro_actividades.component.html',
-    styleUrls: ['../../../styles/modales.scss']
+    styleUrls: ['../../../../styles/modales.scss']
 })
 export class ActControl implements OnInit {
     currentUser: string;
