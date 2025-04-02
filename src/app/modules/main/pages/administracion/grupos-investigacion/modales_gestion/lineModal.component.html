@@ -1,76 +1,179 @@
-<div *ngIf="isLoading" class="loading-spinner-overlay">
+<div *ngIf="isLoading" class="loading-spinner-overlay"> 
   <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
 </div>
 <div class="cont">
-    <header>
-      <h1>Gestión de Áreas y Líneas de Investigación</h1>
-    </header>
-  
-    <table>
-        <thead>
-          <tr>
-            <th>Dominio Académico</th>
-            <th>Área</th>
-            <th>Línea</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let dom of invGroup?.academicDomain">
-            <td [attr.rowspan]="dom.areas?.length">{{ dom.nombreDominioAcademico }}
-              <button class="warn" mat-mini-fab (click)="deleteArea(dom.idDomimioAcademico)">
-                  <i class="fa fa-trash-alt" aria-hidden="true"></i> 
-              </button>
-          </td>
-          </tr>
-          <tr *ngFor="let area of invGroup?.area">
-            <td [attr.rowspan]="area.lineas?.length">{{ area.nombreArea }}
-                <button class="warn" mat-mini-fab (click)="deleteArea(area.idArea)">
-                    <i class="fa fa-trash-alt" aria-hidden="true"></i> 
-                </button>
-            </td>
-            <td>
-              <div *ngFor="let linea of area.lineas">
-                {{ linea.nombreLinea }}
-              </div>
-            </td>
-            <td>
-              <div *ngFor="let linea of area.lineas">
-                <button class="warn" mat-mini-fab (click)="deleteLinea(linea.idLinea)">
-                    <i class="fas fa-trash-alt" aria-hidden="true"></i> 
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      
+  <header>
+    <h1>Gestión de Áreas y Líneas de Investigación</h1>
+  </header>
 
-  
-    <div *ngIf="!loadingData">
-      <form [formGroup]="myForm" (ngSubmit)="Enviar()">
-        <mat-form-field>
-          <mat-label>Áreas de Investigación</mat-label>
-          <mat-select [formControl]="areasControl" multiple>
-            <mat-option *ngFor="let area of areas" [value]="area.idArea">
-              {{ area.nombreArea }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-  
-        <mat-form-field *ngIf="areasControl.value">
-          <mat-label>Líneas de Investigación</mat-label>
-          <mat-select [formControl]="lineasControl" multiple>
-            <mat-option *ngFor="let linea of lineas" [value]="linea.idLinea">
-              {{ linea.nombreLinea }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-  
-        <button mat-raised-button color="primary" type="submit" [disabled]="!myForm.valid">
-          Guardar
-        </button>
-      </form>
-    </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Dominio Académico</th>
+        <th>Área</th>
+        <th>Línea</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let dom of invGroup?.academicDomain">
+        <td>{{ dom.nombreDominioAcademico }}
+          <button type="button" class="warn" mat-mini-fab (click)="deleteDominio(dom.idDomimioAcademico)">
+            <i class="fa fa-trash-alt" aria-hidden="true"></i>
+          </button>
+        </td>
+        <td style="padding: 0px;">
+          <div *ngFor="let area of invGroup?.area" style="width: 100%; border-bottom: solid 1px #ccc;">
+            {{ area.nombreArea }}
+            <button type="button" class="warn" mat-mini-fab (click)="deleteArea(area.idArea)"> 
+              <i class="fa fa-trash-alt" aria-hidden="true"></i>
+            </button>
+          </div>
+          
+        </td>
+        <td style="padding: 0px;">
+          <div *ngFor="let lin of invGroup?.line" style="width: 100%; border-bottom: solid 1px #ccc;">
+            {{ lin.nombreLinea }}
+            <button type="button" class="warn" mat-mini-fab (click)="deleteLinea(lin.idLinea)">
+              <i class="fa fa-trash-alt" aria-hidden="true"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="button-group">
+    <button mat-raised-button color="accent" (click)="agregar('d')">Agregar Dominio Académico</button>
+    <button mat-raised-button color="accent" (click)="agregar('a')">Agregar Área</button>
+    <button mat-raised-button color="accent" (click)="agregar('l')">Agregar Línea</button>
   </div>
-  
+  <div *ngIf="!loadingData && selectMostrar==='d'">
+    <form [formGroup]="myForm" (ngSubmit)="Enviar()">
+      <div class="grid-container">
+
+        <!-- Dominios Académicos -->
+        <div class="grid-item">
+            <mat-form-field appearance="fill">
+                <mat-label>Dominios
+                    Académicos</mat-label>
+                <mat-select
+                    [formControl]="dominiosControl"
+                    multiple required>
+                    <mat-option
+                        *ngFor="let dominio of dominios"
+                        [value]="dominio.idDomimioAcademico">
+                        {{
+                        dominio.nombreDominioAcademico
+                        }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <!-- Áreas de Investigación -->
+        <div class="grid-item">
+            <mat-form-field appearance="fill"
+                *ngIf="dominiosControl.value">
+                <mat-label>Áreas de
+                    Investigación</mat-label>
+                <mat-select [formControl]="areasControl"
+                    multiple required>
+                    <mat-option
+                        *ngFor="let area of areas"
+                        [value]="area.idArea">
+                        {{ area.nombreArea }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <!-- Líneas de Investigación -->
+        <div class="grid-item">
+            <mat-form-field appearance="fill"
+                *ngIf="areasControl.value">
+                <mat-label>Líneas de
+                    Investigación</mat-label>
+                <mat-select
+                    [formControl]="lineasControl"
+                    multiple required>
+                    <mat-option
+                        *ngFor="let linea of lineas"
+                        [value]="linea.idLinea">
+                        {{ linea.nombreLinea }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </form>
+      <button type="submit" mat-raised-button color="accent" [disabled]="!myForm.get('lineas')?.valid || !myForm.get('areas')?.valid || !myForm.get('dominios')?.valid">Guardar</button>
+  </div>
+  <div *ngIf="!loadingData && selectMostrar==='a'">
+    
+    <form [formGroup]="myForm" (ngSubmit)="Enviar()">
+      <div class="grid-container">
+        <!-- Áreas de Investigación -->
+        <div class="grid-item">
+            <mat-form-field appearance="fill"
+                >
+                <mat-label>Áreas de
+                    Investigación</mat-label>
+                <mat-select [formControl]="areasControl"
+                    multiple required>
+                    <mat-option
+                        *ngFor="let area of areas"
+                        [value]="area.idArea">
+                        {{ area.nombreArea }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <!-- Líneas de Investigación -->
+        <div class="grid-item">
+            <mat-form-field appearance="fill"
+                *ngIf="areasControl.value">
+                <mat-label>Líneas de
+                    Investigación</mat-label>
+                <mat-select
+                    [formControl]="lineasControl"
+                    multiple required>
+                    <mat-option
+                        *ngFor="let linea of lineas"
+                        [value]="linea.idLinea">
+                        {{ linea.nombreLinea }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </form>
+      <button type="submit" mat-raised-button color="accent" [disabled]="!myForm.get('areas')?.valid || !myForm.get('lineas')?.valid">Guardar</button>
+
+  </div>
+  <div *ngIf="!loadingData && selectMostrar==='l'">
+    
+    <form [formGroup]="myForm" (ngSubmit)="Enviar()">
+      <div class="grid-container">
+        <div class="grid-item">
+            <mat-form-field appearance="fill"
+                >
+                <mat-label>Líneas de
+                    Investigación</mat-label>
+                <mat-select
+                    [formControl]="lineasControl"
+                    multiple required>
+                    <mat-option
+                        *ngFor="let linea of lineas"
+                        [value]="linea.idLinea">
+                        {{ linea.nombreLinea }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </form>
+      <button type="submit" mat-raised-button color="accent" [disabled]="!myForm.get('lineas')?.valid">Guardar</button>
+
+  </div>
+</div>

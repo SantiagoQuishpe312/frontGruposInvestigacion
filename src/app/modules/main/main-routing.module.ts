@@ -9,17 +9,11 @@ import { TarjetasComponent } from './pages/administracion/tarjets.component';
 import { VinculacionFormComponent } from './pages/coordinadorGI/vinculacion-desvinculacion/vinculacion/vinculacion-form.component';
 import { DesvinculacionFormComponent } from './pages/coordinadorGI/vinculacion-desvinculacion/desvinculacion/desvinculacion.component';
 import { DominioAcademico } from './pages/administracion/dominios-academicos/dom-acad.component';
-
 import { LineComponent } from './pages/administracion/line/line.component';
-
 import { AreaComponent } from './pages/administracion/area/area.component';
-
 import { UpperPlanComponent } from './pages/administracion/upper-plan/upper-plan.component';
-
 import { NationalPlanComponent } from './pages/administracion/national-plan/national-plan.component';
-
 import { LegalFrameworkComponent } from './pages/administracion/legal-framework/legal-framework.component';
-
 import { OdsComponent } from './pages/administracion/ods/ods.component';
 import { DashboardCoordinadorComponent } from './pages/coordinadorGI/dashboard/dashboard.component';
 import { EjecucionComponent } from './pages/ejecucion/ejecucion.component';
@@ -37,7 +31,6 @@ import { MostrarSolicitudForDirector } from './pages/directorDepartamento/faseCr
 import { CargaMemoDirComponent } from './pages/directorDepartamento/faseCreacionGI/memorandosSolicitudCreacion/memorando.component';
 import { GestionRolesComponent } from './pages/administracion/gestion-roles/gestion-crea/gestion-roles.component';
 import { GestionMenuComponent } from './pages/administracion/gestion-roles/gestion-menu.component';
-
 import { GestionRolesPrincipalComponent } from './pages/administracion/gestion-roles/gestion-crea/gestion-roles-principal.component';
 import { SolicitudesForVicerectorComponent } from './pages/vicerectorDeInvestigacion/solicitudes-de-creacion/obtenerSolicitudes.component';
 import { MostrarSolicitudForVicerector } from './pages/vicerectorDeInvestigacion/solicitudes-de-creacion/mostrarSolicitud.component';
@@ -97,7 +90,6 @@ import { SolicitudesFaseNueveComponent } from './pages/comite-investigacion/fase
 import { MostrarGrupoFaseNueveComponent } from './pages/comite-investigacion/fase-creacion/mostrar-grupo-fase-nueve/mostrar-grupo-fase-nueve.component';
 import { MemorandoNueveComponent } from './pages/comite-investigacion/fase-creacion/memorando-nueve/memorando-nueve.component';
 import { GruposAprobadosComponent } from './pages/analistaGestion/fase-creacion/solicitudes-resolucion/grupos-aprobados/grupos-aprobados.component';
-import path from 'path';
 import { SolicitudGruposFaseDiezComponent } from './pages/analistaGestion/fase-creacion/solicitudes-resolucion/solicitud-grupos-fase-diez/solicitud-grupos-fase-diez.component';
 import { MemorandoDiezComponent } from './pages/analistaGestion/fase-creacion/solicitudes-resolucion/memorando-diez/memorando-diez.component';
 import { SolicitudesParaResolucionComponent } from './pages/analistaGestion/fase-creacion/Solicitudes-para-resolucion/solicitudes-para-resolucion/solicitudes-para-resolucion.component';

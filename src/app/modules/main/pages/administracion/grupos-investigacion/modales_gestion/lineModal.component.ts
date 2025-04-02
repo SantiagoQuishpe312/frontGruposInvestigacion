@@ -13,6 +13,8 @@ import { InvGroup_line } from 'src/app/types/invGroup_line';
 import { InvGroup_area } from 'src/app/types/invGroup_area.types';
 import { forkJoin } from 'rxjs';
 import { AcademicDomainService } from 'src/app/core/http/academic-domain/academic-domain.service';
+import { InvGroup_academicDomain } from 'src/app/types/invGroup_academicDomain';
+import { InvGroup_academicDomainService } from 'src/app/core/http/invGroup_academicDomain/invGroup_academicDomain.service';
 
 @Component({
   selector: 'app-members',
@@ -34,10 +36,12 @@ export class LineModalEdit implements OnInit {
   lineasControl = new FormControl();
   dominiosControl = new FormControl();
   myForm: FormGroup;
+  myForm2: FormGroup;
   groupId: number;
   currentUser: string;
   currentDate: Date;
-  isLoading: boolean=true;
+  isLoading: boolean = true;
+  selectMostrar: string='';
   constructor(
     private fb: FormBuilder,
     private userService: UsuarioService,
@@ -47,10 +51,11 @@ export class LineModalEdit implements OnInit {
     private areaService: AreaService,
     private lineService: LineService,
     private invGroup_areaService: InvGroup_areaService,
+    private invGroup_academicDomainService: InvGroup_academicDomainService,
     private invGroupService: InvGroupService,
-    private academicDomainService:AcademicDomainService,
+    private academicDomainService: AcademicDomainService,
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.groupId = Number(sessionStorage.getItem('selectedId'));
@@ -77,17 +82,19 @@ export class LineModalEdit implements OnInit {
 
   cargarFormularios(): void {
     this.loadAreas();
-    this.isLoading = false;
     this.myForm = this.fb.group({
       lineas: this.lineasControl,
       areas: this.areasControl,
       dominios: this.dominiosControl,
     });
+    this.myForm2 = this.fb.group({
+      lineas: this.lineasControl,
+      areas: this.areasControl,
+    });
   }
 
   updateLineasByAreas(selectedAreas: any[]): void {
     this.lineas = [];
-
     if (selectedAreas?.length > 0) {
       selectedAreas.forEach((idArea) => {
         this.lineService.getLineByArea(idArea).subscribe((lineasArea: any[]) => {
@@ -97,12 +104,14 @@ export class LineModalEdit implements OnInit {
               (linea) => !this.lineas.some((l) => l.idLinea === linea.idLinea)
             ),
           ];
+          this.isLoading = false;
         });
       });
     }
   }
   updateAreasByDominios(selectedDominios: any[]): void {
     this.areas = [];
+    console.log(selectedDominios)
     if (selectedDominios?.length > 0) {
       selectedDominios.forEach((idDomimioAcademico) => {
         this.areaService.getAreasByDominio(idDomimioAcademico).subscribe((areasDominio: any[]) => {
@@ -118,9 +127,11 @@ export class LineModalEdit implements OnInit {
   }
 
   getLinesByArea(): void {
+    this.isLoading = false;
     if (this.invGroup?.area) {
       this.invGroup.area.forEach((area) => {
         area.lineas = this.invGroup.line.filter((line) => line.idArea === area.idArea);
+        console.log(area.nombreArea);
       });
     }
   }
@@ -131,13 +142,59 @@ export class LineModalEdit implements OnInit {
       });
     }
   }
+  agregar(tipo: string): void {
+    this.selectMostrar=tipo;
+    if (tipo === 'd') {
+      this.loadDominios();
+    }else if (tipo === 'a') {
+      let idDominios: any[] = []; // Inicializamos el arreglo
+      this.invGroup.academicDomain.forEach((dominioAcademico) => {
+        idDominios.push(dominioAcademico.idDomimioAcademico); 
+      }); 
+      this.updateAreasByDominios(idDominios);
+    }else if(tipo === 'l') {
+      let idAreas: any[] = []; // Inicializamos el arreglo
+      this.invGroup.area.forEach((area) => {
+        idAreas.push(area.idArea); 
+      }); 
+      this.updateLineasByAreas(idAreas);
+    }
+  }
 
   Enviar(): void {
     if (this.myForm.valid) {
       this.isLoading = true;
-      this.saveArea(this.groupId);
-      this.saveLine(this.groupId);
+      if (this.selectMostrar === 'd') {
+        this.saveDominio(this.groupId);
+        this.saveArea(this.groupId);
+        this.saveLine(this.groupId);
+      } else if (this.selectMostrar === 'a') {
+        this.saveArea(this.groupId);
+      } else if (this.selectMostrar === 'l') {
+        this.saveLine(this.groupId);
+      }
+
       this.dialogRef.close(true)
+    }
+  }
+  private saveDominio(id: number): void {
+    const dominiosSeleccionados = this.dominiosControl.value;
+    if (dominiosSeleccionados?.length > 0) {
+      dominiosSeleccionados.forEach((dominiosId: number) => {
+        const domCreaForm: InvGroup_academicDomain = {
+          idGrupo: id,
+          idDomAcad: dominiosId,
+          usuarioCreacion: this.currentUser,
+          fechaCreacion: this.currentDate,
+          usuarioModificacion: null,
+          fechaModificacion: null
+        }
+        this.invGroup_academicDomainService.createAcadCreaForm(domCreaForm).subscribe(
+          (response) => {
+          }
+        );
+      });
+    } else {
     }
   }
 
@@ -185,9 +242,15 @@ export class LineModalEdit implements OnInit {
     this.academicDomainService.getAll().subscribe((data) => {
       this.dominios = data.filter((dominio) => dominio.estado === true);
       this.loadingData = false;
+      console.log(this.dominios);
     });
   }
-
+  loadLineas(): void {
+    this.lineService.getAll().subscribe((data) => {
+      this.lineas = data.filter((linea) => linea.estado === true);
+      this.loadingData = false;
+    });
+  }
   onClickNo(user: any): void {
     this.dialogRef.close(user);
   }
@@ -195,6 +258,12 @@ export class LineModalEdit implements OnInit {
     this.invGroup_linesService.delete(this.groupId, idLinea).subscribe();
     this.get(this.groupId);
 
+  }
+  deleteDominio(idDominio: number): void {
+    this.invGroup_academicDomainService.delete(this.groupId, idDominio).subscribe();
+    this.invGroup_areaService.delete(this.groupId, idDominio).subscribe();
+    this.invGroup_linesService.delete(this.groupId, idDominio).subscribe();
+    this.get(this.groupId);
   }
   deleteArea(idArea: number): void {
     forkJoin([
@@ -209,5 +278,5 @@ export class LineModalEdit implements OnInit {
       }
     });
   }
-  
+
 }
