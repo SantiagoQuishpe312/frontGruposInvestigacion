@@ -1,0 +1,201 @@
+<div class="cont">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="header">
+          <h1>INFORME DE CIERRE DE GRUPOS DE INVESTIGACIÓN</h1>
+        </div>
+      </div>
+  
+      <div class="container-fluid">
+        <select (change)="onChange($event)">
+          <option *ngFor="let reporte of informesCierre" [value]="reporte.id">
+            Informe de Cierre número {{ reporte.id }}
+          </option>
+        </select>
+      </div>
+  
+      <div class="container-fluid">
+        <div class="encabezado">
+          <div class="box">
+            <img src="../../../../../../assets/img/espe/logo-espe.png" alt="Imagen" />
+          </div>
+          <div class="box">
+            <strong>UNIVERSIDAD DE LAS FUERZAS ARMADAS – ESPE</strong><br /><br />
+            <strong>VICERRECTORADO DE INVESTIGACIÓN, INNOVACIÓN Y TRANSFERENCIA
+              TECNOLÓGICA</strong><br />
+            <strong>INFORME DE CIERRE DE GRUPO DE INVESTIGACIÓN</strong><br />
+          </div>
+  
+          <div class="box">
+            <strong>Fecha de Creación:</strong><br /><br />
+            <div *ngFor="let reporte of infCierre">
+              {{ reporte.fechaCreacion | date : 'dd/MM/yyyy' }}
+            </div>
+          </div>
+        </div>
+        <br />
+        <br />
+  
+        <h2><strong>A. OBJETIVO DE CIERRE</strong></h2>
+        <br />
+        <span *ngFor="let reporte of infCierre">
+          {{ reporte.objCierre}}
+        </span>
+        <br /><br />
+
+        <h2><strong>B. CONTEXTO</strong></h2>
+        <br />
+        <span *ngFor="let reporte of infCierre">
+          {{ reporte.contexto}}
+        </span>
+        <br /><br />
+
+        <h2><strong>C. OBJETIVO INICIAL</strong></h2>
+        <br />
+        <span *ngFor="let reporte of infCierre">
+          {{ reporte.objInicial}}
+        </span>
+        <br /><br />
+
+        <h2><strong>D. ACTIVIDADES</strong></h2>
+        <br />
+        <span *ngFor="let reporte of infCierre">
+          {{ reporte.actividades}}
+        </span>
+        <br /><br />
+
+  
+        <h2><strong>RAZONES PARA EL CIERRE DEL GRUPO
+        </strong></h2>
+        <table class="table" style="
+            text-align: left;
+            border: solid 0.5px #dce0e2;
+            width: 100%;
+            margin-left: 0%;
+            margin-top: 1%;
+            margin-bottom: 2%;
+            border-radius: 30px;
+          ">
+          <thead></thead>
+          <tbody>
+            <ng-container *ngFor="let solicitud of solicitudes">
+              <tr style="border: solid 0.5px #dce0e2">
+                <td style="width: 20%; border: solid 0.5px #dce0e2">
+                  <strong>MOTIVACIÓN:</strong><br />
+                  <strong>JUSTIFICACIÓN:</strong><br />
+                </td>
+                <td style="width: 50%; border: solid 0.5px #dce0e2">
+                  {{ solicitud.motivacion }}<br />
+                  {{ solicitud.justificacion }}<br />
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+  
+        <h2><strong>ANÁLISIS DEL IMPACTO DEL CIERRE
+        </strong></h2>
+        <table class="table" style="
+            text-align: left;
+            border: solid 0.5px #dce0e2;
+            width: 100%;
+            margin-left: 0%;
+            margin-top: 1%;
+            margin-bottom: 2%;
+            border-radius: 30px;
+          ">
+          <thead></thead>
+          <tbody>
+            <ng-container *ngFor="let evaluacion of evaluaciones">
+              <tr style="border: solid 0.5px #dce0e2">
+                <td style="width: 20%; border: solid 0.5px #dce0e2">
+                  <strong>REGISTRO:</strong><br />
+                  <strong>CRITERIOS:</strong><br />
+                  <strong>ACCIONES:</strong><br />
+
+                </td>
+                <td style="width: 50%; border: solid 0.5px #dce0e2">
+                  {{ evaluacion.registro }}<br />
+                  {{ evaluacion.criteriosNoSatisfactorio }}<br />
+                  {{ evaluacion.accionesNoSatisfactorio }}<br />
+
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+
+        <h2><strong>E. IMPACTO ACADÉMICO</strong></h2>
+        <br />
+        <span *ngFor="let reporte of infCierre">
+          {{ reporte.impactoAcad }}
+        </span>
+        <br /><br />
+
+        <h2><strong>F. IMPACTO FINANCIERO</strong></h2>
+        <br />
+        <span *ngFor="let reporte of infCierre">
+          {{ reporte.impactoFin }}
+        </span>
+        <br /><br />
+
+        <h2><strong>G. REUBICACIÓN</strong></h2>
+        <br />
+        <span *ngFor="let reporte of infCierre">
+          {{ reporte.reubicacion}}
+        </span>
+        <br /><br />
+
+  
+        <h2><strong>H. CONCLUSIONES</strong></h2>
+        <br />
+        <span *ngFor="let reporte of infCierre">
+          {{ reporte.conclusion }}
+        </span>
+        <br /><br />
+  
+        <h2><strong>I. RECOMENDACIONES</strong></h2>
+        <br />
+        <span *ngFor="let reporte of infCierre">
+          {{ reporte.recomendacion }}
+        </span>
+        <br /><br />
+
+
+        <!-- Añadir esta sección antes del cierre del container-fluid -->
+<h2><strong>ANEXOS</strong></h2>
+<div class="attached-annexes">
+  <table class="table" style="
+      text-align: left;
+      border: solid 0.5px #dce0e2;
+      width: 100%;
+      margin-left: 0%;
+      margin-top: 1%;
+      margin-bottom: 2%;
+      border-radius: 30px;">
+    <thead>
+      <tr>
+        <th>Tipo</th>
+        <th>Nombre del documento</th>
+        <th>Fecha de creación</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let anexo of anexos" style="border: solid 0.5px #dce0e2">
+        <td style="width: 20%; border: solid 0.5px #dce0e2">
+          {{ getTipoDocumento(anexo.idDocumento) }}
+        </td>
+        <td style="width: 50%; border: solid 0.5px #dce0e2">
+          {{ anexo.nombreAnexo }}
+        </td>
+        <td style="width: 30%; border: solid 0.5px #dce0e2">
+          {{ anexo.fechaCreacionAnexo | date:'dd/MM/yyyy' }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+      </div>
+    </div>
+  </div>

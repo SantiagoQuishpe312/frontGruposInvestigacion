@@ -27,7 +27,7 @@ export class EditarProyectosComponent implements OnInit {
       entidadFinanciera: [this.data.entidadFinanciera, Validators.required],
       institucionColaboradora: [this.data.institucionColaboradora, Validators.required],
       horas: [this.data.horas, Validators.required],
-      minutos: [this.data.minutos, Validators.required],
+      minutos: [this.data.minutos, [Validators.required, Validators.min(0), Validators.max(60)]],
       presupuesto: [this.data.presupuesto, Validators.required],
       responsable: [this.data.responsable, Validators.required],
       participantes: [this.data.participantes, Validators.required],
@@ -67,6 +67,50 @@ export class EditarProyectosComponent implements OnInit {
       });
     }
   }
+
+  private showValidationErrors() {
+    const form = this.projectsForm;
+    for (const controlName in form.controls) {
+      if (form.controls.hasOwnProperty(controlName)) {
+        const control = form.get(controlName);
+        if (control.invalid) {
+          let errorMessage = '';
+          
+          if (control.hasError('required')) {
+            errorMessage = `El campo ${controlName} es requerido`;
+          } else if (control.hasError('min')) {
+            errorMessage = `El valor debe ser mayor o igual a ${control.errors.min.min}`;
+          } else if (control.hasError('max')) {
+            errorMessage = `Los minutos no pueden ser mayores a 60`;
+          }
+
+          if (errorMessage) {
+            this.snackBar.open(errorMessage, 'Cerrar', {
+              duration: 3000,
+            });
+            return;
+          }
+        }
+      }
+    }
+    
+    this.snackBar.open('Por favor, llene todos los campos requeridos', 'Cerrar', {
+      duration: 2000,
+    });
+  }
+  numericOnly(event: KeyboardEvent): boolean {
+    const charCode = event.which ? event.which : event.keyCode;
+    return !(charCode > 31 && (charCode < 48 || charCode > 57));
+  }
+  
+  numericDecimalOnly(event: KeyboardEvent): boolean {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode === 46) {
+      return true;
+    }
+    return !(charCode > 31 && (charCode < 48 || charCode > 57));
+  }
+
 
   cerrar(): void {
     this.dialogRef.close();

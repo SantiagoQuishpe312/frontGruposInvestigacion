@@ -27,7 +27,7 @@ export class AgregarProyectosComponent implements OnInit {
       entidadFinanciera: ['', Validators.required],
       institucionColaboradora: ['', Validators.required],
       horas: ['', [Validators.required, Validators.min(0)]],
-      minutos: ['', [Validators.required, Validators.min(0), Validators.max(59)]],
+      minutos: ['', [Validators.required, Validators.min(0), Validators.max(60)]],
       presupuesto: ['', [Validators.required, Validators.min(0)]],
       responsable: ['', Validators.required],
       participantes: ['', Validators.required],
@@ -59,7 +59,7 @@ export class AgregarProyectosComponent implements OnInit {
     if (this.projectsForm.valid) {
       const minutos = this.projectsForm.get('minutos').value;
       if (minutos < 0 || minutos > 60) {
-        this.snackBar.open('Los minutos deben estar entre 0 y 59', 'Cerrar', {
+        this.snackBar.open('Los minutos deben estar entre 0 y 60', 'Cerrar', {
           duration: 3000,
         });
         return;
@@ -87,7 +87,7 @@ export class AgregarProyectosComponent implements OnInit {
           } else if (control.hasError('min')) {
             errorMessage = `El valor debe ser mayor o igual a ${control.errors.min.min}`;
           } else if (control.hasError('max')) {
-            errorMessage = `Los minutos no pueden ser mayores a 59`;
+            errorMessage = `Los minutos no pueden ser mayores a 60`;
           }
 
           if (errorMessage) {

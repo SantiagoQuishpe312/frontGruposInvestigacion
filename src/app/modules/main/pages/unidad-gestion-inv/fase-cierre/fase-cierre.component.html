@@ -1,0 +1,370 @@
+<div class="cont">
+    <div class="container-fluid">
+        <div class="card">
+            <header>
+                <h1>Informe de Recomendación de Cierre de Grupo de Investigación</h1>
+            </header>
+        </div>
+        <div class="container-fluid">
+            <mat-horizontal-stepper [linear]="true" [selectedIndex]="currentStep">
+                <mat-step [stepControl]="reporteForm" class="centrado-y-mayusculas" [completed]="isStepValid(0)">
+                    <ng-template matStepLabel>Introducción</ng-template>
+
+                    <form [formGroup]="reporteForm">
+                        <div class="grid-item">
+                            <h2>Objetivo del Informe</h2>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Ingresar Objetivo de Cierre:</mat-label>
+                                <textarea matInput class="form-control large-textarea"
+                                    formControlName="objCierre"></textarea>
+                                <mat-error
+                                    *ngIf="reporteForm.get('objCierre').invalid && reporteForm.get('objCierre').touched">
+                                    Este campo es obligatorio
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="grid-item">
+                            <h2>Contexto</h2>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Ingresar Contexto:</mat-label>
+                                <textarea matInput class="form-control large-textarea"
+                                    formControlName="contexto"></textarea>
+                                <mat-error
+                                    *ngIf="reporteForm.get('contexto').invalid && reporteForm.get('contexto').touched">
+                                    Este campo es obligatorio
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="grid-item">
+                            <button type="button" mat-raised-button color="primary" class="btn btn-primary float-right"
+                                (click)="nextStep()" [disabled]="!isStepValid(0)">
+                                Siguiente
+                            </button>
+                        </div>
+                    </form>
+                </mat-step>
+
+                <mat-step [stepControl]="reporteForm" class="centrado-y-mayusculas" [completed]="isStepValid(1)">
+                    <ng-template matStepLabel>Antecedentes</ng-template>
+
+                    <form [formGroup]="reporteForm">
+                        <div class="grid-item">
+                            <h2>Creación y Objetivos Iniciales</h2>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Ingresar Objetivo Inicial:</mat-label>
+                                <textarea matInput class="form-control large-textarea"
+                                    formControlName="objInicial"></textarea>
+                                <mat-error
+                                    *ngIf="reporteForm.get('objInicial').invalid && reporteForm.get('objInicial').touched">
+                                    Este campo es obligatorio
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="grid-item">
+                            <h2>Actividades Principales</h2>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Ingresar Actividades Principales:</mat-label>
+                                <textarea matInput class="form-control large-textarea"
+                                    formControlName="actividades"></textarea>
+                                <mat-error
+                                    *ngIf="reporteForm.get('actividades').invalid && reporteForm.get('actividades').touched">
+                                    Este campo es obligatorio
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="btn btn-primary float-right">
+                            <button type="button" mat-raised-button color="primary" (click)="prevStep()">
+                                Regresar
+                            </button>
+                            |
+                            <button type="button" mat-raised-button color="primary" class="btn btn-primary float-right"
+                                (click)="nextStep()" [disabled]="!isStepValid(1)">
+                                Siguiente
+                            </button>
+                        </div>
+                    </form>
+                </mat-step>
+
+                <mat-step label="Razones Para el Cierre del Grupo" #stepForm class="centrado-y-mayusculas"
+                    [completed]="isStepValid(2)">
+                    <ng-container *ngFor="let form of solicitudForms">
+                        <form [formGroup]="form"></form>
+                    </ng-container>
+                    <div class="grid-item"></div>
+
+                    <div class="botonera">
+                        <div>
+                            <button type="button" mat-raised-button color="primary"
+                                (click)="openAgregarSolicitudesModal()">
+                                Agregar
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button" mat-raised-button color="primary" (click)="prevStep()">
+                                Regresar
+                            </button>
+                            |
+                            <button type="button" mat-raised-button color="primary" (click)="nextStep()"
+                                [disabled]="!isStepValid(2)">
+                                Siguiente
+                            </button>
+                        </div>
+
+
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Motivación</th>
+                                    <th>Justificación</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let form of solicitudForms; let i = index">
+                                    <td>{{ i + 1 }}</td>
+                                    <td>{{ form.get('motivacion').value }}</td>
+                                    <td>{{ form.get('justificacion').value }}</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="edit" mat-mini-fab color="primary" aria-label="Actualizar"
+                                                mat-icon-button (click)="actualizarSolicitud(i)">
+                                                <i class="fa fa-edit" aria-hidden="true"></i>
+                                            </button>
+
+                                            <button class="delete" mat-mini-fab color="warn" aria-label="Borrar"
+                                                mat-icon-button (click)="borrarSolicitud(i)">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </mat-step>
+
+                <mat-step label="Evaluaciones No Satisfactorias" #stepForm [completed]="isStepValid(3)">
+                    <ng-container *ngFor="let form of evaluacionForms">
+                        <form [formGroup]="form"></form>
+                    </ng-container>
+
+                    <div class="botonera">
+                        <div>
+                            <button type="button" mat-raised-button color="primary"
+                                (click)="openAgregarEvaluacionesModal()">
+                                Agregar
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button" mat-raised-button color="primary" (click)="prevStep()">
+                                Regresar
+                            </button>
+                            |
+                            <button type="button" mat-raised-button color="primary" (click)="nextStep()"
+                                [disabled]="!isStepValid(3)">
+                                Siguiente
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Registro</th>
+                                    <th>Criterios de Evaluación</th>
+                                    <th>Acciones Correctivas Intentadas</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let form of evaluacionForms; let i = index">
+                                    <td>{{ i + 1 }}</td>
+                                    <td>{{ form.get('registro').value }}</td>
+                                    <td>{{ form.get('criteriosNoSatisfactorio').value }}</td>
+                                    <td>{{ form.get('accionesNoSatisfactorio').value }}</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="edit" mat-mini-fab color="primary" aria-label="Actualizar"
+                                                mat-icon-button (click)="actualizarEvaluacion(i)">
+                                                <i class="fa fa-edit" aria-hidden="true"></i>
+                                            </button>
+
+                                            <button class="delete" mat-mini-fab color="warn" aria-label="Borrar"
+                                                mat-icon-button (click)="borrarEvaluacion(i)">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </mat-step>
+
+                <mat-step [stepControl]="reporteForm" class="centrado-y-mayusculas" [completed]="isStepValid(4)">
+                    <ng-template matStepLabel>Análisis del Impacto de Cierre</ng-template>
+                    <br />
+                    <form [formGroup]="reporteForm">
+                        <div class="grid-item">
+                            <h2>Impacto Académico</h2>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Ingresar Impacto Académico:</mat-label>
+                                <textarea matInput class="form-control large-textarea"
+                                    formControlName="impactoAcad"></textarea>
+                                <mat-error
+                                    *ngIf="reporteForm.get('impactoAcad').invalid && reporteForm.get('impactoAcad').touched">
+                                    Este campo es obligatorio
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="grid-item">
+                            <h2>Impacto Financiero</h2>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Ingresar Impacto Financiero:</mat-label>
+                                <textarea matInput class="form-control large-textarea"
+                                    formControlName="impactoFin"></textarea>
+                                <mat-error
+                                    *ngIf="reporteForm.get('impactoFin').invalid && reporteForm.get('impactoFin').touched">
+                                    Este campo es obligatorio
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="grid-item">
+                            <h2>Reubicación de Proyectos o Miembros</h2>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Ingresar Reubicación de Proyectos o Miembros</mat-label>
+                                <textarea matInput class="form-control large-textarea"
+                                    formControlName="reubicacion"></textarea>
+                                <mat-error
+                                    *ngIf="reporteForm.get('reubicacion').invalid && reporteForm.get('reubicacion').touched">
+                                    Este campo es obligatorio
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="btn btn-primary float-right">
+                            <button type="button" mat-raised-button color="primary" (click)="prevStep()">
+                                Regresar
+                            </button>
+                            |
+                            <button type="button" mat-raised-button color="primary" class="btn btn-primary float-right"
+                                (click)="nextStep()" [disabled]="!isStepValid(4)">
+                                Siguiente
+                            </button>
+                        </div>
+                    </form>
+                </mat-step>
+
+
+                <mat-step [stepControl]="reporteForm" class="centrado-y-mayusculas" [completed]="isStepValid(5)">
+                    <ng-template matStepLabel>Conclusiones y Recomendaciones</ng-template>
+                    <br />
+                    <form [formGroup]="reporteForm">
+                        <div class="grid-item">
+                            <h2>Conclusión</h2>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Ingresar Conclusión:</mat-label>
+                                <textarea matInput class="form-control large-textarea"
+                                    formControlName="conclusion"></textarea>
+                                <mat-error
+                                    *ngIf="reporteForm.get('conclusion').invalid && reporteForm.get('conclusion').touched">
+                                    Este campo es obligatorio
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="grid-item">
+                            <h2>Recomendación Final</h2>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Ingresar Recomendación:</mat-label>
+                                <textarea matInput class="form-control large-textarea"
+                                    formControlName="recomendacion"></textarea>
+                                <mat-error
+                                    *ngIf="reporteForm.get('recomendacion').invalid && reporteForm.get('recomendacion').touched">
+                                    Este campo es obligatorio
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="grid-item">
+                            <h2>Pasos a Seguir</h2>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Ingresar Pasos a Seguir:</mat-label>
+                                <textarea matInput class="form-control large-textarea"
+                                    formControlName="proceso"></textarea>
+                                <mat-error
+                                    *ngIf="reporteForm.get('proceso').invalid && reporteForm.get('proceso').touched">
+                                    Este campo es obligatorio
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="grid-item">
+                            <h2>Anexos</h2>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Tipo de Anexo</mat-label>
+                                <select matNativeControl [(ngModel)]="selectedAnnexType"
+                                    [ngModelOptions]="{standalone: true}">
+                                    <option value="">Seleccione un tipo</option>
+                                    <option value="MEMORANDO">Memorando</option>
+                                    <option value="SOLICITUD">Solicitud</option>
+                                    <option value="INFORME">Informe</option>
+                                </select>
+                            </mat-form-field>
+
+                            <div class="botones-contenedor">
+                                <div class="izquierda">
+
+
+                                    <button mat-raised-button color="primary" (click)="navigateToAnnex()"
+                                        [disabled]="!selectedAnnexType">
+                                        Agregar Anexo
+                                    </button>
+                                </div>
+                                <div *ngIf="annexes.length > 0" class="attached-annexes">
+                                    <h3>Anexos Adjuntos:</h3>
+                                    <ul>
+                                        <li *ngFor="let annex of annexes; let i = index">
+                                            {{annex.nombreAnexo}} - {{annex.fechaCreacionAnexo | date}}
+
+
+                                            <button class="delete" mat-mini-fab color="warn" aria-label="Borrar"
+                                                *ngIf="isAnnexPending(annex)" aria-label="Borrar" 
+                                                mat-icon-button (click)="eliminarAnexo(i)">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+
+                            <div class="derecha">
+                                <button type="button" mat-raised-button color="primary" (click)="prevStep()">
+                                    Regresar
+                                </button>
+                                |
+                                <button type="button" mat-raised-button color="accent" (click)="onSubmit()"
+                                    [disabled]="!reporteForm.valid || solicitudForms.length === 0 || evaluacionForms.length === 0 || annexes.length === 0">
+                                    Enviar
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+                </mat-step>
+            </mat-horizontal-stepper>
+        </div>
+    </div>
+</div>

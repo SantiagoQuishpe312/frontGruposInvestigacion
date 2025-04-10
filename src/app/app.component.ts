@@ -522,6 +522,18 @@ export class AppComponent implements OnInit {
                 label: 'Solicitud Informes',
                 route: 'main/solicitudes-informes',
                 icon: 'mat:school'
+              },
+              {
+                type: 'link',
+                label: 'Fase de Cierre',
+                route: 'main/fase-cierre',
+                icon: 'mat:school'
+              },
+              {
+                type: 'link',
+                label: 'Informe de Cierre',
+                route: 'main/ver-informe-cierre',
+                icon: 'mat:school'
               }
             
             

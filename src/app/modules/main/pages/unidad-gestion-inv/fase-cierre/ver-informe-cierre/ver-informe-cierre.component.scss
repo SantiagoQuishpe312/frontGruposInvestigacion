@@ -1,0 +1,182 @@
+.cont {
+    padding: 8px;
+}
+
+.container-fluid {
+    padding: 17px;
+    background-color: #fff;
+    margin: 10px;
+    border: solid 1px #e9e9e9;
+    border-radius: 5px;
+}
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.btn-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.combo-box {
+    margin-bottom: 20px;
+    width: 80%;
+    padding: 15px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2e8041;
+    color: white;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+.title {
+    font-size: 24px;
+    margin: 0;
+}
+
+.save-button {
+    color: white;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.grid-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 25px;
+}
+
+.grid-item h2 {
+    text-align: left;
+    margin-left: 100px;
+    align-self: flex-start;
+    display: inline-block;
+    position: relative;
+
+}
+
+.grid-item input {
+    background-color: rgba(0, 0, 0, 0.04);
+    width: 100%;
+    height: 50px;
+
+
+}
+
+
+
+.btn-regresar,
+.btn-siguiente {
+    text-align: center;
+    padding: 7px 17px;
+    width: 40%;
+    background-color: #2e8041;
+    color: white;
+    font-size: 1.3em;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.btn-regresar:hover {
+    background-color: #38c258;
+}
+
+.btn-siguiente:hover {
+    background-color: #38c258;
+}
+
+
+.container {
+    margin: 0 auto;
+    width: 100%;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.title {
+    text-align: center;
+    margin-top: 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+th {
+    padding: 12px;
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #ddd;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:nth-child(odd) {
+    background-color: white
+}
+
+.grid-item {
+    margin-bottom: 20px;
+}
+
+.custom-input {
+    border: none;
+    border-color: #f2f2f2;
+    background-color: #f2f2f2;
+    width: 500px;
+}
+
+.encabezado {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    gap: 0px;
+}
+
+.box {
+    padding: 20px;
+    border: 1px solid #ccc;
+    text-align: center;
+}

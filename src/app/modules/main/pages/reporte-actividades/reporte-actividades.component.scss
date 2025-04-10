@@ -166,3 +166,10 @@ th {
 .large-textarea {
   height: 110px;
 }
+
+.botonera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}

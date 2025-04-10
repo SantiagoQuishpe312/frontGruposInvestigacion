@@ -1,0 +1,75 @@
+<div class="cont">
+    <div class="container-fluid">
+      <div class="card">
+        <header>
+          <h2 mat-dialog-title> Editar Evaluaciones no Satisfactorias</h2>
+        </header>
+        <div mat-dialog-content>
+          <form [formGroup]="evaluacionForm">
+            <div class="grid-item">
+              <h2>Historial de Evaluaciones</h2>
+              <mat-form-field>
+                <mat-label>Ingresar Historial de Evaluaciones</mat-label>
+                <textarea matInput 
+                placeholder="Historial de Evaluaciones"
+                formControlName="registro"
+                rows="4"
+                cdkTextareaAutosize
+                cdkAutosizeMinRows="4"
+                cdkAutosizeMaxRows="8"></textarea>              </mat-form-field>
+            </div>
+
+            <div class="grid-item">
+                <h2>Criterios de Evaluación</h2>
+                <mat-form-field>
+                  <mat-label>Ingresar Criterios de Evaluación:</mat-label>
+                  <textarea matInput 
+                  placeholder="Criterios de Evaluación"
+                  formControlName="criteriosNoSatisfactorio"
+                  rows="4"
+                  cdkTextareaAutosize
+                  cdkAutosizeMinRows="4"
+                  cdkAutosizeMaxRows="8"></textarea>                </mat-form-field>
+              </div>
+
+              <div class="grid-item">
+                <h2>Acciones Correctivas Intentadas</h2>
+                <mat-form-field>
+                  <mat-label>Ingresar Acciones Correctivas Intentadas:</mat-label>
+                  <textarea matInput 
+                  placeholder="Acciones Correctivas Intentadas"
+                  formControlName="accionesNoSatisfactorio"
+                  rows="4"
+                  cdkTextareaAutosize
+                  cdkAutosizeMinRows="4"
+                  cdkAutosizeMaxRows="8"></textarea>                </mat-form-field>
+              </div>
+            
+          </form>
+        </div>
+        <div mat-dialog-actions>
+          <div class="action-buttons">
+            <button
+              class="edit"
+              mat-mini-fab
+              color="primary"
+              aria-label="Guardar"
+              mat-button
+              (click)="save()">
+              <i class="fa fa-save" aria-hidden="true"></i>
+            </button>
+            <button
+              class="delete"
+              mat-mini-fab
+              color="warn"
+              aria-label="Borrar"
+              mat-button
+              (click)="cancel()">
+              <i class="fas fa-times-circle" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
