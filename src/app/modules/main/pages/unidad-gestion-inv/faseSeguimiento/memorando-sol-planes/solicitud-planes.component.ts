@@ -15,11 +15,11 @@ export class SolicitudPlanesComponent implements OnInit {
     noSolicitudesPendientes: boolean = false;
     grupos: InvGroupForm[] = [];
     usuarios: any[] = [];
-    loadingData: boolean = true;
+    isLoading: boolean = true;
     coordinador: Usuario;
     grupoComplete: InvGroupCompleteForm[];
     nombreCoor: string;
-    departmentUser: string;
+    displayedColumns: string[] = ['numero', 'grupo', 'coordinador', 'acciones'];
 
   constructor(
     private router: Router,
@@ -27,33 +27,27 @@ export class SolicitudPlanesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.departmentUser = sessionStorage.getItem('departamento');
     this.getGrupo();
 }
 
 getGrupo() {
-    if (this.departmentUser) {
-        this.invGroupService.getByProcessDepartment('12', this.departmentUser).subscribe({
+        this.invGroupService.getByProcess('12').subscribe({
             next: (data) => {
                 this.grupoComplete = data;
-                this.loadingData = false;
+                this.isLoading = false;
             },
             error: (err) => {
                 console.error('Error al obtener el grupo:', err);
-                this.loadingData = false;
+                this.isLoading = false;
             }
         });
-    } else {
-        console.warn('El departamento del usuario no está definido.');
-        this.loadingData = false;
-    }
+ 
 }
 
 solicitar(id: number) {
     localStorage.setItem('GI', id.toString());
 
     this.router.navigate(['main/memorando-sol-planes']);
-
 }
 
 }

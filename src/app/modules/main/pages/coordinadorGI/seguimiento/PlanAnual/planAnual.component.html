@@ -1,0 +1,73 @@
+<div *ngIf="isLoading" class="loading-spinner-overlay">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+</div>
+<div class="container-fluid">
+    <div class="card">
+        <header>
+            <h1>Solicitud Informe Anual de Ejecución de Actividades </h1>
+
+        </header>
+        <main>
+            <div *ngIf="!isLoading">
+                <form [formGroup]="myForm" (ngSubmit)="HandleSubmit()">
+                    <mat-stepper [linear]="true" #stepper>
+                        <mat-step>
+                            <ng-template matStepLabel>Seleccionar Plan de
+                                Desarrollo</ng-template>
+                            <div *ngIf="sinPlan">
+                                <h1>No tiene plan de desarrollo vigente dentro
+                                    del periodo de 4 años</h1>
+                            </div>
+                            <div *ngIf="!sinPlan">
+                                <div *ngFor="let plan of developmentPlan">
+                                    <div class="grid-container">
+                                        <div class="grid-item" *ngIf="!mostrarPlan">
+                                            <div class="box">
+                                                <h2>Tiene vigente el Plan de
+                                                    Desarrollo: </h2>
+                                                <p>Fecha de Creación:
+                                                    {{plan.fechaCreacionUsuario
+                                                    | date}}</p>
+                                                <button mat-button type="button"
+                                                    (click)="RevisarPlan()">Revisar</button>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="mostrarPlan"
+                                            class="grid-item">
+<app-developmentPlanForm-component [id]="plan.idGrupoInv"></app-developmentPlanForm-component>
+                                        </div>
+                                    </div>
+                                </div></div>
+                        </mat-step>
+                        <mat-step >
+                            <ng-template matStepLabel>Objetivo
+                                General</ng-template>
+                            <div>
+
+                                <mat-form-field appearance="fill">
+                                    <mat-label>OBJETIVO GENERAL</mat-label>
+                                    <textarea matInput
+                                        class="textarea" rows="10"
+                                        required></textarea>
+                                </mat-form-field>
+                                <h1>Alineación Estratégica</h1>
+                                <mat-form-field appearance="fill" *ngIf="planDesarrolloCompleto">
+                                    <textarea matInput
+                                        [value]="planDesarrolloCompleto.objEstrategicoInst.objetivo" readonly
+                                        class="textarea" rows="1"
+                                        maxlength="4000">
+                    </textarea>
+
+                                </mat-form-field>
+                            </div>
+                        </mat-step>
+                        <mat-step></mat-step>
+                    </mat-stepper>
+
+                </form>
+
+            </div>
+
+        </main>
+    </div>
+</div>

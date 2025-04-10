@@ -341,7 +341,7 @@ export class SolCreacionComponent implements OnInit {
           this.selectedUsers.push({
             user: data.user,
             userId: idUsuarioSeleccionado,
-            rol: 'Colaborador'  // Almacenar el rol junto con el usuario
+            rol: 'COLABORADOR'  // Almacenar el rol junto con el usuario
           });
           this.verificarDocumentosCargados();
           return;
@@ -364,7 +364,7 @@ export class SolCreacionComponent implements OnInit {
             this.selectedUsers.push(nuevoUsuario);
             this.snackBar.open(`Usuario agregado como ${rolSeleccionado}`, 'Cerrar', { duration: 3000 });
 
-            if (rolSeleccionado === 'Miembro') {
+            if (rolSeleccionado === 'MIEMBRO') {
               this.totalMiembrosInternos++;
               this.miembrosInternos.push(nuevoUsuario); // Guardamos solo los miembros
             }
@@ -382,7 +382,7 @@ export class SolCreacionComponent implements OnInit {
       // Actualizar el rol en la lista de selectedUsers
       const index = this.selectedUsers.findIndex(user => user.userId === this.selectedMember.userId);
       if (index !== -1) {
-        this.selectedUsers[index].rol = 'Miembro-Secretario'; // Cambiar el rol a "Miembro-Secretario"
+        this.selectedUsers[index].rol = 'SECRETARIO'; // Cambiar el rol a "Miembro-Secretario"
       }
     }
   }
@@ -390,7 +390,7 @@ export class SolCreacionComponent implements OnInit {
 
   borrarInvestigador(index: number) {
     console.log(this.selectedUsers)
-    if (this.selectedUsers[index].rol === 'Miembro') {
+    if (this.selectedUsers[index].rol === 'MIEMBRO') {
       this.totalMiembrosInternos--;
     }
     this.investigadores.splice(index, 1);
@@ -464,7 +464,7 @@ export class SolCreacionComponent implements OnInit {
 
   //Envio del Formulario
   HandleSubmit() {
-    this.cambiarRol;
+    this.cambiarRol();
     this.loadingData = true;
     if (this.myForm.valid) {
       //const partes = this.userCoordinador.departamento.split(" - ");
@@ -600,7 +600,7 @@ export class SolCreacionComponent implements OnInit {
           idUsuario: user.user.idBd,
           fechaVinculacion: null,
           tipo: user.rol,
-          status: "Interno",
+          status: "INTERNO",
           usuarioCreacion: this.currentUser,
           fechaCreacion: this.currentDate,
           usuarioModificacion: null,
@@ -641,7 +641,7 @@ export class SolCreacionComponent implements OnInit {
           idUsuario: user.id,
           fechaVinculacion: null,
           tipo: user.rol,
-          status: "Externo",
+          status: "EXTERNO",
           usuarioCreacion: this.currentUser,
           fechaCreacion: this.currentDate,
           usuarioModificacion: null,
@@ -799,18 +799,9 @@ export class SolCreacionComponent implements OnInit {
 
     const file = files[0];
 
-    if (t === 'h') {
-      const fileExtension = file.name.split('.').pop()?.toLowerCase();
-      if (fileExtension !== 'pdf') {
-        alert('Solo se permiten archivos PDF.');
-        return;
-      }
-      this.selectedCv = file;
-      const customFileName = `Hoja_de_Vida_Coordinador${this.currentUserId}.pdf`;
-      this.setFileName(customFileName);
-    } else if (t === 'i') {
+    
       this.processImageFile(file);
-    }
+    
   }
 
   onImgSelected(event: any) {

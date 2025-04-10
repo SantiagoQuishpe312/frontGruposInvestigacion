@@ -26,6 +26,8 @@ export class MemorandoSolPlanesComponent implements OnInit {
     token: string;
     loading: boolean = false;
     originalFileName: string;
+    group: InvGroupForm;
+    isLoading: boolean = true;
     constructor(private annexesService: AnnexesService,
       private router: Router,
       private authService: AuthService,
@@ -38,6 +40,13 @@ export class MemorandoSolPlanesComponent implements OnInit {
       this.currentUser = this.authService.getUserName();
       this.groupId = Number(localStorage.getItem('GI'));
       this.token = sessionStorage.getItem('access_token');
+      this.getGroupData();
+    }
+    getGroupData() {
+      this.invGroupService.getById(this.groupId).subscribe(data => {
+        this.group = data;
+        this.isLoading = false;
+      });
     }
     onDrop(event: any) {
       event.preventDefault();
@@ -61,7 +70,7 @@ export class MemorandoSolPlanesComponent implements OnInit {
         return;
       }
       this.originalFileName = this.selectedFile.name;
-      const name = `memo_delega_revision_comite_Inv_${this.groupId}_${this.currentDate.getFullYear()}-${this.currentDate.getMonth() + 1}-${this.currentDate.getDate()}.pdf`;
+      const name = `memo_sol_plan_anual_grupo_${this.groupId}_${this.currentDate.getFullYear()}-${this.currentDate.getMonth() + 1}-${this.currentDate.getDate()}.pdf`;
       const modifiedFile = new File([this.selectedFile], name, { type: this.selectedFile.type });
       this.selectedFile = modifiedFile;
     }
@@ -184,7 +193,7 @@ export class MemorandoSolPlanesComponent implements OnInit {
           fechaCreacion: data.fechaCreacion,
           usuarioModificacion: this.currentUser,
           fechaModificacion: this.currentDate,
-          proceso:'14'
+          proceso:'13'
   
         }
         this.invGroupService.update(this.groupId, invGroup).subscribe(

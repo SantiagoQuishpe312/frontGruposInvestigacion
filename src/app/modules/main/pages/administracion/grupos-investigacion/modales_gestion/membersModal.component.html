@@ -146,7 +146,7 @@
           </mat-form-field>
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Correo</mat-label>
-            <input matInput type="text" formControlName="correo" required>
+            <input matInput type="text" formControlName="correo">
             <mat-error
               *ngIf="userDataForm.get('correo').invalid && userDataForm.get('correo').touched">
               El campo correo es obligatorio
@@ -163,7 +163,7 @@
           </mat-form-field>
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Cédula</mat-label>
-            <input matInput type="text" formControlName="cedula" required
+            <input matInput type="text" formControlName="cedula"
               [readonly]="onlyRead">
             <mat-error
               *ngIf="userDataForm.get('cedula').invalid && userDataForm.get('cedula').touched">
@@ -269,7 +269,7 @@
           type="button">
           Guardar cambios
         </button>
-        <button mat-button type="button" (click)="cancelar()"
+        <button class="btn-save" mat-button type="button" (click)="cancelar()"
           matTooltip="Regresar">
           Regresar/Cancelar
         </button>

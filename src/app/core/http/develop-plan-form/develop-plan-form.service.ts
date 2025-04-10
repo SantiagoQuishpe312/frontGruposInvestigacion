@@ -20,8 +20,8 @@ export class DevelopmentPlanService {
   getById(id: number): Observable<DevelopmentPlanForms> {
     return this.http.get<DevelopmentPlanForms>(`${this.URL}/${id}`);
   }
-  getByIdGroupC(id: number): Observable<DevelopmentPlanForms> {
-    return this.http.get<DevelopmentPlanForms>(`${this.URL}/groupC/${id}`);
+  getByIdGroupC(id: number): Observable<DevelopmentPlanForms[]> {
+    return this.http.get<DevelopmentPlanForms[]>(`${this.URL}/groupC/${id}`);
   }
   getByIdGroupAndType(id: number,type:string): Observable<DevelopmentPlanForms> {
     return this.http.get<DevelopmentPlanForms>(`${this.URL}/group/${id}/Type/${type}`);

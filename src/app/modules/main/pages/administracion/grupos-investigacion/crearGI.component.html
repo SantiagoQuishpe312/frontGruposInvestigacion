@@ -41,6 +41,9 @@
 
                             <button type="button" mat-raised-button
                                 color="warn" 
+                                (click)="openDialogCoord()" *ngIf="selectedUserCoord">Cambiar Coordinador</button>
+                                <button type="button" mat-raised-button
+                                color="warn" 
                                 (click)="openDialogCoord()" *ngIf="!selectedUserCoord">Coordinador</button>
                                 <mat-form-field appearance="fill" *ngIf="selectedUserCoord" class="coordinator-field">
                                     <mat-label>Coordinador:</mat-label>
@@ -202,7 +205,7 @@
                                         matStepperPrevious>Regresar</button>
                                     <button type="button" mat-raised-button
                                         color="primary"
-                                        [disabled]="!dominiosControl.value?.length || !areasControl.value?.length || !lineasControl.value?.length"
+                                        [disabled]="totalMiembrosInternos <3"
                                         matStepperNext>Siguiente</button>
 
                                 </div> </div>
@@ -211,28 +214,72 @@
                 </mat-step>
 
                 <!-- Paso 4 -->
-                <mat-step [stepControl]="grupoInv4" label="Imagen del Grupo">
-                    <div class="creacion-grupo-investigacion">
-                        <div formGroupName="grupoInv4">
-                            <div >
-                                <div class="custom-file-input">
-                                  <label for="fileInput">Seleccione la Imagen del Grupo</label>
-                                  <input id="fileInput" type="file" (change)="onFileSelected($event)" accept=".png" />
-                                </div>
-                              </div>
-                        </div>
-                        <div class="grid-item">
-                            <div>
-                                <button type="button" mat-raised-button
-                                    color="primary"
-                                    matStepperPrevious>Regresar</button>
-                                <button type="submit" mat-raised-button
-                                    color="primary"
-                                    >Guardar</button>
+                <mat-step [stepControl]="grupoInv4"
+                label="Imagen del Grupo">
+                <div class="creacion-grupo-investigacion">
+                    <div formGroupName="grupoInv4">
+                        <h1>Imagen (logo) del Grupo de Investigación
+                        </h1>
 
-                            </div> </div>
+                        <div class="drag-drop"
+                            (drop)="onDrop($event)"
+                            (dragover)="onDragOver($event)">
+                            <!-- Contenedor para previsualización o ícono -->
+                            <div class="vista-previa-img"
+                                *ngIf="filePreview">
+                                <img *ngIf="isImageFile"
+                                    [src]="filePreview"
+                                    alt="Vista previa" width="150px">
+                                <i *ngIf="!isImageFile"
+                                    [class]="fileIcon"></i>
+                            </div>
+
+                            <i *ngIf="selectedImg && !isImageFile"
+                                [class]="getFileIcon(selectedImg.type)"></i>
+                            <p *ngIf="!selectedImg">Arrastra y suelta la
+                                imagen aquí o haz clic para
+                                seleccionarla.</p>
+                            <p *ngIf="selectedImg">{{ imageNameOriginal
+                                }}</p>
+
+                            <div class="custom-file-input">
+                                <label for="imageInput">{{ selectedImg ?
+                                    'Cambiar imagen' :
+                                    'Seleccionar imagen' }}</label>
+                                <input id="imageInput" type="file"
+                                    (change)="onImgSelected($event)"
+                                    accept=".jpg, .jpeg, .png, .gif, .bmp, .webp, .tiff, .svg" />
+                            </div>
+                        </div>
+                        <mat-form-field appearance="outline"
+                            class="full-width">
+                            <mat-label>Selecciona un miembro del GI para
+                                asignarle el rol de
+                                Secretario</mat-label>
+                            <mat-select [(value)]="selectedMember"
+                                placeholder="Seleccionar miembro">
+                                <mat-option
+                                    *ngFor="let miembro of miembrosInternos"
+                                    [value]="miembro">
+                                    {{ miembro.user.nombres }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
                     </div>
-                </mat-step>
+                    <div class="grid-item">
+                        <div>
+                            <button type="button" mat-raised-button
+                                color="primary"
+                                matStepperPrevious>Regresar</button>
+                            <button type="submit" mat-raised-button
+                                color="primary"
+                                [disabled]='!selectedImg || !selectedMember '>Guardar</button>
+
+                        </div> </div>
+                </div>
+            </mat-step>
+
             </mat-stepper>
         </form>
     </div>

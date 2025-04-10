@@ -204,7 +204,7 @@ button.custom-button:disabled {
   margin-top: 15px;
 }
 .btn-agregar {
-  background-color: rgb(180, 180, 180); 
+  background-color: rgb(74, 109, 61); 
   color: white; 
   width: 150px;
   margin-top: 15px;
@@ -298,3 +298,16 @@ button.custom-button:disabled {
   text-align: center;
 }
 
+.warn {
+  background-color: #f44336 !important; /* Rojo */
+  color: white !important;
+}
+.btn-blue {
+  background-color: #2e8041 !important; /* Verde */
+  color: white !important;
+}
+
+.btn-save{
+  background-color: #332e80 !important; /* Verde */
+  color: white !important;
+}

@@ -41,7 +41,7 @@
                
 
                 <!-- Seguimiento -->
-                <header *ngIf="grupo && grupo.proceso==='SolicitaPlanAnual'">
+                <header *ngIf="grupo && grupo.proceso==='13'">
                     <h1>Elaborar y remitir los planes</h1>
                 </header>
                 <header
@@ -79,7 +79,7 @@
             <div class="presentacionGrupo"
                 *ngIf=" !loadingData  && grupo.proceso==='1' "
                 style="text-align: center;">
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
                 <h2>Para complementar la información y continuar con la
                     solicitud de creación del grupo de investigación se debe
                     cargar el Plan de Desarrollo del Grupo de
@@ -148,9 +148,9 @@
 
             <!-- FASE DE SEGUIMIENTO DEL GRUPO DE INVESTIGACIÓN (FORMULARIO CUANDO SE ENVÍA LA SOLICITUD POR PRIMERA VEZ) -->
             <div class="presentacionGrupo"
-                *ngIf=" !loadingData  && grupo.estadoGrupoInv==='Activo' && grupo.proceso==='SolicitaPlanAnual' "
+                *ngIf=" !loadingData  && grupo.proceso==='13' "
                 style="text-align: center;">
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
                 <p>Mediante memorando la Unidad de Gestión de Investigación
                     solicita que el GI revise, elabore y remita el plan de
                     desarrollo y planificación operativa anual con base a los

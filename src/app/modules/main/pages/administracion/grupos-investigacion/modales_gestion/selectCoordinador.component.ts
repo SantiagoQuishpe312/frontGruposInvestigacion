@@ -5,16 +5,16 @@ import { UsuarioService } from 'src/app/core/http/usuario/usuario.service';
 import { UserApp } from 'src/app/types/userApp.types';
 import { Usuario } from 'src/app/types/usuario.types';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
-import { ExternMembersGroup } from './externMemberForm.component';
 import { Output, EventEmitter } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-members',
-  templateUrl: './membersGroup.component.html',
-  styleUrls: ['../../coordinadorGI/faseCreacion/sol-creacion/sol-creacion.component.scss']
+  templateUrl: './selectCoordinador.component.html',
+  styleUrls: ['../../../coordinadorGI/faseCreacion/sol-creacion/sol-creacion.component.scss']
 })
-export class MembersGroup implements OnInit {
+export class SelectCoordinadorGroup implements OnInit {
   user: UserApp;
   @Output() usuarioExternoCreado: EventEmitter<Usuario> = new EventEmitter<Usuario>();
   private readonly URLImage = environment.imageApiUrl;
@@ -22,14 +22,14 @@ export class MembersGroup implements OnInit {
   miembro: FormGroup;
   isSearchClicked = false;
   userNotFound = false;
-
+  isDisabled = false;
   constructor(
     private fb: FormBuilder,
     private userService: UsuarioService,
     private authService: AuthService,
-    public dialogRef: MatDialogRef<MembersGroup>,
+    public dialogRef: MatDialogRef<SelectCoordinadorGroup>,
     private dialog: MatDialog,
-
+    private snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.usuarios = data.usuarios;
@@ -55,6 +55,16 @@ export class MembersGroup implements OnInit {
           this.user = data;
           this.isSearchClicked = true;
           this.userNotFound = false;
+          if (data.tipo === 'SERVIDOR PUBLICO' || data.tipo === 'ESTUDIANTE') {
+            this.snackBar.open('El coordinador no puede ser SERVIDOR PÚBLICO ni ESTUDIANTE', 'Cerrar', {
+              duration: 4000,
+              panelClass: ['toast-error'] // puedes personalizar esto en el CSS
+            });
+            this.isDisabled = true;
+          }
+          else {
+            this.isDisabled = false;
+          }
         } else {
           this.userNotFound = true;
           this.user = null;
@@ -81,18 +91,14 @@ export class MembersGroup implements OnInit {
     const currentDate = new Date();
     const token = sessionStorage.getItem('access_token');
     const userName = this.miembro.get('usuario').value;
-    let nacionalidad: string;
+
     this.userService.getUserApp(userName, token).subscribe((data) => {
       this.userService.getByUserName(userName).subscribe((userData) => {
         if (userData.id != null) {
           console.log("El usuario ya existe en la bd");
           this.user.idBd = userData.id;
-        } else {
-          if (data.nacionalidad === 'E') {
-            nacionalidad = 'ECUADOR';
-          }if (data.nacionalidad === 'E5') {
-            nacionalidad = 'ESPAÑA';
-          }
+        }
+        else  {
           const partes = data.ubicacion.split(" - ");
           const departamento = partes[1].trim();
           const sede = partes[0].trim();
@@ -110,7 +116,7 @@ export class MembersGroup implements OnInit {
             usuarioModificacion: null,
             institucion: 'UNIVERSIDAD DE LAS FUERZAS ARMADAS – ESPE',
             cargo: data.escalafon || data.tipo,
-            nacionalidad: nacionalidad || data.nacionalidad,
+            nacionalidad: data.nacionalidad,
             genero: data.sexo,
             grado: data.grado,
             sede: sede,
@@ -125,16 +131,5 @@ export class MembersGroup implements OnInit {
       });
     });
   }
-  crearUsuarioExterno(): void {
-    const dialogRef = this.dialog.open(ExternMembersGroup, {
-      width: '60%',
-      height: '90%',
-      data: { usuarios: this.usuarios }
-    });
-    dialogRef.componentInstance.memberCreated.subscribe((usuarioCreado: Usuario) => {
-      this.usuarios.push(usuarioCreado); // Agregar el usuario a la lista de usuarios
-      this.usuarioExternoCreado.emit(usuarioCreado); // Emitir el usuario al componente padre
-    });
-
-  }
+  
 }

@@ -250,21 +250,26 @@
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
         </table>
-        <button type="button" mat-raised-button color="primary" class="btn-container"
-        [disabled]="!invGroup" (click)="EditGroup()">Editar Información del Grupo</button>
-        <button type="button" mat-raised-button color="primary" class="btn-container" 
-          [disabled]="!invGroup" (click)="EditMembers()">
-          Editar Miembros del Grupo
-        </button>
-        <button type="button" mat-raised-button color="primary" class="btn-container" 
-          [disabled]="!invGroup" (click)="EditLine()">
-          Editar Dominios-Áreas-Líneas
-        </button>
-
-        <button type="button" mat-raised-button color="primary" class="btn-container" 
-          [disabled]="!invGroup" (click)="enlace('reportesGI')">
-          Reportes
-        </button>
+        <div class="botones-container">
+          <button type="button" mat-raised-button color="primary" class="btn-container"
+            [disabled]="!invGroup" (click)="EditGroup()">Editar Información del Grupo</button>
+        
+          <button type="button" mat-raised-button color="primary" class="btn-container" 
+            [disabled]="!invGroup" (click)="EditMembers()">
+            Editar Miembros del Grupo
+          </button>
+        
+          <button type="button" mat-raised-button color="primary" class="btn-container" 
+            [disabled]="!invGroup" (click)="EditLine()">
+            Editar Dominios-Áreas-Líneas
+          </button>
+        
+          <button type="button" mat-raised-button color="primary" class="btn-container" 
+            [disabled]="!invGroup" (click)="enlace('reportesGI')">
+            Reportes
+          </button>
+        </div>
+        
       </mat-card>
     </div>
   </div>

@@ -1,0 +1,53 @@
+<div *ngIf="isLoading" class="loading-spinner-overlay">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+  </div>
+  
+  <div class="container-fluid">
+    <div class="card">
+      <header>
+        <h1>Solicitud Plan de Desarrollo y Planificación Anual</h1>
+      </header>
+      <main>
+        <div *ngIf="noSolicitudesPendientes && !isLoading" class="no-data-message">
+          No existen Solicitudes por Validar Pendientes
+        </div>
+  
+        <div *ngIf="!noSolicitudesPendientes && !isLoading">
+          <table mat-table [dataSource]="grupoComplete" class="mat-elevation-z8" style="width: 100%;">
+  
+            <!-- Número -->
+            <ng-container matColumnDef="numero">
+              <th mat-header-cell *matHeaderCellDef> # </th>
+              <td mat-cell *matCellDef="let element; let i = index"> {{ i + 1 }} </td>
+            </ng-container>
+  
+            <!-- Nombre Grupo -->
+            <ng-container matColumnDef="grupo">
+              <th mat-header-cell *matHeaderCellDef> Nombre de Grupo </th>
+              <td mat-cell *matCellDef="let element"> {{ element.invGroup.nombreGrupoInv }} </td>
+            </ng-container>
+  
+            <!-- Nombre Coordinador -->
+            <ng-container matColumnDef="coordinador">
+              <th mat-header-cell *matHeaderCellDef> Nombre del Coordinador </th>
+              <td mat-cell *matCellDef="let element"> {{ element.coordinador.nombre }} </td>
+            </ng-container>
+  
+            <!-- Solicitar -->
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef> Solicitar </th>
+              <td mat-cell *matCellDef="let element">
+                <button type="button" mat-mini-fab color="primary" (click)="solicitar(element.invGroup.idGrupoInv)">
+                    <i class="fa fa-folder-open" aria-hidden="true"></i></button>
+              </td>
+            </ng-container>
+  
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+  

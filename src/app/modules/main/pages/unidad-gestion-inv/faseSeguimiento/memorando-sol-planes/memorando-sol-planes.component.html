@@ -7,9 +7,9 @@
             <h1>Delegar la revisión y el análisis a la Unidad Responsable de la Gestión de la Investigación</h1>
         </header>
         <main>
-            <p><br>Mediante memorando la Unidad Responsable de la Gestión de la Investigación, delegar la revisión y
+            <p><br>Mediante memorando la Unidad Responsable de la Gestión de la Investigación, debe delegar la revisión y
                 el análisis del Plan de desarrollo a 4 años y la
-                Planificación operativa anual de los Grupos de Investigación al Coordinador de G.I.
+                Planificación operativa anual del Grupo de Investigación <span> {{ group.nombreGrupoInv }} - {{group.acronimoGrupoinv}}</span>.
             </p>
             <p><br>Adjunte el memorando</p>
             <form (submit)="onSubmit()">
@@ -25,7 +25,7 @@
                         <input id="fileInput" type="file" (change)="onFileSelected($event)" accept=".pdf" />
                     </div>
                 </div>
-                <button class="boton" type="submit" [disabled]="!selectedFile">Delegar Revisión y Análisis</button>
+                <button class="boton" type="submit" [disabled]="!selectedFile">Solicitar plan de Desarrollo y Planificación Anual</button>
                 <div *ngIf="selectedFile" class="file-info">
                     <p *ngIf="fileUploaded" class="success-message">El anexo se ha cargado con éxito.</p>
                 </div>

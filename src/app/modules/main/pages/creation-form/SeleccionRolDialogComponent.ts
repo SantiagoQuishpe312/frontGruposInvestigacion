@@ -8,12 +8,12 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
     <mat-dialog-content>
       <p>¿Este usuario será un "Miembro" o un "Colaborador"?</p>
       <mat-button-toggle-group [(ngModel)]="rolSeleccionado">
-        <mat-button-toggle value="Miembro">Miembro</mat-button-toggle>
-        <mat-button-toggle value="Colaborador">Colaborador</mat-button-toggle>
+        <mat-button-toggle value="MIEMBRO">MIEMBRO</mat-button-toggle>
+        <mat-button-toggle value="COLABORADOR">COLABORADOR</mat-button-toggle>
       </mat-button-toggle-group>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button (click)="dialogRef.close()">Cancelar</button>
+      <button mat-button (click)="dialogRef.close()">CANCELAR</button>
       <button mat-button color="primary" [disabled]="!rolSeleccionado" (click)="confirmar()">Aceptar</button>
     </mat-dialog-actions>
   `

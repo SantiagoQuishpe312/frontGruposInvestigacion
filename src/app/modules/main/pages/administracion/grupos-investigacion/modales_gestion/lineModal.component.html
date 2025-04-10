@@ -6,49 +6,70 @@
     <h1>Gestión de Áreas y Líneas de Investigación</h1>
   </header>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Dominio Académico</th>
-        <th>Área</th>
-        <th>Línea</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let dom of invGroup?.academicDomain">
-        <td>{{ dom.nombreDominioAcademico }}
-          <button type="button" class="warn" mat-mini-fab (click)="deleteDominio(dom.idDomimioAcademico)">
-            <i class="fa fa-trash-alt" aria-hidden="true"></i>
-          </button>
-        </td>
-        <td style="padding: 0px;">
-          <div *ngFor="let area of invGroup?.area" style="width: 100%; border-bottom: solid 1px #ccc;">
-            {{ area.nombreArea }}
-            <button type="button" class="warn" mat-mini-fab (click)="deleteArea(area.idArea)"> 
+  <div style="display: flex; gap: 20px;">
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Dominio Académico</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let dom of invGroup?.academicDomain">
+          <td>
+            {{ dom.nombreDominioAcademico }}
+            <button type="button" class="warn" mat-mini-fab (click)="deleteDominio(dom.idDomimioAcademico)">
               <i class="fa fa-trash-alt" aria-hidden="true"></i>
             </button>
-          </div>
-          
-        </td>
-        <td style="padding: 0px;">
-          <div *ngFor="let lin of invGroup?.line" style="width: 100%; border-bottom: solid 1px #ccc;">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Área</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let area of invGroup?.area">
+          <td>
+            {{ area.nombreArea }}
+            <button type="button" class="warn" mat-mini-fab (click)="deleteArea(area.idArea)">
+              <i class="fa fa-trash-alt" aria-hidden="true"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Línea</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let lin of invGroup?.line">
+          <td>
             {{ lin.nombreLinea }}
             <button type="button" class="warn" mat-mini-fab (click)="deleteLinea(lin.idLinea)">
               <i class="fa fa-trash-alt" aria-hidden="true"></i>
             </button>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
 
   <div class="button-group">
-    <button mat-raised-button color="accent" (click)="agregar('d')">Agregar Dominio Académico</button>
-    <button mat-raised-button color="accent" (click)="agregar('a')">Agregar Área</button>
-    <button mat-raised-button color="accent" (click)="agregar('l')">Agregar Línea</button>
+    <button class="btn-blue" mat-raised-button color="accent" (click)="agregar('d')">Agregar Dominio Académico</button>
+    <button class="btn-blue"mat-raised-button color="accent" (click)="agregar('a')">Agregar Área</button>
+    <button class="btn-blue"mat-raised-button color="accent" (click)="agregar('l')">Agregar Línea</button>
   </div>
   <div *ngIf="!loadingData && selectMostrar==='d'">
-    <form [formGroup]="myForm" (ngSubmit)="Enviar()">
+    <form [formGroup]="myForm" >
       <div class="grid-container">
 
         <!-- Dominios Académicos -->
@@ -106,11 +127,11 @@
           </div>
         </div>
       </form>
-      <button type="submit" mat-raised-button color="accent" [disabled]="!myForm.get('lineas')?.valid || !myForm.get('areas')?.valid || !myForm.get('dominios')?.valid">Guardar</button>
+      <button class="btn-save" type="button" (click)="Enviar()" mat-raised-button color="accent" [disabled]="!myForm.get('lineas')?.valid || !myForm.get('areas')?.valid || !myForm.get('dominios')?.valid">Guardar</button>
   </div>
   <div *ngIf="!loadingData && selectMostrar==='a'">
     
-    <form [formGroup]="myForm" (ngSubmit)="Enviar()">
+    <form [formGroup]="myForm" >
       <div class="grid-container">
         <!-- Áreas de Investigación -->
         <div class="grid-item">
@@ -148,12 +169,12 @@
           </div>
         </div>
       </form>
-      <button type="submit" mat-raised-button color="accent" [disabled]="!myForm.get('areas')?.valid || !myForm.get('lineas')?.valid">Guardar</button>
+      <button class="btn-save" type="button" (click)="Enviar()" mat-raised-button color="accent" [disabled]="!myForm.get('areas')?.valid || !myForm.get('lineas')?.valid">Guardar</button>
 
   </div>
   <div *ngIf="!loadingData && selectMostrar==='l'">
     
-    <form [formGroup]="myForm" (ngSubmit)="Enviar()">
+    <form [formGroup]="myForm" >
       <div class="grid-container">
         <div class="grid-item">
             <mat-form-field appearance="fill"
@@ -173,7 +194,7 @@
           </div>
         </div>
       </form>
-      <button type="submit" mat-raised-button color="accent" [disabled]="!myForm.get('lineas')?.valid">Guardar</button>
+      <button  class="btn-save" type="button" (click)="Enviar()" mat-raised-button color="accent" [disabled]="!myForm.get('lineas')?.valid">Guardar</button>
 
   </div>
 </div>

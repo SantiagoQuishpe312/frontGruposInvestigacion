@@ -76,6 +76,7 @@ export class DetalleGIComponent implements OnInit {
   }
 
   get(id: number) {
+  this.isLoading = true;
     this.giService.getByIdAll(id).subscribe((data) => {
       this.totalUsuarios=data.users.length+1;
      this.usuariosPorDepartamento=this.contarPorCategoria(data.users,'departamento')
@@ -258,8 +259,6 @@ export class DetalleGIComponent implements OnInit {
     const dialogRef = this.dialog.open(GroupModalEdit, { width: '80%', height: '70%' });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) this.get(this.id);
-      this.isLoading = true;
-
     });
   }
   enlace(url: string) {

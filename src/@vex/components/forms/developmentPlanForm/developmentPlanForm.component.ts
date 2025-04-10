@@ -46,7 +46,7 @@ export class DevelopPlanFormComponent implements OnInit {
   controlPanel:ControlPanelForm[]=[];
   specificObj:ObjectiveCompleteOds[]=[];
   token:string;
-
+  planDesarrolloVigente:DevelopmentPlanForms[];
   constructor(
     private invGroupService: InvGroupService,
     private userService: UsuarioService,
@@ -63,11 +63,16 @@ private objStrategiesODSService:ObjStrategiesODSService,
 
   ngOnInit(): void {
     console.log("id plan ",this.id)
+    this.planDesarrolloVigente = JSON.parse(localStorage.getItem('planDesarrollo'));
     this.obtenerPlanDesarrollo(this.id)
   }
 
   obtenerPlanDesarrollo(id: number) {
-    this.developmentService.getByIdGroupAndType(id,'c').subscribe((data) => {
+    let tipo='c';
+  if(this.planDesarrolloVigente){
+    tipo=this.planDesarrolloVigente[0].tipo;
+  }
+  this.developmentService.getByIdGroupAndType(id,tipo).subscribe((data) => {
   this.planDesarrollo = data[0];
   this.obtenerExtras(data[0].idPlanDesarrollo)
   this.cargarObjInstitucional(data[0].idObjetivoInst)

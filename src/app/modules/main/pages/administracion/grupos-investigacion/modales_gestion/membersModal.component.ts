@@ -250,23 +250,23 @@ export class MembersModalEdit implements OnInit {
 
     this.userDataForm = this.fb.group({
       id: [user.user.id, Validators.required],
-      usuario: [user.user.usuario ?? 'EXTERNO', Validators.required],
+      usuario: [user.user.usuario ?? 'EXTERNO'],
       nombre: [user.user.nombre, Validators.required],
-      idInstitucional: [user.user.idInstitucional, Validators.required],
-      correo: [user.user.correo, Validators.required],
-      departamento: [user.user.departamento ?? 'EXTERNO', Validators.required],
-      cedula: [user.user.cedula, Validators.required],
-      institucion: [user.user.institucion, Validators.required],
-      cargo: [user.user.cargo, Validators.required],
+      idInstitucional: [user.user.idInstitucional],
+      correo: [user.user.correo],
+      departamento: [user.user.departamento ?? 'EXTERNO'],
+      cedula: [user.user.cedula],
+            institucion: [user.user.institucion],
+      cargo: [user.user.cargo],
       nacionalidad: [user.user.nacionalidad, Validators.required],
-      foto: [user.user.foto, Validators.required],
+      foto: [user.user.foto],
       genero: [user.user.genero, Validators.required],
       grado: [user.user.grado, Validators.required],
-      sede: [user.user.sede, Validators.required],
+      sede: [user.user.sede],
       fechaCreacion: [user.user.fechaCreacion, Validators.required],
       fechaModificacion: [user.user.fechaModificacion, Validators.required],
-      usuarioCreacion: [user.user.usuarioCreacion, Validators.required],
-      usuarioModificacion: [user.user.usuarioModificacion, Validators.required],
+      usuarioCreacion: [user.user.usuarioCreacion],
+      usuarioModificacion: [user.user.usuarioModificacion],
     })
     this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe(data => {
       this.nacionalidades = data.map(country => country.translations.spa.common); // Extraer nombres en español
@@ -281,34 +281,37 @@ export class MembersModalEdit implements OnInit {
 
 actualizarInfoMiembro(): void {
   this.isLoading = true;
-
+  console.log('actualizarInfoMiembro');
+  const miembroData = this.miembroForm.value;
+  const usuarioData = this.userDataForm.value;
+  console.log(this.userDataForm.valid);
+  console.log(this.userDataForm.value);
   // Llamada concurrente para actualizar miembro y usuario
   forkJoin([
-    this.invMemberService.update(this.miembroForm.value.idUsuario, this.miembroForm.value.idGrupoInv, this.miembroForm.value),
-    this.userService.update(this.userDataForm.value.id, this.userDataForm.value)
-  ]).subscribe(
-    ([miembroResponse, usuarioResponse]) => {
-      // Recargar datos después de la actualización exitosa
-      this.get(this.groupId);
-      this.isLoading = false;
+    this.invMemberService.update(miembroData.idUsuario, miembroData.idGrupoInv, miembroData),
+    this.userService.update(usuarioData.id, usuarioData)
+  ]).subscribe({
+    next: ([miembroResponse, usuarioResponse]) => {
+      this.get(this.groupId);         // Recargar datos del grupo
       this.isEdit = false;
-
+      this.isLoading = false;
       // Mostrar mensaje de éxito
       this.snackBar.open('Información del usuario actualizada con éxito.', 'Cerrar', {
         duration: 3000,
         panelClass: ['success-snackbar'],
       });
     },
-    (error) => {
+    error: (err) => {
       this.isLoading = false;
-
+  
       // Mostrar mensaje de error
       this.snackBar.open('Error al actualizar la información del usuario.', 'Cerrar', {
         duration: 3000,
         panelClass: ['error-snackbar'],
       });
     }
-  );
+  });
+  
 }
 
 

@@ -1,0 +1,63 @@
+<div class="cont">
+  <div class="container-fluid">
+    <form [formGroup]="miembro" (ngSubmit)="buscarMiembro()" class="container">
+      <header class="header">
+        <h1 class="title">Seleccionar Coordinador</h1>
+      </header>
+      <div class="grid-container">
+        <div class="grid-item">
+          <mat-form-field appearance="fill">
+            <mat-label>Ingrese el usuario (miEspe) del miembro a
+              buscar</mat-label>
+            <input matInput formControlName="usuario">
+          </mat-form-field>
+        </div>
+        <div class="grid-item">
+          <button mat-raised-button color="primary" class="btn-verde"
+            (click)="buscarMiembro()">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+        <div class="grid-item" *ngIf="user">
+          <div class="info">
+            <!-- Información del usuario -->
+            <h2>{{user.nombres}}</h2>
+            <h3>{{user.tipo}}</h3>
+            <h3>{{user.escalafon}}</h3>
+            <h3>{{user.ubicacion}}</h3>
+            <h3>{{user.correoInstitucional}} - {{user.correoPersonal}}</h3>
+            <h3>{{user.id}} - {{user.cedula}}</h3>
+          </div>
+        </div>
+
+        <div class="grid-item" *ngIf="user">
+          <div class="info">
+            <!-- Imagen del usuario -->
+            <img [src]="user.urlFoto" alt="Imagen del usuario"
+              class="rounded-image">
+          </div>
+        </div>
+        <div class="grid-item" *ngIf="userNotFound">
+          <div class="info">
+            <!-- Mensaje de error -->
+            <p>El usuario no existe.</p>
+          </div>
+        </div>
+      </div>
+    </form>
+    <!-- Botones del diálogo -->
+    <div mat-dialog-actions>
+      <button mat-button class="btn-agregar"
+        [mat-dialog-close]="{ user: user, usuarioValue: miembro.get('usuario').value }"
+        (click)="crearUsuario(user)"
+        *ngIf="isSearchClicked && !userNotFound && !(data.tipo === 'SERVIDOR PUBLICO' || data.tipo === 'ESTUDIANTE')"
+        [disabled]="isDisabled">
+        Añadir
+      </button>
+
+      <button mat-button class="btn-cerrar" [mat-dialog-close]
+        (click)="limpiarUsuario()">Cerrar</button>
+
+    </div>
+  </div>
+</div>

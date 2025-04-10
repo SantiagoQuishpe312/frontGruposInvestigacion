@@ -430,3 +430,17 @@ th, td {
   border: 1px solid #ddd;
   text-align: left;
 }
+.botones-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem; // espacio entre botones
+  justify-content: center; // o "flex-start" si los quieres alineados a la izquierda
+  padding: 1rem;
+
+  .btn-container {
+    flex: 1 1 auto; // crece y se adapta según el espacio
+    min-width: 220px; // ancho mínimo para que no se vean muy chicos
+    max-width: 300px;
+  }
+}
+

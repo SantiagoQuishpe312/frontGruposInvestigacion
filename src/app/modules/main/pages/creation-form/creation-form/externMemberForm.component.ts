@@ -49,6 +49,10 @@ export class ExternMembersGroup implements OnInit {
             grado: [''],
             nacionalidad: ['', Validators.required],
             genero: ['', Validators.required],
+            departamento: ['EXTERNO'],
+            sede: ['EXTERNO'],
+            usuarioCreacion:[this.currentUser],
+            fechaCreacion:[this.currentDate],
         });
 
         // Cargar nacionalidades desde la API
@@ -70,6 +74,7 @@ export class ExternMembersGroup implements OnInit {
     convertirAMayusculas(event: Event) {
         const inputElement = event.target as HTMLInputElement; // ✅ Cast seguro
         this.miembro.get('institucion')?.setValue(inputElement.value.toUpperCase(), { emitEvent: false });
+
       }
       
     onClickNo(): void {
@@ -84,7 +89,7 @@ export class ExternMembersGroup implements OnInit {
         const nombre = this.miembro.get('nombre')?.value.toUpperCase();
         const nombreCompleto = `${apellido}, ${nombre}`;
         this.miembro.patchValue({ nombre: nombreCompleto });
-
+        this.miembro.get('nacionalidad')?.setValue(this.miembro.get('nacionalidad')?.value.toUpperCase(), { emitEvent: false });
         // Crear el objeto usuario
         const userData: Usuario = this.miembro.value;
         userData.fechaCreacion = this.currentDate;

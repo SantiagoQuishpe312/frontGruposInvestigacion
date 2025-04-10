@@ -102,6 +102,23 @@ export class DashboardCoordinadorComponent implements OnInit {
         }
       })
     })
+    if(this.grupo.proceso === '13'){
+      this.annexesServices.getByGroupType(id, 'emo_Solicitud').subscribe((data) => {
+        console.log('data', data);
+        this.documentService.getDocument(this.token, data[0].rutaAnexo, data[0].nombreAnexo).subscribe({
+          next: (blob) => {
+            const pdfBlob = new Blob([blob], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(pdfBlob);
+            this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url); // Marcar la URL como segura
+            this.loadingData = false;
+          },
+          error: (err) => {
+            console.error('Error al cargar el documento:', err);
+            this.loadingData = false;
+          }
+        })
+      })
+    }
   }
   enlace(url: string) {
     this.router.navigateByUrl(`main/${url}`);
