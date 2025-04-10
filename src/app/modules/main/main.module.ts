@@ -172,6 +172,13 @@ import { SolicitudPlanesComponent } from './pages/unidad-gestion-inv/solicitud-p
 import { MemorandoSolPlanesComponent } from './pages/unidad-gestion-inv/faseSeguimiento/memorando-sol-planes/memorando-sol-planes.component';
 import { SolicitudInformesComponent } from './pages/unidad-gestion-inv/solicitud-informes/solicitud-informes.component';
 import { MemorandoSolInformesComponent } from './pages/unidad-gestion-inv/solicitud-informes/memorando-sol-informes/memorando-sol-informes.component';
+import { FaseCierreComponent } from './pages/unidad-gestion-inv/fase-cierre/fase-cierre.component';
+import { EvaluacionesModalComponent } from './pages/unidad-gestion-inv/fase-cierre/evaluaciones-modal/evaluaciones-modal.component';
+import { SolicitudesModalComponent } from './pages/unidad-gestion-inv/fase-cierre/solicitudes-modal/solicitudes-modal.component';
+import { EditarEvaluacionCierreComponent } from './pages/unidad-gestion-inv/fase-cierre/evaluaciones-modal/editar-evaluacionCierre.component';
+import { EditarSolicitudCierreComponent } from './pages/unidad-gestion-inv/fase-cierre/solicitudes-modal/editar-solicitudCierre.component';
+import { VerInformeCierreComponent } from './pages/unidad-gestion-inv/fase-cierre/ver-informe-cierre/ver-informe-cierre.component';
+import { AnexosFaseCierreComponent } from './pages/unidad-gestion-inv/fase-cierre/anexos-fase-cierre/anexos-fase-cierre.component';
 
 @NgModule({
   declarations: [
@@ -309,6 +316,14 @@ import { MemorandoSolInformesComponent } from './pages/unidad-gestion-inv/solici
    MemorandoSolPlanesComponent,
    SolicitudInformesComponent,
    MemorandoSolInformesComponent,
+   FaseCierreComponent,
+   EvaluacionesModalComponent,
+   SolicitudesModalComponent,
+   EditarEvaluacionCierreComponent,
+   EditarSolicitudCierreComponent,
+   VerInformeCierreComponent,
+   AnexosFaseCierreComponent
+   
   ],
   imports: [
     MatButtonToggleModule,  

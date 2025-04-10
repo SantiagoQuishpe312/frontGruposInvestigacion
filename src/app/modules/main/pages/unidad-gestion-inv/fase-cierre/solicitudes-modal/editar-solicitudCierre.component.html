@@ -1,0 +1,56 @@
+<div class="cont">
+    <div class="container-fluid">
+      <div class="card">
+        <header>
+          <h2 mat-dialog-title>Editar Solicitud Motivada por Parte del Grupo</h2>
+        </header>
+        <div mat-dialog-content>
+          <form [formGroup]="solicitudForm">
+            <div class="grid-item">
+              <h2>Motivación del Grupo</h2>
+              <mat-form-field>
+                <mat-label>Ingresar Motivación</mat-label>
+                <textarea matInput 
+                placeholder="Motivación" 
+                formControlName="motivacion"
+                rows="4"></textarea>              </mat-form-field>
+            </div>
+
+            <div class="grid-item">
+                <h2>Justificación Adicional:</h2>
+                <mat-form-field>
+                  <mat-label>Ingresar Justificación Adicional:</mat-label>
+                  <textarea matInput 
+                  placeholder="Justificación Adicional" 
+                  formControlName="justificacion"
+                  rows="4"></textarea>                </mat-form-field>
+              </div>
+            
+          </form>
+        </div>
+        <div mat-dialog-actions>
+          <div class="action-buttons">
+            <button
+              class="edit"
+              mat-mini-fab
+              color="primary"
+              aria-label="Guardar"
+              mat-button
+              (click)="save()">
+              <i class="fa fa-save" aria-hidden="true"></i>
+            </button>
+            <button
+              class="delete"
+              mat-mini-fab
+              color="warn"
+              aria-label="Borrar"
+              mat-button
+              (click)="cancel()">
+              <i class="fas fa-times-circle" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

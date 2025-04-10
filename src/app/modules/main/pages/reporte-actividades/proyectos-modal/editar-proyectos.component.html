@@ -11,6 +11,9 @@
             <mat-form-field>
               <mat-label>Ingresar Título</mat-label>
               <input matInput placeholder="Título" formControlName="titulo" />
+              <mat-error *ngIf="projectsForm.get('titulo').hasError('required')">
+                Título es requerido
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -22,6 +25,9 @@
                 matInput
                 placeholder="Entidad Financiera"
                 formControlName="entidadFinanciera" />
+              <mat-error *ngIf="projectsForm.get('entidadFinanciera').hasError('required')">
+                Entidad Financiera es requerida
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -33,10 +39,14 @@
                 matInput
                 placeholder="Institución Colaboradora"
                 formControlName="institucionColaboradora" />
+              <mat-error *ngIf="projectsForm.get('institucionColaboradora').hasError('required')">
+                Institución Colaboradora es requerida
+              </mat-error>
             </mat-form-field>
           </div>
 
           <table>
+            <h2>Tiempo de duración (Horas : Minutos)</h2>
             <tr>
               <td>
                 <div class="grid-item">
@@ -46,8 +56,16 @@
                     <input
                       matInput
                       type="number"
+                      min="0"
                       placeholder="Horas"
-                      formControlName="horas" />
+                      formControlName="horas"
+                      (keypress)="numericOnly($event)" />
+                    <mat-error *ngIf="projectsForm.get('horas').hasError('required')">
+                      Horas es requerido
+                    </mat-error>
+                    <mat-error *ngIf="projectsForm.get('horas').hasError('min')">
+                      Las horas deben ser positivas
+                    </mat-error>
                   </mat-form-field>
                 </div>
               </td>
@@ -59,8 +77,17 @@
                     <input
                       matInput
                       type="number"
+                      min="0"
+                      max="60"
                       placeholder="Minutos"
-                      formControlName="minutos" />
+                      formControlName="minutos"
+                      (keypress)="numericOnly($event)" />
+                    <mat-error *ngIf="projectsForm.get('minutos').hasError('required')">
+                      Minutos es requerido
+                    </mat-error>
+                    <mat-error *ngIf="projectsForm.get('minutos').hasError('min') || projectsForm.get('minutos').hasError('max')">
+                      Los minutos deben estar entre 0 y 60
+                    </mat-error>
                   </mat-form-field>
                 </div>
               </td>
@@ -75,8 +102,17 @@
                     <input
                       matInput
                       type="number"
+                      min="0"
+                      step="0.01"
                       placeholder="Presupuesto"
-                      formControlName="presupuesto" />
+                      formControlName="presupuesto"
+                      (keypress)="numericDecimalOnly($event)" />
+                    <mat-error *ngIf="projectsForm.get('presupuesto').hasError('required')">
+                      Presupuesto es requerido
+                    </mat-error>
+                    <mat-error *ngIf="projectsForm.get('presupuesto').hasError('min')">
+                      El presupuesto debe ser positivo
+                    </mat-error>
                   </mat-form-field>
                 </div>
               </td>
@@ -90,6 +126,9 @@
                       matInput
                       placeholder="Responsable"
                       formControlName="responsable" />
+                    <mat-error *ngIf="projectsForm.get('responsable').hasError('required')">
+                      Responsable es requerido
+                    </mat-error>
                   </mat-form-field>
                 </div>
               </td>
@@ -104,6 +143,9 @@
                 matInput
                 placeholder="Participantes"
                 formControlName="participantes" />
+              <mat-error *ngIf="projectsForm.get('participantes').hasError('required')">
+                Participantes es requerido
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -119,6 +161,9 @@
                         {{ tipo }}
                       </mat-option>
                     </mat-select>
+                    <mat-error *ngIf="projectsForm.get('tipo').hasError('required')">
+                      Tipo es requerido
+                    </mat-error>
                   </mat-form-field>
                 </div>
               </td>
@@ -132,6 +177,9 @@
                         {{ estado }}
                       </mat-option>
                     </mat-select>
+                    <mat-error *ngIf="projectsForm.get('estado').hasError('required')">
+                      Estado es requerido
+                    </mat-error>
                   </mat-form-field>
                 </div>
               </td>  

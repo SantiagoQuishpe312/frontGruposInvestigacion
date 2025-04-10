@@ -1,0 +1,228 @@
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+.cont {
+    padding: 8px;
+}
+
+.container-fluid {
+    padding: 17px;
+    background-color: #fff;
+    margin: 10px;
+    border: solid 1px #e9e9e9;
+    border-radius: 5px;
+}
+
+header {
+    background-color: #2e8041;
+    color: #fff;
+    padding: 13px;
+}
+
+.grid-container {
+    margin-top: 15px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.grid-item div {
+    text-align: right;
+    margin-top: 0px;
+}
+
+.error-message {
+    color: red;
+}
+
+.mat-form-field {
+    width: 100%;
+
+}
+
+.mat-form-field-wrapper {
+    display: flex;
+    align-items: center;
+    //height: auto; 
+    height: 250%;
+}
+
+.info {
+
+    text-align: center !important;
+    align-items: center !important;
+}
+
+.rounded-image {
+    text-align: center;
+    border-radius: 50%;
+    width: 250px;
+    object-fit: cover;
+    height: 250px;
+}
+
+.btn-verde {
+    background-color: green;
+    color: white;
+    border-radius: 50%;
+    height: 40px;
+    width: 25px;
+}
+
+.btn-verde:hover {
+    background-color: darkgreen;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.btn-agregar {
+    background-color: #3f51b5;
+}
+
+.btn-agregar:hover {
+    background-color: #007bff;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.mat-icon-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+}
+
+.mat-icon-button:hover {
+    background-color: #f0f0f0;
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.button-container button {
+    padding: 2px 10px;
+    margin-top: 50px;
+    border-radius: 4px;
+    background-color: #3f51b5;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.button-container button:hover {
+    background-color: #007bff;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.action-buttons button {
+    margin: 0 5px;
+}
+
+.edit {
+    background-color: blue;
+}
+
+.delete {
+    background-color: red;
+}
+
+
+.table-container {
+    overflow-x: auto;
+}
+
+.large-textarea {
+    height: 110px;
+}
+
+.botonera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.botones-contenedor {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.izquierda {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.derecha {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.attached-annexes ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+  }
+  
+  .attached-annexes li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    gap: 15px; 
+  }
+  
+  .attached-annexes li:last-child {
+    border-bottom: none;
+  }
+  
+  .delete {
+    margin-left: 15px;
+    flex-shrink: 0; 
+  }
+  
+  .delete .fa-trash {
+    font-size: 16px; 
+  }
+  
+  .attached-annexes h3 {
+    margin-bottom: 10px;
+    color: #555;
+  }

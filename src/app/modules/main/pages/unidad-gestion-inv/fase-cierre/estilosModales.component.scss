@@ -1,0 +1,29 @@
+ @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+ .card {
+   background-color: #fff;
+   border-radius: 4px;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+   padding: 20px;
+ }
+
+ ::ng-deep mat-form-field {
+   width: 100%;
+ }
+
+ ::ng-deep .mat-dialog-actions {
+   display: flex;
+   justify-content: center;
+ }
+
+ ::ng-deep .action-buttons button {
+   margin: 0 5px;
+ }
+
+ header {
+   background-color: #2e8041;
+   color: #fff;
+   padding: 13px;
+   width: 100%;
+   margin-bottom: 50px;
+ }

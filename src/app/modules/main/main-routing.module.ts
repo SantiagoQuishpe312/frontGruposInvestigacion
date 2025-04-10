@@ -99,6 +99,8 @@ import { SolicitudPlanesComponent } from './pages/unidad-gestion-inv/solicitud-p
 import { MemorandoSolPlanesComponent } from './pages/unidad-gestion-inv/faseSeguimiento/memorando-sol-planes/memorando-sol-planes.component';
 import { SolicitudInformesComponent } from './pages/unidad-gestion-inv/solicitud-informes/solicitud-informes.component';
 import { MemorandoSolInformesComponent } from './pages/unidad-gestion-inv/solicitud-informes/memorando-sol-informes/memorando-sol-informes.component';
+import { FaseCierreComponent } from './pages/unidad-gestion-inv/fase-cierre/fase-cierre.component';
+import { VerInformeCierreComponent } from './pages/unidad-gestion-inv/fase-cierre/ver-informe-cierre/ver-informe-cierre.component';
 const routes: Routes = [
   {
     path: 'principal',
@@ -509,6 +511,15 @@ component: MemorandoCreacionVITTComponent
   {
     path:'memorando-12',
     component:MemorandoDoceComponent
+  },
+  //fase de cierre
+  {
+    path:'fase-cierre',
+    component:FaseCierreComponent
+  },
+  {
+    path:'ver-informe-cierre',
+    component:VerInformeCierreComponent
   }
 ];
 

@@ -564,7 +564,7 @@ export class ReporteActividadesComponent implements OnInit {
 
         const congresoForm = this.formBuilder.group({
           idInformeActividad: [''],
-          numero: [result.numero, Validators.required],
+          numero: [result.numero],
           titulo: [result.titulo, Validators.required],
           autores: [result.autores, Validators.required],
           congreso: [result.congreso, Validators.required],
