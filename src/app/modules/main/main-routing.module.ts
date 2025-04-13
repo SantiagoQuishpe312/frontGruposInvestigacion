@@ -101,6 +101,7 @@ import { SolicitudInformesComponent } from './pages/unidad-gestion-inv/solicitud
 import { MemorandoSolInformesComponent } from './pages/unidad-gestion-inv/solicitud-informes/memorando-sol-informes/memorando-sol-informes.component';
 import { FaseCierreComponent } from './pages/unidad-gestion-inv/fase-cierre/fase-cierre.component';
 import { VerInformeCierreComponent } from './pages/unidad-gestion-inv/fase-cierre/ver-informe-cierre/ver-informe-cierre.component';
+import { VistaPlanAnualComponent } from './pages/coordinadorGI/vista-plan-anual/vista-plan-anual.component';
 const routes: Routes = [
   {
     path: 'principal',
@@ -375,6 +376,10 @@ component: MemorandoCreacionVITTComponent
   {
     path: 'memorando-sol-planes',
     component: MemorandoSolPlanesComponent
+  },
+  {
+    path: 'vista-plan-anual',
+    component: VistaPlanAnualComponent
   },
 
   //fase de evaluación
