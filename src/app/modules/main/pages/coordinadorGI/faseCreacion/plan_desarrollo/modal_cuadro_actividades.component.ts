@@ -1,9 +1,7 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { error } from "console";
 import { AuthService } from "src/app/core/auth/services/auth.service";
-import { ControlPanelService } from "src/app/core/http/control-panel/control-panel.service";
 import { ControlPanelForm } from "src/app/types/controlPanel.types";
 import { InvMemberService } from "src/app/core/http/inv-member/inv-member.service";
 import { Usuario } from "src/app/types/usuario.types";
@@ -30,7 +28,6 @@ export class ActControl implements OnInit {
         private fb: FormBuilder,
         private authService: AuthService,
         public dialogRef: MatDialogRef<ActControl>,
-        private controlPanelService: ControlPanelService,
         private invMemberService: InvMemberService,
         private invGroupService: InvGroupService,
         private usuarioService: UsuarioService,

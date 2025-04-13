@@ -1,0 +1,124 @@
+<div class="cont" style="max-height: 70vh; overflow-y: auto;">
+    <div class="container-fluid">
+        <div class="back-button-container">
+            <header style="display: flex;">
+                
+                <h1>Control Anual{{ isEditing ? 'Editar Control Anual' : 'Crear Nuevo control Anual' }}</h1>
+            </header>
+        </div>
+        <div *ngIf="isLoading" class="loading-spinner-overlay">
+            <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+        </div>
+        <div class="form-container" *ngIf="!isLoading">
+            <form [formGroup]="myForm" (ngSubmit)="saveAnualControl()">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Objetivo Específico</mat-label>
+                    <input matInput type="text" readOnly [value]="objetivo.objetivo">
+                    
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-select formControlName="idOds" required>
+                        <mat-option *ngFor="let ods of ods; let i = index" [value]="ods.id">
+                          {{ ods.ods }}
+                        </mat-option>
+                      </mat-select> 
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-select formControlName="idEstrategia" required>
+                        <mat-option *ngFor="let est of estrategias; let i = index" [value]="est.idEstrategia">
+                          {{est.estrategia}}
+                        </mat-option>
+                      </mat-select> 
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Actividad</mat-label>
+                    <input matInput type="text" readOnly [value]="panelControl.panelControl.actividad" readonly>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Indicador</mat-label>
+                    <input matInput type="text" readOnly [value]="panelControl.panelControl.indicadorNombre" readonly>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label> Meta Anual</mat-label>
+                    <input matInput type="text" formControlName="objetivoAnual" required>
+                    <mat-error *ngIf="myForm.get('objetivoAnual').invalid && myForm.get('objetivoAnual').touched">
+                        El campo es obligatorio.
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Producto</mat-label>
+                    <input matInput type="text" formControlName="producto" required>
+                    <mat-error *ngIf="myForm.get('producto').invalid && myForm.get('producto').touched">
+                        El campo es obligatorio.
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Financiamiento</mat-label>
+                    <input matInput type="text" formControlName="financiamiento" required>
+                    <mat-error *ngIf="myForm.get('financiamiento').invalid && myForm.get('financiamiento').touched">
+                        El campo es obligatorio.
+                    </mat-error>
+
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Monto</mat-label>
+                    <input matInput type="text" formControlName="monto" required>
+                    <mat-error *ngIf="myForm.get('monto').invalid && myForm.get('monto').touched">
+                        El campo es obligatorio.
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Item Presupuestario</mat-label>
+                    <input matInput type="text" formControlName="presupuesto" required>
+                    <mat-error *ngIf="myForm.get('presupuesto').invalid && myForm.get('presupuesto').touched">
+                        El campo es obligatorio.
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Responsable</mat-label>
+                    <input matInput type="text" readOnly [value]="encargadoNombre" readonly>
+                    
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Periodicidad</mat-label>
+                    <input matInput type="text" formControlName="periodicidad" required>
+                    <mat-error *ngIf="myForm.get('periodicidad').invalid && myForm.get('periodicidad').touched">
+                        El campo es obligatorio.
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Fecha Inicio</mat-label>
+                    <input matInput [matDatepicker]="pickerInicio" formControlName="fechaInicio" required>
+                    <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerInicio></mat-datepicker>
+                    <mat-error *ngIf="myForm.get('fechaInicio').invalid && myForm.get('fechaInicio').touched">
+                      El campo es obligatorio.
+                    </mat-error>
+                  </mat-form-field>
+                  
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Fecha Fin</mat-label>
+                    <input matInput [matDatepicker]="pickerFin" formControlName="fechaFin" required>
+                    <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerFin></mat-datepicker>
+                    <mat-error *ngIf="myForm.get('fechaFin').invalid && myForm.get('fechaFin').touched">
+                      El campo es obligatorio.
+                    </mat-error>
+                  </mat-form-field>
+                  
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Medios de Verificación</mat-label>
+                    <input matInput type="text" formControlName="mediosVerificacion" required>
+                    <mat-error *ngIf="myForm.get('mediosVerificacion').invalid && myForm.get('mediosVerificacion').touched">
+                        El campo es obligatorio.
+                    </mat-error>
+                </mat-form-field>
+                <button mat-raised-button color="primary" type="submit" [disabled]="!myForm.valid">
+                    Guardar
+                </button>
+            </form>
+
+        </div>
+</div>

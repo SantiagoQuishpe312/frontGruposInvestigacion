@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class AnnualOperativePlanService {
-  private readonly URL = environment.appApiUrl + '/annualOperativePlan/';
+  private readonly URL = environment.appApiUrl + '/annualOperativePlan';
 
   constructor(private http: HttpClient) {}
 

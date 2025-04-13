@@ -17,8 +17,12 @@ export class ObjStrategiesODSService {
     return this.http.get<Objectives_Strategies_Ods[]>(`${this.URL + "/"}`);
   }
 
-  getById(id: number): Observable<Objectives_Strategies_Ods> {
-    return this.http.get<Objectives_Strategies_Ods>(`${this.URL}/${id}`);
+  getCompleteByObj(id:number): Observable<ObjectiveCompleteOds>{
+    return this.http.get<ObjectiveCompleteOds>(`${this.URL}/all-by-obj/${id}`);
+  }
+
+  getById(id: number): Observable<Objectives_Strategies_Ods[]> {
+    return this.http.get<Objectives_Strategies_Ods[]>(`${this.URL}/objective/${id}`);
   }
   getByPlan(id:number): Observable<ObjectiveCompleteOds[]>{
     return this.http.get<ObjectiveCompleteOds[]>(`${this.URL}/developmentPlan/${id}`);

@@ -93,3 +93,45 @@ header {
       flex: 1 1 100%;
     }
   }  
+  .control-card {
+    border: 1px solid #dcdcdc;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    background-color: #ffffff;
+    transition: transform 0.2s;
+  
+    &:hover {
+      transform: scale(1.01);
+    }
+  
+    .card-header {
+      background-color: #1976d2;
+      color: white;
+      font-weight: bold;
+      padding: 10px 15px;
+      font-size: 16px;
+    }
+  
+    .card-body {
+      padding: 15px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 10px;
+  
+      .card-row {
+        font-size: 14px;
+        color: #333;
+      }
+  
+      .botones {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 10px;
+      }
+    }
+  }
+  
