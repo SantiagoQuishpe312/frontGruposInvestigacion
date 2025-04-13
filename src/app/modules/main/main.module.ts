@@ -181,6 +181,8 @@ import { EditarSolicitudCierreComponent } from './pages/unidad-gestion-inv/fase-
 import { VerInformeCierreComponent } from './pages/unidad-gestion-inv/fase-cierre/ver-informe-cierre/ver-informe-cierre.component';
 import { AnexosFaseCierreComponent } from './pages/unidad-gestion-inv/fase-cierre/anexos-fase-cierre/anexos-fase-cierre.component';
 import { ModalCuadroOp } from './pages/coordinadorGI/seguimiento/PlanAnual/modalCuadro.component';
+import { VistaPlanAnualComponent } from './pages/coordinadorGI/vista-plan-anual/vista-plan-anual.component';
+
 @NgModule({
   declarations: [
     SeleccionRolDialogComponent,
@@ -325,7 +327,9 @@ import { ModalCuadroOp } from './pages/coordinadorGI/seguimiento/PlanAnual/modal
    EditarSolicitudCierreComponent,
    VerInformeCierreComponent,
    AnexosFaseCierreComponent,
-   ModalCuadroOp,
+   ModalCuadroOp,   
+   VistaPlanAnualComponent
+
    
   ],
   imports: [

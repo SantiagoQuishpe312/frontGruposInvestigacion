@@ -8,7 +8,7 @@ import { InvGroupService } from 'src/app/core/http/inv-group/inv-group.service';
 import { CreationReqService } from 'src/app/core/http/creation-req/creation-req.service';
 import { CreationReqForm } from 'src/app/types/creationReq.types';
 import { InvGroupForm } from 'src/app/types/invGroup.types';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { DevelopmentPlanService } from 'src/app/core/http/develop-plan-form/develop-plan-form.service';
 import { DevelopmentPlanComplete, DevelopmentPlanForms } from 'src/app/types/developPlanForm';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -19,9 +19,9 @@ import { AnualControlService } from 'src/app/core/http/anual-control/anual-contr
 import { AnnualOperativePlanService } from 'src/app/core/http/annual-operative-plan/annual-operative-plan.service';
 import { AnualControl } from 'src/app/types/anualControl.types';
 @Component({
-    selector: 'app-carga-anexo',
-    templateUrl: './planAnual.component.html',
-    styleUrls: ['./planAnual.component.scss']
+  selector: 'app-carga-anexo',
+  templateUrl: './planAnual.component.html',
+  styleUrls: ['./planAnual.component.scss']
 })
 export class AnnualPlanComponent implements OnInit {
   currentDate: Date = new Date();
@@ -45,14 +45,14 @@ export class AnnualPlanComponent implements OnInit {
     private authService: AuthService,
     private documentService: DocumentsService,
     private invGroupService: InvGroupService,
- 
+
     private matSnackBar: MatSnackBar,
     private developmentPlanService: DevelopmentPlanService,
     private dialog: MatDialog,
     private fb: FormBuilder,
     private anualControlService: AnualControlService,
     private annualOperativePlanService: AnnualOperativePlanService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.groupId = Number(sessionStorage.getItem("invGroup"));
@@ -64,14 +64,14 @@ export class AnnualPlanComponent implements OnInit {
       idObjetivoEspecifico: [null, Validators.required],
       usuarioCreado: [this.currentUser, Validators.required],
       fechaCreacion: [this.currentDate, Validators.required],
-      usuarioModificacion: [null, Validators.required], 
+      usuarioModificacion: [null, Validators.required],
       fechaModificacion: [null, Validators.required]
     });
 
 
     this.loadDevelopmentPlan();
-   
-    
+
+
   }
 
   loadDevelopmentPlan(): void {
@@ -119,7 +119,7 @@ export class AnnualPlanComponent implements OnInit {
   }
 
   agregarAnualControl(): void {
-    const seleccionado = this.myForm.get('idObjetivoEspecifico')?.value;  
+    const seleccionado = this.myForm.get('idObjetivoEspecifico')?.value;
     const dialogRef = this.dialog.open(ModalCuadroOp, {
       width: '600px',
       data: {
@@ -141,25 +141,25 @@ export class AnnualPlanComponent implements OnInit {
   get anualControles(): FormArray<FormGroup> {
     return this.myForm.get('anualControles') as FormArray<FormGroup>;
   }
-  
+
 
   crearAnualControl(): FormGroup {
     return this.fb.group({
-      idPlanAnual: [null, ],
-            idPanelControl: [null, Validators.required],
-            idOds: [null, Validators.required],
-            idEstrategia: [null, Validators.required],
-            objetivoAnual: ['', Validators.required],
-            producto: ['', Validators.required],
-            financiamiento: ['', Validators.required],
-            monto: [null, Validators.required],
-            presupuesto: ['', Validators.required],
-            periodicidad: ['', Validators.required],
-            fechaInicio: [null, Validators.required],
-            fechaFin: [null, Validators.required],
-            mediosVerificacion: ['', Validators.required],
-            usuarioCreacion: [this.currentUser, Validators.required],
-            fechaCreacion: [this.currentDate, Validators.required],
+      idPlanAnual: [null,],
+      idPanelControl: [null, Validators.required],
+      idOds: [null, Validators.required],
+      idEstrategia: [null, Validators.required],
+      objetivoAnual: ['', Validators.required],
+      producto: ['', Validators.required],
+      financiamiento: ['', Validators.required],
+      monto: [null, Validators.required],
+      presupuesto: ['', Validators.required],
+      periodicidad: ['', Validators.required],
+      fechaInicio: [null, Validators.required],
+      fechaFin: [null, Validators.required],
+      mediosVerificacion: ['', Validators.required],
+      usuarioCreacion: [this.currentUser, Validators.required],
+      fechaCreacion: [this.currentDate, Validators.required],
     });
   }
 
@@ -167,10 +167,7 @@ export class AnnualPlanComponent implements OnInit {
     this.isLoading = true;
     this.annualOperativePlanService.createForm(this.myForm.value).subscribe(
       (response) => {
-        this.isLoading = false;
-        this.matSnackBar.open('Se ha creado el plan de actividades.', 'Cerrar', {
-          duration: 3000,
-        });
+
         this.guardarControlAnual(response);
       },
       (error) => {
@@ -212,6 +209,10 @@ export class AnnualPlanComponent implements OnInit {
           },
           (error) => {
             console.error('Error al crear el control anual:', error);
+            this.isLoading = false;
+            this.matSnackBar.open('Ha ocurrido un error inesperado Porfavor Intenta mas tarde.', 'Cerrar', {
+              duration: 3000,
+            });
           }
         );
       });
@@ -219,7 +220,7 @@ export class AnnualPlanComponent implements OnInit {
       console.error('No se han creado controles anuales.');
     }
   }
-  actualizarProcesoGrupo(){
+  actualizarProcesoGrupo() {
     this.invGroupService.getById(this.groupId).subscribe(data => {
       const invGroup: InvGroupForm = {
         idGrupoInv: this.groupId,
@@ -235,19 +236,21 @@ export class AnnualPlanComponent implements OnInit {
       }
       this.invGroupService.update(this.groupId, invGroup).subscribe(
         () => {
-          console.log('Proceso del grupo actualizado correctamente.');
-          this.ruta('main/dashboard');
+          this.isLoading = false;
+          this.matSnackBar.open('Se ha creado el plan de actividades.', 'Cerrar', {
+            duration: 3000,
+          }); this.ruta('main/dashboard');
         });
     })
   }
 
   ruta(path: string) {
-    this.router.navigate([path]);    
+    this.router.navigate([path]);
   }
   eliminarControl(index: number): void {
     this.anualControles.removeAt(index);
   }
-  
+
   editarControl(index: number): void {
     const control = this.anualControles.at(index);
     const dialogRef = this.dialog.open(ModalCuadroOp, {
@@ -258,12 +261,12 @@ export class AnnualPlanComponent implements OnInit {
         objetivoEspecifico: control.value.objetivoEspecifico
       }
     });
-  
+
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         control.patchValue(result);
       }
     });
   }
-  
+
 }

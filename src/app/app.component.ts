@@ -235,6 +235,13 @@ export class AppComponent implements OnInit {
                   icon: 'mat:group_remove'
                 },
                 {
+                  type: 'link',
+                  label: 'Vista Plan Anual',
+                  route: 'main/vista-plan-anual',
+                  icon: 'mat:description'
+                },
+
+                {
                   type: 'subheading',
                   label: `Ejecución Grupo Investigación`,
                 },

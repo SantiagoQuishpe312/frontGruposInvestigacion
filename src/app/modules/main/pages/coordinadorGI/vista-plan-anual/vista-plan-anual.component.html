@@ -1,0 +1,234 @@
+<!-- <div class="cont">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="header">
+                <h1>PLAN OPERATIVO ANUAL DEL GRUPO DE INVESTIGACIÓN [Nombre del grupo]</h1>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <select (change)="onChange($event)">
+                <option *ngFor="let plan of planesOperativos" [value]="plan.idAnnualOperativePlan">
+                    Plan Operativo número {{ plan.idAnnualOperativePlan }}
+                </option>
+            </select>
+        </div>
+
+        <div class="container-fluid">
+            <div class="encabezado">
+                <div class="box">
+                    <img src="../../../../../../assets/img/espe/logo-espe.png" alt="Imagen" />
+                </div>
+                <div class="box">
+                    <strong>UNIVERSIDAD DE LAS FUERZAS ARMADAS – ESPE</strong><br /><br />
+                    <strong>VICERRECTORADO DE INVESTIGACIÓN, INNOVACIÓN Y TRANSFERENCIA
+                        TECNOLÓGICA</strong><br />
+                    <strong>PLAN OPERATIVO ANUAL DEL GRUPO DE INVESTIGACIÓN</strong><br />
+                </div>
+
+                <div class="box">
+                    <strong>Fecha de Creación:</strong><br /><br />
+                    <div *ngFor="let plan of planOp">
+                        {{plan.fechaCreacionInforme | date : 'dd/MM/yyyy' }}
+                    </div>
+                </div>
+            </div>
+            <br />
+            <br />
+
+            <h2><strong>A. OBJETIVO GENERAL</strong></h2>
+            <br />
+            <span *ngFor="plan of planOp">
+                {{plan.idObjetivo }}
+            </span>
+            <br /><br />
+
+            <h2><strong>B. OBJETIVO ESTRATÉGIGO INSTITUCIONAL</strong></h2>
+            <br />
+            <span *ngFor="obj of objetivos">
+                {{obj.objetivo }}
+            </span>
+            <br /><br />
+
+            <h2><strong>C. ESTRATEGIAS Y ODS ASOCIADOS</strong></h2>
+            <table class="table" style="
+            text-align: left;
+            border: solid 0.5px #dce0e2;
+            width: 100%;
+            margin-left: 0%;
+            margin-top: 1%;
+            margin-bottom: 2%;
+            border-radius: 30px;
+          ">
+                <thead></thead>
+                <tbody>
+                    <tr style="border: solid 0.5px #dce0e2">
+                        <td style="width: 35%; border: solid 0.5px #dce0e2">
+                            <strong>OBJETIVO ESPECÍFICO</strong>
+                        </td>
+                        <td style="width: 35%; border: solid 0.5px #dce0e2">
+                            <strong>ESTRATEGIA INSTITUCIONAL</strong>
+                        </td>
+                        <td style="width: 15%; border: solid 0.5px #dce0e2">
+                            <strong>ODS RELACIONADO</strong>
+                        </td>
+                    </tr>
+                    <tr *ngFor="let control of controlPanel">
+                        <td style="border: solid 0.5px #dce0e2">{{ control.objetivoEspecifico }}</td>
+                        <td style="border: solid 0.5px #dce0e2">
+                            {{ estr.estrategia }}
+                        </td>
+                        <td style="border: solid 0.5px #dce0e2">
+                            {{ ods.odsObj }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2><strong>C. PLANIFICACIÓN</strong></h2>
+            <table class="table" style="
+                text-align: left;
+                border: solid 0.5px #dce0e2;
+                width: 100%;
+                margin-left: 0%;
+                margin-top: 1%;
+                margin-bottom: 2%;
+                border-radius: 30px;
+            ">
+                <thead>
+                    <tr style="border: solid 0.5px #dce0e2">
+                        <th style="width: 40%; border: solid 0.5px #dce0e2"><strong>ACTIVIDADES</strong></th>
+                        <th style="width: 30%; border: solid 0.5px #dce0e2"><strong>INDICADORES</strong></th>
+                        <th style="width: 30%; border: solid 0.5px #dce0e2"><strong>METAS</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let control of controlPanel">
+                        <td style="border: solid 0.5px #dce0e2">
+                            {{ control.actividad }}
+                        </td>
+                        <td style="border: solid 0.5px #dce0e2">
+                            <strong>NOMBRE:</strong> {{ control.indicadorNombre }}<br />
+                            <strong>TIPO:</strong> {{ control.indicadorTipo }}<br />
+                            <strong>FORMA:</strong> {{ control.indicadorForma }}<br />
+                            <strong>CONDICIONAL:</strong> {{ control.indicadorCondicional }}<br />
+                            <strong>ACUMULATIVO:</strong> {{ control.indicadorAcumulativo }}<br />
+                        </td>
+                        <td style="border: solid 0.5px #dce0e2">
+                            <strong>META ANUAL 1:</strong> {{ control.meta1 }}<br />
+                            <strong>META ANUAL 2:</strong> {{ control.meta2 }}<br />
+                            <strong>META ANUAL 3:</strong> {{ control.meta3 }}<br />
+                            <strong>META ANUAL 4:</strong> {{ control.meta4 }}<br />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2><strong>D. PERIODICIDAD</strong></h2>
+            <table class="table" style="
+            text-align: left;
+            border: solid 0.5px #dce0e2;
+            width: 100%;
+            margin-left: 0%;
+            margin-top: 1%;
+            margin-bottom: 2%;
+            border-radius: 30px;
+          ">
+                <thead></thead>
+                <tbody>
+                    <tr style="border: solid 0.5px #dce0e2">
+                        <td style="
+                  width: 5%;
+                  border: solid 0.5px #dce0e2;
+                  text-align: center;
+                ">
+                            <strong>PERIODICIDAD</strong>
+                        </td>
+                        <td style="
+                  width: 25%;
+                  border: solid 0.5px #dce0e2;
+                  text-align: justify;
+                  text-align-last: left;
+                ">
+                            <strong>FECHA INICIO</strong>
+                        </td>
+                        <td style="
+                  width: 25%;
+                  border: solid 0.5px #dce0e2;
+                  text-align: justify;
+                  text-align-last: left;
+                ">
+                            <strong>FECHA FIN</strong>
+                        </td>
+                        <td style="
+                  width: 20%;
+                  border: solid 0.5px #dce0e2;
+                  text-align: justify;
+                  text-align-last: left;
+                ">
+                            <strong>MEDIO DE VERIFICACIÓN</strong>
+                        </td>
+                    </tr>
+
+                    <tr *ngFor="let dtoAC of dtoAnualControl">
+                        <td style="border: solid 0.5px #dce0e2">{{ dtoAC.periodicidad }}</td>
+                        <td style="border: solid 0.5px #dce0e2">{{ dtoAC.fechaInicio }}</td>
+                        <td style="border: solid 0.5px #dce0e2">{{ dtoAC.fechaFin }}</td>
+                        <td style="border: solid 0.5px #dce0e2">{{ dtoAC.mediosVerificacion}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2><strong>E. SEGUIMIENTO</strong></h2>
+            <table class="table"
+                style="text-align: left; border: solid 0.5px #dce0e2; width: 100%; margin-left: 0%; margin-top: 1%; margin-bottom: 2%; border-radius: 30px;">
+                <thead></thead>
+                <tbody>
+                    <tr style="border: solid 0.5px #dce0e2">
+                        <td style="width: 20%; border: solid 0.5px #dce0e2; text-align: left;">
+                            <strong>N. CERTIFICACIÓN POA:</strong>
+                        </td>
+                        <td style="width: 15%; border: solid 0.5px #dce0e2; text-align: left;">
+                            {{ dtoAC.certificado }}
+                        </td>
+                        <td style="width: 20%; border: solid 0.5px #dce0e2; text-align: left;">
+                            <strong>FECHA:</strong>
+                        </td>
+                        <td style="width: 45%; border: solid 0.5px #dce0e2; text-align: left;" colspan="3">
+                            {{ dtoAC.fechaSeguimiento }}
+                        </td>
+                    </tr>
+                    <tr style="border: solid 0.5px #dce0e2">
+                        <td
+                            style="width: 18%; border: solid 0.5px #dce0e2; text-align: justify; text-align-last: left;">
+                            <strong>VALOR VERIFICADO</strong>
+                        </td>
+                        <td
+                            style="width: 18%; border: solid 0.5px #dce0e2; text-align: justify; text-align-last: left;">
+                            <strong>VALOR COMPROMETIDO</strong>
+                        </td>
+                        <td
+                            style="width: 15%; border: solid 0.5px #dce0e2; text-align: justify; text-align-last: left;">
+                            <strong>VALOR DEVENGADO</strong>
+                        </td>
+                        <td
+                            style="width: 12%; border: solid 0.5px #dce0e2; text-align: justify; text-align-last: left;">
+                            <strong>VALOR DISPONIBLE</strong>
+                        </td>
+                    </tr>
+                    <tr *ngFor="let dtoAC of dtoAnualControl">
+                        <td style="border: solid 0.5px #dce0e2">{{ dtoAC.montoCertificado }}</td>
+                        <td style="border: solid 0.5px #dce0e2">{{ dtoAC.montoComprometido }}</td>
+                        <td style="border: solid 0.5px #dce0e2">{{ dtoAC.valorDevengado }}</td>
+                        <td style="border: solid 0.5px #dce0e2">{{ dtoAC.montoDisponible}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="border: solid 0.5px #dce0e2; text-align: left;"><strong>%
+                                CUMPLIMIENTO:</strong></td>
+                        <td style="border: solid 0.5px #dce0e2">{{ dtoAC.cumplimiento }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div> -->
