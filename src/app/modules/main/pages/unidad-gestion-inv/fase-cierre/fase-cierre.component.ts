@@ -87,7 +87,7 @@ export class FaseCierreComponent implements OnInit {
     this.solCreaGiService.getAll().subscribe(groups => {
       const userGroup = groups.find(group => group.idCoordinador === userId);
       if (userGroup) {
-        this.idGrupoInvestigacion = userGroup.idGrupoInv;
+        this.idGrupoInvestigacion = Number(localStorage.getItem('GI'));
         this.reporteForm.patchValue({
           idGrupoInvestigacion: this.idGrupoInvestigacion
         });
@@ -382,8 +382,8 @@ export class FaseCierreComponent implements OnInit {
           const annexPromises = this.pendingAnnexes.map(annex => {
             const fileToUpload = annex.file;
             const sistema = 'GruposInv';
-
             return new Promise((resolve, reject) => {
+              
               this.annexeService.createAnnexesForm({
                 idAnexo: null,
                 idDocumento: annex.idDocumento,

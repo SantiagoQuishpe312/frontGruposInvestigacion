@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Closure } from 'src/app/types/closure.types';
+import { Closure, ClosureComplete } from 'src/app/types/closure.types';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +26,10 @@ export class ClosureService {
   getById(id: number): Observable<Closure> {
     return this.http.get<Closure>(`${this.URL}/${id}`);
   }
+  getAllByGroup(id: number): Observable<ClosureComplete> {
+      return this.http.get<ClosureComplete>(`${this.URL}/all/${id}`);
+  }
+
 /*
   createClosure(dtoClosure: Closure): Observable<number> {
     return this.http.post<number>(`${this.URL}/create`, dtoClosure);

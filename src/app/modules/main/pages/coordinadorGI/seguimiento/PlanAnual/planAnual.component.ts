@@ -227,7 +227,7 @@ export class AnnualPlanComponent implements OnInit {
         idCoordinador: data.idCoordinador,
         nombreGrupoInv: data.nombreGrupoInv,
         estadoGrupoInv: data.estadoGrupoInv,
-        proceso: '14',
+        proceso: '13A',
         acronimoGrupoinv: data.acronimoGrupoinv,
         usuarioCreacion: data.usuarioCreacion,
         fechaCreacion: data.fechaCreacion,

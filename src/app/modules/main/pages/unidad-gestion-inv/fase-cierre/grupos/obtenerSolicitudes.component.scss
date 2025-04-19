@@ -1,0 +1,272 @@
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+.container {
+    width: 90%;
+    margin: 0 auto;
+    background-color: #F4FAFE;
+    padding: 20px;
+  }
+  
+  header {
+    background-color: #2e8041;
+    color: #fff;
+    padding: 13px;
+  }
+  
+  main {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  
+  
+  .acciones {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .boton {
+   // background-color: #2e8041;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 18px;
+    margin-right: 10px;
+  }
+  
+  .boton:last-child {
+    margin-right: 0;
+  }.anexo {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center; 
+  }
+  
+  div {
+    padding: 20px;
+  
+    input[type="file"] {
+      margin-bottom: 10px;
+    }
+  
+    button {
+      padding: 1px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+    }
+  }
+  .drag-drop {
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  .drag-over {
+    border-color: #4CAF50;
+  }
+  
+  .file-icon {
+    font-size: 24px; 
+    color: #4CAF50; 
+    margin-bottom: 10px;
+  }
+  .file-info{
+    font-size: 20px;
+  }
+  
+  .success-message {
+    color: #4CAF50; 
+   font-weight: bold;
+  }
+  
+
+  input[type="file"] {
+    display: none; 
+  }
+  
+  .custom-file-input {
+    width: 100%; 
+    height: 100px; 
+    position: relative; 
+    overflow: hidden; 
+    text-align: center;
+  }
+  
+  .custom-file-input label {
+    display: block; 
+    width: 80%;
+    height: 80%; 
+    background-color: #007bff; 
+    color: #fff; 
+    padding: 15px; 
+    text-align: center; 
+    line-height: 20px;
+    margin-left: 10%;
+    cursor: pointer; 
+    border-radius: 10px;
+  }
+  
+  .custom-file-input input[type="file"] {
+    position: absolute; 
+    top: 0; 
+    right: 0;     
+    bottom: 0; 
+    left: 0; 
+    opacity: 0; 
+    cursor: pointer; 
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center; /* Centrar el contenido de las celdas */
+  }
+  
+  /* Estilos para las celdas del encabezado */
+  th {
+    padding: 12px;
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  /* Estilos para las celdas de datos */
+  td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  /* Estilos para filas impares */
+  tr:nth-child(odd) {
+    background-color: #f9f9f9;
+  }
+  
+  /* Estilos para el mensaje de éxito */
+/* Estilos para el mensaje de éxito */
+.success-message {
+    color: #155724; /* Color del texto */
+    background-color: #d4edda; /* Color de fondo */
+    border: 1px solid #c3e6cb; /* Borde */
+    border-radius: 0.25rem; /* Bordes redondeados */
+    padding: 0.75rem 1.25rem; /* Espaciado interno */
+    margin-top: 10px; /* Margen superior */
+    text-align: center; /* Centrar texto */
+    font-size: 1rem; /* Tamaño de fuente */
+  }
+
+  //estilo para mostrar el formualario
+  .encabezado {
+    display: grid;
+    grid-template-columns:1fr 3fr 1fr;; /* Tres columnas de igual ancho */
+    gap: 0px; /* Espacio entre las casillas */
+  }
+  
+  .grid-container {
+    margin-top: 15px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .grid-item div {
+    text-align: right;
+    margin-top: 5px;
+  
+  }
+
+  .box {
+    padding: 20px;
+    border: 1px solid #ccc;
+    text-align: center;
+  }
+  .edit{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .check{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color:#155724 !important;
+  }
+
+  .tPlan {
+    width: 100%; /* Asegura que la tabla ocupe todo el ancho disponible */
+    border-collapse: collapse; /* Elimina espacios entre bordes de celdas */
+    font-family: Arial, sans-serif; /* Establece una fuente adecuada */
+}
+
+.tPlan th, .tPlan td {
+    border: 1px dashed  #000; /* Bordes negros alrededor de celdas */
+    padding: 8px; /* Espaciado interno en celdas */
+    text-align: justify; /* Alinea el texto a la izquierda */
+}
+
+.tPlan th {
+  padding: 10px; /* Espaciado opcional para mejorar la presentación */
+  background-color: #f8f9fa; /* Color de fondo para las cabeceras */
+    font-weight: bold; /* Establece el texto en negrita para las cabeceras */
+    border-bottom: 2px solid transparent;
+}
+
+.tPlan tr:nth-child(even) {
+    background-color: #f9f9f9; /* Color de fondo alterno para filas pares */
+}
+
+.tPlan tr:hover {
+    background-color: #e0e0e0; /* Color de fondo al pasar el mouse sobre una fila */
+}
+
+.tPlan td {
+    vertical-align: top; /* Alinea el contenido de las celdas hacia arriba */
+}
+
+/* Para manejar los listados dentro de las celdas de Estrategias e ODS */
+.tPlan td ul {
+    list-style-type: none; /* Quita el estilo de lista predeterminado */
+    padding: 0; /* Elimina el espaciado interno */
+    margin: 0; /* Elimina el margen externo */
+}
+
+.tPlan td ul li {
+    padding: 4px 0; /* Espaciado vertical entre los elementos de la lista */
+}
+.tPlan th:first-child,
+.tPlan th:nth-child(-n+5) { /* Selecciona los primeros cinco th que quieres que se vean unidos */
+    border-bottom: 2px solid transparent; /* Eliminar borde inferior de estos encabezados */
+}
+
+.tPlan th:nth-child(6) {
+    border-bottom: 2px solid transparent; /* Para el encabezado de "Metas Anuales" */
+}
+
+.tPlan th:last-child {
+    border-bottom: 2px solid transparent; /* Quitar borde inferior de la celda "Financiamiento Requerido" */
+}
+
+/* Agregar borde inferior solo a las celdas de la fila de las metas anuales */
+.tPlan thead tr:nth-child(2) th {
+    border-bottom: 2px solid #000; /* Línea inferior solo para la fila de las metas anuales */
+}
+.tPlan thead tr:nth-child(3) th {
+  background-color: #f0f0f0; /* Color de fondo para distinguir la fila de metas anuales */
+}
+.metas-header {
+  border-bottom: 2px solid #000; /* Borde inferior negro */
+  border-top: 2px solid #000; /* Borde inferior negro */
+
+}
+.section{
+  text-indent: 20px;
+}

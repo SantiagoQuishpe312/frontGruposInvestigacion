@@ -2,7 +2,7 @@ import { ObserversModule } from '@angular/cdk/observers';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AnnualOperativePlan } from 'src/app/types/annualOperativePlan.types';
+import { AnnualOperativePlan, DocAnnualOperativePlan } from 'src/app/types/annualOperativePlan.types';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -20,6 +20,9 @@ export class AnnualOperativePlanService {
   getById(id:number): Observable<AnnualOperativePlan> {
     return this.http.get<AnnualOperativePlan>(`${this.URL}/${id}`);
   }
+  getAllById(id:number):Observable<DocAnnualOperativePlan[]>{
+    return this.http.get<DocAnnualOperativePlan[]>(`${this.URL}/allReport/${id}`);
+  } 
 
   createForm(formData: AnnualOperativePlan):Observable<any>{
     return this.http.post(`${this.URL}/created`, formData);

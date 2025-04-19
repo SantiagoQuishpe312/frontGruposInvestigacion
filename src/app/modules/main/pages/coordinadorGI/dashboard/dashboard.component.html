@@ -49,7 +49,11 @@
 
                 <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
             </header>
+            <header
+            *ngIf="invGroupExists  && grupo && (grupo.proceso==='13A'||grupo.proceso==='14') ">
 
+            <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+        </header>
             </div>
 
             <div *ngIf="!invGroupExists" class="info-proceso">
@@ -164,11 +168,34 @@
                         color="primary"><a href="/main/anual-Plan">Cargar Plan
                             Anual</a></button>
                 </div>
+                
                 <div *ngIf="pdfUrl">
                     <iframe [src]="pdfUrl" width="100%" height="600px"></iframe>
 
                 </div>
 
+            </div>
+            <div class="presentacionGrupo"
+                *ngIf=" !loadingData  && grupo.proceso==='13A' "
+                style="text-align: center;">
+                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
+                <p>Adjuntar el Memorando de Seguimiento y envio de plan Anual y plan de Desarrollo
+                </p>
+                <div>
+                    <button type="button" mat-raised-button
+                        color="primary"><a href="/main/baremo">Adjuntar Memorando</a></button>
+                </div>
+            </div>
+            <div class="presentacionGrupo"
+                *ngIf=" !loadingData  && grupo.proceso==='14' "
+                style="text-align: center;">
+                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
+                <p>
+                </p>
+                <div>
+                    <button type="button" mat-raised-button
+                        color="primary"><a href="/main/baremo">Adjuntar Memorando</a></button>
+                </div>
             </div>
 
         </div>

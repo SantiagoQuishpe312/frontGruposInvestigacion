@@ -28,6 +28,7 @@ import { InvGroupService } from './core/http/inv-group/inv-group.service';
 import { UsuarioService } from './core/http/usuario/usuario.service';
 import { Usuario } from './types/usuario.types';
 import { InvGroupForm } from './types/invGroup.types';
+import { InformeCierreComponent } from 'src/@vex/components/forms/closedGroupReport/closeReport.component';
 @Component({
   selector: 'vex-root',
   templateUrl: './app.component.html',
@@ -460,6 +461,16 @@ export class AppComponent implements OnInit {
                 },
                 {
                   type: 'subheading',
+                  label: `Cierres de Grupos Investigación`,
+                },
+                {
+                  type: 'link',
+                  label: 'Recomendar a Consejo Académico',
+                  route: 'main/grupos-cierre-1',
+                  icon: 'mat:school'
+                },
+                {
+                  type: 'subheading',
                   label: `Reportes`,
                 },
                 {
@@ -533,7 +544,7 @@ export class AppComponent implements OnInit {
               {
                 type: 'link',
                 label: 'Fase de Cierre',
-                route: 'main/fase-cierre',
+                route: 'main/grupos-cierre',
                 icon: 'mat:school'
               },
               {

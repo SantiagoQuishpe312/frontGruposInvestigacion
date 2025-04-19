@@ -1,3 +1,7 @@
+import { ControlPanelComplete } from "./controlPanel.types";
+import { ODS } from "./ods.types";
+import { Strategies } from "./strategies.types";
+
 export interface AnualControl {
     idPanelControl: number;
     idPlanAnual: number;
@@ -23,4 +27,11 @@ export interface AnualControl {
     fechaCreacion: Date;
     usuarioModificacion: string;   
     fechaModificacion: Date;
+}
+
+export interface AnnualControlComplete{
+    control: AnualControl;
+    ods:ODS;
+    estrategias:Strategies;
+    controlPanel:ControlPanelComplete;
 }

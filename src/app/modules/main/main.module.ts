@@ -182,9 +182,18 @@ import { VerInformeCierreComponent } from './pages/unidad-gestion-inv/fase-cierr
 import { AnexosFaseCierreComponent } from './pages/unidad-gestion-inv/fase-cierre/anexos-fase-cierre/anexos-fase-cierre.component';
 import { ModalCuadroOp } from './pages/coordinadorGI/seguimiento/PlanAnual/modalCuadro.component';
 import { VistaPlanAnualComponent } from './pages/coordinadorGI/vista-plan-anual/vista-plan-anual.component';
-
+import { SolicitudesComponent30 } from './pages/unidad-gestion-inv/fase-cierre/grupos/obtenerSolicitudes.component';
+import { MostrarSolicitud30 } from './pages/unidad-gestion-inv/fase-cierre/grupos/mostrarSolicitud.component';
+import { InformeCierreComponent } from 'src/@vex/components/forms/closedGroupReport/closeReport.component';
+import { SolicitudesComponent31 } from './pages/analistaGestion/FaseCierre/obtenerSolicitudes.component';
+import { MostrarSolicitud31 } from './pages/analistaGestion/FaseCierre/mostrarSolicitud.component';
+import { Memorando31Component } from './pages/analistaGestion/FaseCierre/memorando-31/memorando-31.component';
 @NgModule({
   declarations: [
+    SolicitudesComponent30,
+    MostrarSolicitud31,
+    InformeCierreComponent,
+    MostrarSolicitud30,
     SeleccionRolDialogComponent,
     ProgressComponent,
     GroupModalEdit,
@@ -328,8 +337,9 @@ import { VistaPlanAnualComponent } from './pages/coordinadorGI/vista-plan-anual/
    VerInformeCierreComponent,
    AnexosFaseCierreComponent,
    ModalCuadroOp,   
-   VistaPlanAnualComponent
-
+   VistaPlanAnualComponent,
+   SolicitudesComponent31,
+    Memorando31Component,
    
   ],
   imports: [
@@ -360,9 +370,6 @@ import { VistaPlanAnualComponent } from './pages/coordinadorGI/vista-plan-anual/
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    
-    
-    
   ],
   exports:[CdkStepperModule],
   providers: [],

@@ -102,6 +102,10 @@ import { MemorandoSolInformesComponent } from './pages/unidad-gestion-inv/solici
 import { FaseCierreComponent } from './pages/unidad-gestion-inv/fase-cierre/fase-cierre.component';
 import { VerInformeCierreComponent } from './pages/unidad-gestion-inv/fase-cierre/ver-informe-cierre/ver-informe-cierre.component';
 import { VistaPlanAnualComponent } from './pages/coordinadorGI/vista-plan-anual/vista-plan-anual.component';
+import { SolicitudesComponent30 } from './pages/unidad-gestion-inv/fase-cierre/grupos/obtenerSolicitudes.component';
+import { SolicitudesComponent31 } from './pages/analistaGestion/FaseCierre/obtenerSolicitudes.component';
+import { MostrarSolicitud31 } from './pages/analistaGestion/FaseCierre/mostrarSolicitud.component';
+import { Memorando31Component } from './pages/analistaGestion/FaseCierre/memorando-31/memorando-31.component';
 const routes: Routes = [
   {
     path: 'principal',
@@ -525,6 +529,20 @@ component: MemorandoCreacionVITTComponent
   {
     path:'ver-informe-cierre',
     component:VerInformeCierreComponent
+  },{
+    path:'grupos-cierre',
+    component:SolicitudesComponent30
+  },
+  {
+    path:'grupos-cierre-1',
+    component:SolicitudesComponent31
+  },
+  {
+    path:'solicitud-cierre',
+    component:MostrarSolicitud31
+  },{
+    path:'memorando-cierre',
+    component: Memorando31Component
   }
 ];
 

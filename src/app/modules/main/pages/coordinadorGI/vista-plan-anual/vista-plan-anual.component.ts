@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-
 @Component({
   selector: 'vex-vista-plan-anual',
   templateUrl: './vista-plan-anual.component.html',

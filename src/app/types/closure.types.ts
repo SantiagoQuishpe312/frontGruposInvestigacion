@@ -1,3 +1,6 @@
+import { ClosureRequest } from "./closureRequest.types";
+import { Unsatisfactory } from "./unsatisfactory.types";
+
 export interface Closure {
     id: number;
     objCierre: string;
@@ -15,4 +18,10 @@ export interface Closure {
     usuarioModificacion: string;
     fechaModificacion: Date;
     idGrupoInvestigacion: number;
+}
+
+export interface ClosureComplete {
+    informeCierre: Closure;
+    solicitudCierreGI:ClosureRequest;
+    evInsatisfactoria:Unsatisfactory;
 }
