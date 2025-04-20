@@ -1,0 +1,55 @@
+<div class="cont">
+    <div class="container-fluid">
+        <div class="card">
+            <header>
+            <h1>Detalle de Bienes</h1>
+            </header>
+        </div>
+        <form [formGroup]="form" (ngSubmit)="save()">
+            <div class="grid-container">
+                <div class="grid-item">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Código</mat-label>
+                        <input matInput placeholder="Código" formControlName="codigo">
+                    </mat-form-field>
+                </div>
+                <div class="grid-item">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Descripción</mat-label>
+                        <input matInput placeholder="Descripción" formControlName="descripcion">
+                    </mat-form-field>
+                </div>
+                <div class="grid-item">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Fecha de adquisición</mat-label>
+                        <input matInput [matDatepicker]="picker" placeholder="Fecha de adquisición" formControlName="fechaAdquisicion">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div class="grid-item">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Estado actual</mat-label>
+                        <input matInput placeholder="Estado actual" formControlName="estadoActual">
+                    </mat-form-field>
+                </div>
+                <div class="grid-item">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Ubicación actual</mat-label>
+                        <input matInput placeholder="Ubicación actual" formControlName="ubicacionActual">
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="grid-item">
+                <button type="button" mat-raised-button color="primary"
+                    (click)="onClickClose()">
+                    Cancelar
+                </button>
+                <button type="submit" mat-raised-button color="primary">
+                    Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

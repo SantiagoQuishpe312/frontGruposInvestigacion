@@ -1,5 +1,91 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
+
+div {
+  padding: 20px;
+
+  input[type="file"] {
+    margin-bottom: 10px;
+  }
+
+  button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  }
+}
+.drag-drop {
+  border: 2px dashed #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+.drag-drop i {
+  margin-right: 8px;
+  color: #d9534f; /* Rojo para PDF */
+  font-size: 5rem;
+}
+.loading-spinner-overlay {
+  position: fixed; /* Para que el div esté posicionado en relación a la pantalla */
+  top: 0;
+  left: 0;
+  width: 100vw; /* Abarca todo el ancho de la pantalla */
+  height: 100vh; /* Abarca todo el alto de la pantalla */
+  display: flex; /* Centra el contenido usando flexbox */
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+  z-index: 1000; /* Asegúrate de que esté encima de otros elementos */
+}
+
+.drag-over {
+  border-color: #4CAF50;
+}
+
+.file-icon {
+  font-size: 24px; 
+  color: #4CAF50; 
+  margin-bottom: 10px;
+}
+.file-info{
+  font-size: 20px;
+}
+
+
+input[type="file"] {
+  display: none; 
+}
+
+.custom-file-input label {
+  display: block; 
+  width: 80%;
+  height: 60%; 
+  background-color: #007bff; 
+  color: #fff; 
+  padding: 15px; 
+  text-align: center; 
+  line-height: 20px;
+  margin-left: 10%;
+  cursor: pointer; 
+  border-radius: 10px;
+}
+
+.custom-file-input input[type="file"] {
+  position: absolute; 
+  top: 0; 
+  right: 0;     
+  bottom: 0; 
+  left: 0; 
+  opacity: 0; 
+  cursor: pointer; 
+}
 .cont{
   padding: 8px;
 }
@@ -103,8 +189,6 @@ div button{
 }
 
 button.custom-button {
-  padding: 1px 50px;
-
   background-color: #007bff;
   color: #fff;
   border: none;

@@ -8,7 +8,7 @@ import { AssetesDetails } from 'src/app/types/assetesDetails.types';
   providedIn: 'root'
 })
 export class AssetsDetailsService {
-  private readonly URL = environment.appApiUrl + '/assetsDetails/'
+  private readonly URL = environment.appApiUrl + '/assetsDetails'
   
   constructor(private http: HttpClient) { }
 

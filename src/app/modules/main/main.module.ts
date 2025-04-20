@@ -188,6 +188,7 @@ import { InformeCierreComponent } from 'src/@vex/components/forms/closedGroupRep
 import { SolicitudesComponent31 } from './pages/analistaGestion/FaseCierre/obtenerSolicitudes.component';
 import { MostrarSolicitud31 } from './pages/analistaGestion/FaseCierre/mostrarSolicitud.component';
 import { Memorando31Component } from './pages/analistaGestion/FaseCierre/memorando-31/memorando-31.component';
+import { DetalleEquiposComponent } from './pages/coordinadorGI/informeBienesEquipos/modalBienesEquipos/modalDetalles.component';
 @NgModule({
   declarations: [
     SolicitudesComponent30,
@@ -340,6 +341,7 @@ import { Memorando31Component } from './pages/analistaGestion/FaseCierre/memoran
    VistaPlanAnualComponent,
    SolicitudesComponent31,
     Memorando31Component,
+  DetalleEquiposComponent,
    
   ],
   imports: [

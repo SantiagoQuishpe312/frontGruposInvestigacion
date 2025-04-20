@@ -54,6 +54,11 @@
 
             <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
         </header>
+        <header
+            *ngIf="invGroupExists  && grupo && (grupo.proceso==='34') ">
+
+            <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+        </header>
             </div>
 
             <div *ngIf="!invGroupExists" class="info-proceso">
@@ -195,6 +200,18 @@
                 <div>
                     <button type="button" mat-raised-button
                         color="primary"><a href="/main/baremo">Adjuntar Memorando</a></button>
+                </div>
+            </div>
+            <div class="presentacionGrupo"
+                *ngIf=" !loadingData  && grupo.proceso==='34' "
+                style="text-align: center;">
+                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
+
+                <p> Se le ha asignado que el coordinador de GI emita un informe al VITT a fin que se defina y autorice el destino de los equipos, bienes u otros activos, en caso existieran.
+                </p>
+                <div>
+                    <button type="button" mat-raised-button
+                        color="primary"><a href="/main/informe-bienes">Llenar Informe</a></button>
                 </div>
             </div>
 
