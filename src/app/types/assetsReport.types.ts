@@ -1,3 +1,5 @@
+import { AssetesDetails } from "./assetesDetails.types";
+
 export interface AssetsReport{
     idReporteActivos: number;
     idGrupoInvestigacion: number;
@@ -11,4 +13,9 @@ export interface AssetsReport{
     fechaCreacionReporte?: Date;
     usuarioModificadoReporte?: String;
     fechaModificacionReporte?: String;
+}
+
+export interface AssetsReportComplete{
+    reporteBienes:AssetsReport;
+    detalleBienes:AssetesDetails[];
 }

@@ -107,6 +107,8 @@ import { SolicitudesComponent31 } from './pages/analistaGestion/FaseCierre/obten
 import { MostrarSolicitud31 } from './pages/analistaGestion/FaseCierre/mostrarSolicitud.component';
 import { Memorando31Component } from './pages/analistaGestion/FaseCierre/memorando-31/memorando-31.component';
 import { infBienesEquiposComponent } from './pages/coordinadorGI/informeBienesEquipos/infBienesEquipos.component';
+import { Solicitudes36Component } from './pages/unidad-gestion-inv/fase-cierre/proceso36/obtenerSolicitudes.component';
+import { MostrarSolicitud36 } from './pages/unidad-gestion-inv/fase-cierre/proceso36/mostrarSolicitud.component';
 const routes: Routes = [
   {
     path: 'principal',
@@ -547,6 +549,13 @@ component: MemorandoCreacionVITTComponent
   },{
     path:'informe-bienes',
     component: infBienesEquiposComponent
+  },{
+    path:'informe-bienes-grupos',
+    component: Solicitudes36Component
+  },
+  {
+    path:'doc-informe-bienes',
+    component:MostrarSolicitud36
   }
 ];
 

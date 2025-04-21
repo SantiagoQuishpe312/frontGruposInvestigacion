@@ -3,11 +3,9 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { AnnexesService } from 'src/app/core/http/annexes/annexes.service';
-import { ClosureRequestService } from 'src/app/core/http/closure-request/closure-request.service';
 import { ClosureService } from 'src/app/core/http/closure/closure.service';
 import { DocumentsService } from 'src/app/core/http/documentos/documents.service';
 import { InvGroupService } from 'src/app/core/http/inv-group/inv-group.service';
-import { UnsatisfactoryService } from 'src/app/core/http/unsatisfactory/unsatisfactory.service';
 import { Annexes } from 'src/app/types/annexes.types';
 import { Closure, ClosureComplete } from 'src/app/types/closure.types';
 

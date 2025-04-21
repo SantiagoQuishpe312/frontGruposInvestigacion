@@ -189,9 +189,15 @@ import { SolicitudesComponent31 } from './pages/analistaGestion/FaseCierre/obten
 import { MostrarSolicitud31 } from './pages/analistaGestion/FaseCierre/mostrarSolicitud.component';
 import { Memorando31Component } from './pages/analistaGestion/FaseCierre/memorando-31/memorando-31.component';
 import { DetalleEquiposComponent } from './pages/coordinadorGI/informeBienesEquipos/modalBienesEquipos/modalDetalles.component';
+import { ReporteBienesComponent } from 'src/@vex/components/forms/assetsReport/assetsReport.component';
+import { Solicitudes36Component } from './pages/unidad-gestion-inv/fase-cierre/proceso36/obtenerSolicitudes.component';
+import { MostrarSolicitud36 } from './pages/unidad-gestion-inv/fase-cierre/proceso36/mostrarSolicitud.component';
 @NgModule({
   declarations: [
     SolicitudesComponent30,
+    Solicitudes36Component,
+    MostrarSolicitud36,
+    ReporteBienesComponent,
     MostrarSolicitud31,
     InformeCierreComponent,
     MostrarSolicitud30,

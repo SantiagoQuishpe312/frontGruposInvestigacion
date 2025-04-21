@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AssetsReport } from 'src/app/types/assetsReport.types';
+import { AssetsReport, AssetsReportComplete } from 'src/app/types/assetsReport.types';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -18,6 +18,10 @@ export class AssetsReportService {
 
   getById(id: number): Observable<AssetsReport>{
     return this.http.get<AssetsReport>(`${this.URL}/${id}`);
+  }
+
+  getAllByGroup(id: number): Observable<AssetsReportComplete>{
+    return this.http.get<AssetsReportComplete>(`${this.URL}/allByGroup/${id}`);
   }
 
   createAssetsReport(formData: AssetsReport): Observable<any>{
