@@ -15,6 +15,7 @@ import { AssetsReportComplete } from "src/app/types/assetsReport.types";
     ){}
     ngOnInit(): void {
         this.loadData();
+        console.log(this.idGrupo);
     }
     loadData(){
         this.assetsReportService.getAllByGroup(this.idGrupo).subscribe(data=>{

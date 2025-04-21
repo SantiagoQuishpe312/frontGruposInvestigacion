@@ -375,6 +375,16 @@ export class AppComponent implements OnInit {
                   label: 'Reportes y Dashboards',
                   route: 'main/reportMenu',
                   icon: 'mat:analytics'
+                },
+                {
+                  type: 'subheading',
+                  label: `Cierre de Grupos Investigación`,
+                },
+                {
+                  type: 'link',
+                  label: 'Recomendar a Unidad de Tecnologías de la Información',
+                  route: 'main/grupos-cierre-UTI',
+                  icon: 'mat:school'
                 }
               );
             } else if (r.idRol === 5) {
@@ -419,7 +429,20 @@ export class AppComponent implements OnInit {
                 label: 'Resoluciones',
                 route: 'main/solicitudes-A',
                 icon: 'mat:school'
-              });
+              },
+              {
+                type: 'subheading',
+                label: `Cierres de Grupos Investigación`,
+              },
+              {
+              
+              type: 'link',
+              label: 'Recomendar a V.I.T.T',
+              route: 'main/grupos-cierre-VITT',
+              icon: 'mat:school'
+            }
+            
+            );
             } else if (r.idRol === 7) {
               roleItem.children.push(
                 {
@@ -549,12 +572,25 @@ export class AppComponent implements OnInit {
               },
               {
                 type: 'link',
-                label: 'Informe de Cierre',
-                route: 'main/ver-informe-cierre',
+                label: 'Coordinar Actas',
+                route: 'main/solicitud-cierre-36',
                 icon: 'mat:school'
               }
-            
-            
+            );
+            }
+
+            else if (r.idRol ===13) {
+              roleItem.children.push(
+                {
+                  type: 'subheading',
+                  label: `Cierres de Grupos Investigación`,
+                },
+              {
+                type: 'link',
+                label: 'Fase de Cierre',
+                route: 'main/grupos-cierre-UTIC',
+                icon: 'mat:school'
+              }
             );
             }
             menuItems.push(roleItem);

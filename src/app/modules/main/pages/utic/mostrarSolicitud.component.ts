@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CreationReqForm } from 'src/app/types/creationReq.types';
 import { InvGroupForm } from 'src/app/types/invGroup.types';
+import { InvMemberForm } from 'src/app/types/invMember.types';
 import { Usuario } from 'src/app/types/usuario.types';
 import { AnnexesService } from 'src/app/core/http/annexes/annexes.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser'; // Importa DomSanitizer y SafeResourceUrl
@@ -11,11 +13,16 @@ import { CreationReqService } from 'src/app/core/http/creation-req/creation-req.
   templateUrl: './mostrarSolicitud.component.html',
   styleUrls: ['./obtenerSolicitudes.component.scss']
 })
-export class MostrarSolicitud36 implements OnInit {
+export class MostrarSolicitud34 implements OnInit {
 
   id: number;
+  idPlanDesarrollo: number;
+  creationReqForm: CreationReqForm;
   invGroup: InvGroupForm;
   usuario: Usuario;
+  memberUser: Usuario[] = [];
+  member: InvMemberForm[];
+  idSolicitud: number;
   loadingData: boolean = true;
   invGroupId: number;
   token: string;
@@ -33,17 +40,15 @@ export class MostrarSolicitud36 implements OnInit {
 ) { /*this.loadingData = true;*/}
 
   ngOnInit(): void {
-    this.token = sessionStorage.getItem('access_token');
     this.invGroupId = Number(localStorage.getItem('GI'));
-    console.log(this.invGroupId);
-    this.loadingData=false;
+
+    this.obtenerAnexos()
+    this.token = sessionStorage.getItem('access_token');
   }
 
-  
 
-
-  obtenerAnexos(id: number) {
-    this.annexesService.getByGroupType(id, 'propuesta').subscribe((data) => {
+  obtenerAnexos() {
+    this.annexesService.getByGroupType(this.invGroupId, 'propuesta').subscribe((data) => {
       this.documentsService.getDocument(this.token, data[0].rutaAnexo, data[0].nombreAnexo)
         .subscribe({
           next: (blob) => {
@@ -62,6 +67,10 @@ export class MostrarSolicitud36 implements OnInit {
 
     })
   }
+
+  
+  //memorando_solicitud_vitt_GI_172
+  
 
   validarGrupo(ruta: string) {
     if (localStorage.getItem('GI')) {
