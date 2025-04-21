@@ -7,7 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ChecklistFormComponent } from './pages/checklist/checklist-reg.component';
 //import { DevelopmentPlanFormComponent } from './pages/develop-plan-form/develop-plan-form.component';
 import { TarjetasComponent } from './pages/administracion/tarjets.component';
-import {CdkStepperModule} from '@angular/cdk/stepper';
+import { CdkStepperModule } from '@angular/cdk/stepper';
 import { VinculacionFormComponent } from './pages/coordinadorGI/vinculacion-desvinculacion/vinculacion/vinculacion-form.component';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatInputModule } from '@angular/material/input';
@@ -45,13 +45,13 @@ import { ScientificProductionGroupsComponent } from './pages/reportes/scientific
 import { NgxChartsModule } from '@swimlane/ngx-charts'
 import { AllInvGroupCDComponent } from './pages/reportes/all-inv-group-cd/all-inv-group-cd.component';
 import { ReporteActividadesComponent } from './pages/reporte-actividades/reporte-actividades.component';
-import {MatSelectModule} from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MembersGroup } from './pages/creation-form/creation-form/membersGroup.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { SolicitudesForDirectorComponent } from './pages/directorDepartamento/faseCreacionGI/solicitudes-de-creacion/obtenerSolicitudes.component';
 import { MostrarSolicitudForDirector } from './pages/directorDepartamento/faseCreacionGI/solicitudes-de-creacion/mostrarSolicitud.component';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CargaMemoDirComponent } from './pages/directorDepartamento/faseCreacionGI/memorandosSolicitudCreacion/memorando.component';
 import { GestionRolesComponent } from './pages/administracion/gestion-roles/gestion-crea/gestion-roles.component';
 import { GestionMenuComponent } from './pages/administracion/gestion-roles/gestion-menu.component';
@@ -81,9 +81,9 @@ import { MostrarSolicitudForVicerector } from './pages/vicerectorDeInvestigacion
 import { SolicitudesForAnalistaComponent } from './pages/analistaGestion/fase-creacion/solicitudes-de-creacion/obtenerSolicitudes.component';
 import { MostrarSolicitudForAnalista } from './pages/analistaGestion/fase-creacion/solicitudes-de-creacion/mostrarSolicitud.component';
 import { FichaFormComponent } from './pages/analistaGestion/FichaDeRegistro/ficha.component';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Avances } from './pages/analistaGestion/FichaDeRegistro/registroAvances.component';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CargaMemoVicComponent } from './pages/vicerectorDeInvestigacion/memorandosSolicitudCreacion/memorando.component';
 import { SolicitudesForComisionComponent } from './pages/comisionDeTecnologia/solicitudes-de-creacion/obtenerSolicitudes.component';
@@ -135,7 +135,7 @@ import { infBienesEquiposComponent } from './pages/coordinadorGI/informeBienesEq
 import { OdsControl } from './pages/administracion/ods/modal_ods.component';
 import { ObjControl } from './pages/coordinadorGI/faseCreacion/plan_desarrollo/modal_objetivos.component';
 import { ActControl } from './pages/coordinadorGI/faseCreacion/plan_desarrollo/modal_cuadro_actividades.component';
-import{ProgressComponent} from 'src/@vex/components/progress/progress.component';
+import { ProgressComponent } from 'src/@vex/components/progress/progress.component';
 import { CreationRequestFormComponent } from 'src/@vex/components/forms/creationRequest/creationRequestForm.component';
 import { DevelopPlanFormComponent } from 'src/@vex/components/forms/developmentPlanForm/developmentPlanForm.component';
 import { CvComponent } from 'src/@vex/components/forms/cv/cv.component';
@@ -145,7 +145,7 @@ import { GruposControlComponent } from './pages/administracion/grupos-investigac
 import { DetalleGIComponent } from './pages/administracion/grupos-investigacion/detalle-gi.component';
 import { CrearGIComponent } from './pages/administracion/grupos-investigacion/crearGI.component';
 import { LineModalEdit } from './pages/administracion/grupos-investigacion/modales_gestion/lineModal.component';
-import{MembersModalEdit} from './pages/administracion/grupos-investigacion/modales_gestion/membersModal.component';
+import { MembersModalEdit } from './pages/administracion/grupos-investigacion/modales_gestion/membersModal.component';
 import { GroupModalEdit } from './pages/administracion/grupos-investigacion/modales_gestion/groupModal.component';
 import { AnnualPlanComponent } from './pages/coordinadorGI/seguimiento/PlanAnual/planAnual.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -189,6 +189,15 @@ import { SolicitudesComponent31 } from './pages/analistaGestion/FaseCierre/obten
 import { MostrarSolicitud31 } from './pages/analistaGestion/FaseCierre/mostrarSolicitud.component';
 import { Memorando31Component } from './pages/analistaGestion/FaseCierre/memorando-31/memorando-31.component';
 import { DetalleEquiposComponent } from './pages/coordinadorGI/informeBienesEquipos/modalBienesEquipos/modalDetalles.component';
+import { Memorando32Component } from './pages/consejoAcademico/FaseCierre/memorando32/memorando32.component';
+import { SolicitudesComponent32 } from './pages/consejoAcademico/FaseCierre/obtenerSolicitudes.component';
+import { Memorando33Component } from './pages/vicerectorDeInvestigacion/FaseCierre/memorando33/memorando33.component';
+import { SolicitudesComponent33 } from './pages/vicerectorDeInvestigacion/FaseCierre/obtenerSolicitudes.component';
+import { Memorando34Component } from './pages/utic/memorando34/memorando34.component';
+import { SolicitudesComponent34 } from './pages/utic/obtenerSolicitudes.component';
+import { MostrarSolicitud32 } from './pages/consejoAcademico/FaseCierre/mostrarSolicitud.component';
+import { MostrarSolicitud33 } from './pages/vicerectorDeInvestigacion/FaseCierre/mostrarSolicitud.component';
+import { MostrarSolicitud34 } from './pages/utic/mostrarSolicitud.component';
 @NgModule({
   declarations: [
     SolicitudesComponent30,
@@ -242,8 +251,8 @@ import { DetalleEquiposComponent } from './pages/coordinadorGI/informeBienesEqui
     VinculacionFormComponent,
     DesvinculacionFormComponent,
     ReporteActividadesComponent,
-    MembersGroup,MostrarSolicitudForDirector,
-    SolicitudesForDirectorComponent,CargaMemoDirComponent, 
+    MembersGroup, MostrarSolicitudForDirector,
+    SolicitudesForDirectorComponent, CargaMemoDirComponent,
     GestionRolesComponent,
     GestionMenuComponent,
     GestionRolesPrincipalComponent,
@@ -266,20 +275,20 @@ import { DetalleEquiposComponent } from './pages/coordinadorGI/informeBienesEqui
     AgregarEjecucionComponent,
     EditarEjecucionComponent,
     MostrarSolicitudForVicerector,
-    SolicitudesForVicerectorComponent,SolicitudesForAnalistaComponent,
+    SolicitudesForVicerectorComponent, SolicitudesForAnalistaComponent,
     MostrarSolicitudForAnalista,
-    FichaFormComponent,Avances
-    ,CargaMemoVicComponent,
+    FichaFormComponent, Avances
+    , CargaMemoVicComponent,
     SolicitudesForComisionComponent,
     MostrarSolicitudForComision,
     CargaMemoComComponent,
-    SolicitudesForConsejoComponent,MostrarSolicitudForConsejo,
+    SolicitudesForConsejoComponent, MostrarSolicitudForConsejo,
     CargaMemoConsejoComponent,
     SolicitudesForVicerectorAComponent,
     CargaMemoVicAComponent,
     MostrarSolicitudForVicerectorA,
     CargaSolComComponent,
-    GruposForAnalistaComponent,CargaSolDirComponent,
+    GruposForAnalistaComponent, CargaSolDirComponent,
     GruposForDirectorComponent,
 
     VinculacionForCoor,
@@ -300,10 +309,10 @@ import { DetalleEquiposComponent } from './pages/coordinadorGI/informeBienesEqui
     VerReportesComponent,
     PropuestaGIComponent,
     InformeDePertinenciaComponent,
-    ResolucionConsejoComponent, 
+    ResolucionConsejoComponent,
     SolicitudesForVicerectorIComponent,
     MostrarSolicitudForVicerectorI,
-    CargaMemoVicIComponent,AcademicDomainsControl,
+    CargaMemoVicIComponent, AcademicDomainsControl,
     AreaControl,
     InstStrategicObjComponent,
     ModalInstStrategicObjControl,
@@ -314,42 +323,51 @@ import { DetalleEquiposComponent } from './pages/coordinadorGI/informeBienesEqui
     AnnualPlanComponent,
     SolCreacionComponent,
     ReportesGIComponent,
-   ConfirmDialogComponent,
-   MemorandoCreacionVITTComponent,
-   MemorandoOchoComponent,
-   SolicitudesFaseNueveComponent,
-   MostrarGrupoFaseNueveComponent,
-   MemorandoNueveComponent,
-   SolicitudGruposFaseDiezComponent,
-   GruposAprobadosComponent,
-   MemorandoDiezComponent,
-   SolicitudesParaResolucionComponent,
-   GruposParaResolucionComponent,
-   MemorandoDoceComponent,
-   SolicitudPlanesComponent,
-   MemorandoSolPlanesComponent,
-   SolicitudInformesComponent,
-   MemorandoSolInformesComponent,
-   FaseCierreComponent,
-   EvaluacionesModalComponent,
-   SolicitudesModalComponent,
-   EditarEvaluacionCierreComponent,
-   EditarSolicitudCierreComponent,
-   VerInformeCierreComponent,
-   AnexosFaseCierreComponent,
-   ModalCuadroOp,   
-   VistaPlanAnualComponent,
-   SolicitudesComponent31,
+    ConfirmDialogComponent,
+    MemorandoCreacionVITTComponent,
+    MemorandoOchoComponent,
+    SolicitudesFaseNueveComponent,
+    MostrarGrupoFaseNueveComponent,
+    MemorandoNueveComponent,
+    SolicitudGruposFaseDiezComponent,
+    GruposAprobadosComponent,
+    MemorandoDiezComponent,
+    SolicitudesParaResolucionComponent,
+    GruposParaResolucionComponent,
+    MemorandoDoceComponent,
+    SolicitudPlanesComponent,
+    MemorandoSolPlanesComponent,
+    SolicitudInformesComponent,
+    MemorandoSolInformesComponent,
+    FaseCierreComponent,
+    EvaluacionesModalComponent,
+    SolicitudesModalComponent,
+    EditarEvaluacionCierreComponent,
+    EditarSolicitudCierreComponent,
+    VerInformeCierreComponent,
+    AnexosFaseCierreComponent,
+    ModalCuadroOp,
+    VistaPlanAnualComponent,
+    SolicitudesComponent31,
     Memorando31Component,
-  DetalleEquiposComponent,
-   
+    DetalleEquiposComponent,
+    Memorando32Component,
+    SolicitudesComponent32,
+    Memorando33Component,
+    SolicitudesComponent33,
+    Memorando34Component,
+    SolicitudesComponent34,
+    MostrarSolicitud32,
+    MostrarSolicitud33,
+    MostrarSolicitud34
+
   ],
   imports: [
-    MatButtonToggleModule,  
+    MatButtonToggleModule,
 
     CommonModule,
     MainRoutingModule,
-    FormsModule, 
+    FormsModule,
     ReactiveFormsModule,
     CdkStepperModule,
     MatStepperModule,
@@ -358,12 +376,12 @@ import { DetalleEquiposComponent } from './pages/coordinadorGI/informeBienesEqui
     MatFormFieldModule,
     MatIconModule,
     NgxChartsModule,
-    MatSelectModule, 
+    MatSelectModule,
     MatDialogModule,
     MatProgressSpinnerModule,
     MatAutocompleteModule,
     MatDialogModule,
-    MatSnackBarModule,MatCheckboxModule,
+    MatSnackBarModule, MatCheckboxModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatCardModule,
@@ -373,7 +391,7 @@ import { DetalleEquiposComponent } from './pages/coordinadorGI/informeBienesEqui
     MatSortModule,
     MatPaginatorModule,
   ],
-  exports:[CdkStepperModule],
+  exports: [CdkStepperModule],
   providers: [],
   entryComponents: [ConfirmDialogComponent] // Asegura que se pueda abrir dinámicamente
 

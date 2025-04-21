@@ -107,6 +107,15 @@ import { SolicitudesComponent31 } from './pages/analistaGestion/FaseCierre/obten
 import { MostrarSolicitud31 } from './pages/analistaGestion/FaseCierre/mostrarSolicitud.component';
 import { Memorando31Component } from './pages/analistaGestion/FaseCierre/memorando-31/memorando-31.component';
 import { infBienesEquiposComponent } from './pages/coordinadorGI/informeBienesEquipos/infBienesEquipos.component';
+import { SolicitudesComponent34 } from './pages/utic/obtenerSolicitudes.component';
+import { SolicitudesComponent32 } from './pages/consejoAcademico/FaseCierre/obtenerSolicitudes.component';
+import { MostrarSolicitud32 } from './pages/consejoAcademico/FaseCierre/mostrarSolicitud.component';
+import { Memorando32Component } from './pages/consejoAcademico/FaseCierre/memorando32/memorando32.component';
+import { SolicitudesComponent33 } from './pages/vicerectorDeInvestigacion/FaseCierre/obtenerSolicitudes.component';
+import { MostrarSolicitud33 } from './pages/vicerectorDeInvestigacion/FaseCierre/mostrarSolicitud.component';
+import { Memorando33Component } from './pages/vicerectorDeInvestigacion/FaseCierre/memorando33/memorando33.component';
+import { MostrarSolicitud34 } from './pages/utic/mostrarSolicitud.component';
+import { Memorando34Component } from './pages/utic/memorando34/memorando34.component';
 const routes: Routes = [
   {
     path: 'principal',
@@ -547,6 +556,39 @@ component: MemorandoCreacionVITTComponent
   },{
     path:'informe-bienes',
     component: infBienesEquiposComponent
+  },
+  {
+    path:'grupos-cierre-VITT',
+    component:SolicitudesComponent32
+  },
+  {
+    path:'solicitud-cierre',
+    component:MostrarSolicitud32
+  },{
+    path:'memorando-cierre',
+    component: Memorando32Component
+  },
+  {
+    path:'grupos-cierre-UTI',
+    component:SolicitudesComponent33
+  },
+  {
+    path:'solicitud-cierre',
+    component:MostrarSolicitud33
+  },{
+    path:'memorando-cierre',
+    component: Memorando33Component
+  },
+  {
+    path:'grupos-cierre-UTIC',
+    component:SolicitudesComponent34
+  },
+  {
+    path:'solicitud-cierre',
+    component:MostrarSolicitud34
+  },{
+    path:'memorando-cierre',
+    component: Memorando34Component
   }
 ];
 
