@@ -1,0 +1,122 @@
+<div class="cont">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="header">
+                <h1>INFORME DE BIENES Y EQUIPOS A CARGO DEL GRUPO DE INVESTIGACIÓN {{ groupName }}</h1>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <select (change)="onChange($event)">
+                <option *ngFor="let reporte of assetsReports" [value]="reporte.idReporteActivos">
+                    Informe de Bienes y Equipos número {{ reporte.idReporteActivos }}
+                </option>
+            </select>
+        </div>
+
+        <div class="container-fluid">
+            <div class="encabezado">
+                <div class="box">
+                    <img src="../../../../../../assets/img/espe/logo-espe.png" alt="Imagen" />
+                </div>
+                <div class="box">
+                    <h2>UNIVERSIDAD DE LAS FUERZAS ARMADAS – ESPE</h2><br /><br />
+                    <h2>VICERRECTORADO DE INVESTIGACIÓN, INNOVACIÓN Y TRANSFERENCIA
+                        TECNOLÓGICA</h2><br />
+                    <h2>INFORME DE BIENES Y EQUIPOS</h2><br />
+                </div>
+
+                <div class="box">
+                    <h2>Fecha de Creación:</h2><br /><br />
+                    <div *ngFor="let reporte of assetsReports">
+                        {{ reporte.fechaCreacionReporte | date : 'dd/MM/yyyy' }}
+                    </div>
+                </div>
+            </div>
+            <br />
+            <br />
+
+            <h2>
+                <h2>A. INTRODUCCIÓN</h2>
+            </h2>
+            <br />
+            <span *ngFor="let reporte of assetsReports">
+                {{ reporte.objetivoReporte }}
+            </span>
+            <br /><br />
+            <h2>
+                <h2>B. CONTEXTO</h2>
+            </h2>
+            <br />
+            <span *ngFor="let reporte of assetsReports">
+                {{ reporte.contextoReporte }}
+            </span>
+            <br /><br />
+
+            <h2>
+                <h2>C. ESTADO ACTUAL DE LOS BIENES</h2>
+            </h2>
+            <div class="assets-container">
+                <ng-container *ngFor="let detalle of AssetDetails;">
+                    <table class="asset-table">
+                        <tr class="asset-row">
+                            <td class="label-cell">ÍTEM:</td>
+                            <td class="data-cell">{{ detalle.idDetalles }}</td>
+                        </tr>
+                        <tr class="asset-row">
+                            <td class="label-cell">DESCRIPCIÓN:</td>
+                            <td class="data-cell">{{ detalle.descripcion }}</td>
+                        </tr>
+                        <tr class="asset-row">
+                            <td class="label-cell">CÓDIGO/SERIE:</td>
+                            <td class="data-cell">{{ detalle.codigo }}</td>
+                        </tr>
+                        <tr class="asset-row">
+                            <td class="label-cell">FECHA ADQUISICIÓN:</td>
+                            <td class="data-cell">{{ detalle.fechaAdquisicion | date: 'dd/MM/yyyy' }}</td>
+                        </tr>
+                        <tr class="asset-row">
+                            <td class="label-cell">ESTADO ACTUAL:</td>
+                            <td class="data-cell">{{ detalle.estadoActual }}</td>
+                        </tr>
+                        <tr class="asset-row">
+                            <td class="label-cell">UBICACIÓN ACTUAL:</td>
+                            <td class="data-cell">{{ detalle.ubicacionActual }}</td>
+                        </tr>
+                    </table>
+                </ng-container>
+            </div>
+
+            <h2>
+                <h2>D. USO Y CONDICIONES DE LOS EQUIPOS</h2>
+            </h2>
+            <ul>
+                <li>
+                    <h2>Funcionamiento y Uso: </h2><span *ngFor="let reporte of assetsReports">{{ reporte.usoEstado
+                        }}</span>
+                </li>
+                <li>
+                    <h2>Condición General</h2><span *ngFor="let reporte of assetsReports">
+                        {{ reporte.condicionesGenerales }}
+                    </span>
+                </li>
+                <li>
+                    <h2>Relevancia para Proyectos Actuales:</h2><span *ngFor="let reporte of assetsReports">
+                        {{ reporte.relevancia }}
+                    </span>
+                </li>
+                <li></li>
+                <li></li>
+            </ul>
+
+            <h2>
+                <h2>F. CONCLUSIÓN</h2>
+            </h2>
+            <br />
+            <span *ngFor="let reporte of assetsReports">
+                {{ reporte.conclusiones }}
+            </span>
+            <br /><br />
+        </div>
+    </div>
+</div>
