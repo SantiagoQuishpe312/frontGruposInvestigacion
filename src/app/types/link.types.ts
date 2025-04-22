@@ -1,3 +1,6 @@
+import { InvGroupCompleteForm } from "./invGroup.types";
+import { Usuario } from "./usuario.types";
+
 export interface Link {
     idVinculacion: number;
     idGrupoInv: number;
@@ -10,4 +13,10 @@ export interface Link {
     fechaCreacion: Date;
     usuarioModificacion: string;
     fechaModificacion: Date;
+}
+
+export interface LinksComplete {
+    formularioVinculacion: Link;
+    grupoInvestigacion:InvGroupCompleteForm;
+    nuevoInvestigador:Usuario;
 }

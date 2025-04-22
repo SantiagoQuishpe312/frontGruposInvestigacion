@@ -1,0 +1,62 @@
+
+<div class="container-fluid">
+    <div class="card">
+      <header>
+        <h1>Informe para conocimiento y registro sobre la admisión de los nuevos miembros y colaboradores.</h1>
+      </header>
+      <div
+        style="width: 100%;display: flex;justify-self: center;justify-items: center;justify-content: center; align-items: center;"
+        *ngIf="loadingData">
+        <mat-spinner diameter="150" color="primary"
+          class="overlay-spinner"></mat-spinner>
+  
+      </div>
+      <main *ngIf="!loadingData">
+        <mat-stepper #stepper>
+          <mat-step>
+            <ng-template matStepLabel>Informe de Recomendación de Cierre de Grupo</ng-template>
+            <vex-vinculacion-form-view [idGrupo]="invGroupId" [tipo]="'v'" [estado]="'e'"></vex-vinculacion-form-view>
+            <div class="grid-container">
+              <div class="grid-item"></div>
+              <div class="grid-item">
+                <div>
+                
+                <button type="button" mat-raised-button color="primary"
+                  matStepperNext>
+                  Siguiente
+                </button></div>
+              </div> </div>
+            
+          </mat-step>   
+          <mat-step>
+            <ng-template matStepLabel>Adjuntos</ng-template>
+            <div *ngIf="pdfUrl">
+              <iframe [src]="pdfUrl" width="100%" height="600px"></iframe>
+  
+            </div>
+               <div class="grid-container">
+                <div class="grid-item"></div>
+                <div class="grid-item">
+                  <div>
+                
+                <button type="button" mat-raised-button color="primary"
+                  matStepperPrevious>
+                  Anterior
+                </button>
+                <button type="button" mat-raised-button color="primary"
+                  (click)="validarGrupo('memorando-cierre')">
+                  Enviar Recomendación
+                </button>
+              </div> </div></div>
+            
+          </mat-step>      
+        </mat-stepper>
+        <div >
+          
+          
+        </div>
+  
+      </main>
+    </div>
+  </div>
+  

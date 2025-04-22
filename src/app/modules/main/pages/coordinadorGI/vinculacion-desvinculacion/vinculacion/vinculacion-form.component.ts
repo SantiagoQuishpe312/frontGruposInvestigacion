@@ -11,6 +11,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MembersGroup } from '../../../creation-form/creation-form/membersGroup.component';
 import { AnnexesService } from 'src/app/core/http/annexes/annexes.service';
 import { DocumentsService } from 'src/app/core/http/documentos/documents.service';
+import { InvGroupForm } from 'src/app/types/invGroup.types';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { InvGroupService } from 'src/app/core/http/inv-group/inv-group.service';
 
 @Component({
   selector: 'vex-vinculacion-form',
@@ -35,35 +38,41 @@ export class VinculacionFormComponent implements OnInit {
   fileName: string = '';
   fileUploaded: boolean = false;
   username: string;
+  currentDate: Date = new Date();
+  currentUser: string;
+  groupId: number;
+  originalFileName: string;
+  loading: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private linkService: LinkService,
-    private invGroupService: SolCreaGiService,
+    private invGroupService: InvGroupService,
     private usuarioService: UsuarioService,
     private authService: AuthService,
     private datePipe: DatePipe,
     private router: Router,
     private dialog: MatDialog,
     private annexesService: AnnexesService,
-    private documentService: DocumentsService
+    private documentService: DocumentsService,
+    private matSnackBar: MatSnackBar
   ) { this.user = null; }
 
   ngOnInit(): void {
+    this.groupId = Number(sessionStorage.getItem('invGroup'));
     this.loadData();
-    const currentUser = this.authService.getUserName();
-    const currentDate = this.datePipe.transform(new Date(), 'yyyy-MM-ddTHH:mm:ss');
-    const groupId = sessionStorage.getItem("invGroup");
+    this.currentUser = this.authService.getUserName();
     this.link = this.fb.group({
-      idGrupoInv: [groupId, Validators.required],
+      idGrupoInv: [this.groupId, Validators.required],
       idUser: [1, Validators.required],
       justificacion: ['', Validators.required],
       observaciones: ['', Validators.required],
       estado: ['e', Validators.required],
-      tipo: ['vinc', Validators.required],
-      usuarioCreacion: [currentUser, Validators.required],
-      fechaCreacion: [currentDate],
-      usuarioModificacion: [''],
-      fechaModificacion: [''],
+      tipo: ['v', Validators.required],
+      usuarioCreacion: [this.currentUser, Validators.required],
+      fechaCreacion: [this.currentDate],
+      usuarioModificacion: ['0'],
+      fechaModificacion: [this.currentDate],
     });
   }
 
@@ -76,6 +85,7 @@ export class VinculacionFormComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((data: { user: any, usuarioValue: any }) => {
+      console.log(data);
       this.usuarioService.getByUserName(data.usuarioValue).subscribe((data) => {
         this.user = data;
       })
@@ -106,7 +116,7 @@ export class VinculacionFormComponent implements OnInit {
   }
 
   createLink() {
-    this.link.get('idUser').setValue(this.user.idUsuario);
+    this.link.get('idUser').setValue(this.user.id);
     if (this.link.valid) {
       const linkData: Link = this.link.value;
       this.linkService.createLinkForm(linkData).subscribe(
@@ -119,6 +129,7 @@ export class VinculacionFormComponent implements OnInit {
       );
     } else {
       console.error('El formulario no es válido. Verifica los campos.');
+      console.log(this.link.value);
       this.savedMessage = 'Verifica los campos del formulario';
       Object.values(this.link.controls).forEach(control => {
         control.markAsTouched();
@@ -134,20 +145,29 @@ export class VinculacionFormComponent implements OnInit {
       const fileExtension = file.name.split('.').pop().toLowerCase();
       if (fileExtension !== 'pdf') {
         alert('Solo se permiten archivos PDF.');
+        this.clearFileInput();
         return;
       }
       this.selectedFile = file;
-      const groupId = sessionStorage.getItem('invGroup');
-      const customFileName = `doc_vinculacion_Grupo_${groupId}_User_${this.username}.pdf`;
-      this.setFileName(customFileName);
+      this.setFileName();
     }
   }
-
+  setFileName() {
+    if (!this.selectedFile) {
+      console.error("Error: No hay archivo seleccionado.");
+      return;
+    }
+    this.originalFileName = this.selectedFile.name;
+    const name = `solicitud_vinculacion_GI_${this.groupId}_${this.currentDate.getFullYear()}-${this.currentDate.getMonth() + 1}-${this.currentDate.getDate()}.pdf`;
+    const modifiedFile = new File([this.selectedFile], name, { type: this.selectedFile.type });
+    this.selectedFile = modifiedFile;
+  }
   onDragOver(event: any) {
     event.preventDefault();
     event.stopPropagation();
     event.target.classList.add('drag-over');
   }
+
 
   onDragLeave(event: any) {
     event.preventDefault();
@@ -157,22 +177,22 @@ export class VinculacionFormComponent implements OnInit {
 
   onFileSelected(event: any) {
     this.selectedFile = event.target.files[0];
-    const groupId = sessionStorage.getItem('invGroup');
-    const customFileName = `doc_vinculacion_Grupo_${groupId}_User_${this.username}.pdf`;
     this.validateFileType();
-
-    this.setFileName(customFileName);
-
   }
+
   validateFileType() {
     if (this.selectedFile) {
       const fileExtension = this.selectedFile.name.split('.').pop().toLowerCase();
       if (fileExtension !== 'pdf') {
         alert('Solo se permiten archivos PDF.');
         this.clearFileInput();
+        this.selectedFile = undefined;
+      } else {
+        this.setFileName();
       }
     }
   }
+
   clearFileInput() {
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     if (fileInput) {
@@ -180,54 +200,76 @@ export class VinculacionFormComponent implements OnInit {
     }
   }
 
-  setFileName(name: string) {
-    const modifiedFile = new File([this.selectedFile], name, { type: this.selectedFile.type });
-    this.selectedFile = modifiedFile;
-    console.log(modifiedFile);
-  }
 
   onSubmit() {
+    this.loading = true;
     if (this.selectedFile) {
       const fileToUpload = this.selectedFile;
-      const groupId = sessionStorage.getItem('invGroup');
-      const currentUser = this.authService.getUserName();
-      const currentDate = new Date();
+      const sistema = 'GruposInv';
       const token = sessionStorage.getItem('access_token');
-      const sistema = 'publicaciones'
       this.documentService.saveDocument(token, fileToUpload, sistema).subscribe(response => {
-        //console.log(response);
         const annexesData: any = {
           idAnexo: 0,
-          usuarioCreacionAnexo: currentUser,
-          fechaCreacionAnexo: currentDate,
+          usuarioCreacionAnexo: this.currentUser,
+          fechaCreacionAnexo: this.currentDate,
           usuarioModificacionAnexo: '',
           fechaModificacionAnexo: null,
-          idGrupo: parseInt(groupId || '0'),
-          nombreAnexo: response.uuid,
-          rutaAnexo: response.fileName
+          idGrupo: this.groupId,
+          nombreAnexo: response.fileName,
+          rutaAnexo: response.uuid
         };
         this.annexesService.createAnnexesForm(annexesData).subscribe(
           () => {
-            console.log('Archivo subido con éxito.');
-            this.fileUploaded = true;
-            setTimeout(() => {
-              this.router.navigateByUrl('main/dashboard');
-            }, 1000);
+            this.loading = false;
+            this.actualizarEstados();
           },
           (error) => {
-            console.error('Error al subir el archivo:', error);
+            this.matSnackBar.open('Error al enviar resolución.', 'Cerrar', {
+              duration: 3000,
+            });
           }
         );
       })
     }
   }
   getFileIcon(fileType: string | undefined): string {
-    if (!fileType) return '';
-    const lowerCaseFileType = fileType.toLowerCase();
+    if (!fileType) return 'far fa-file'; // Ícono genérico si no hay tipo de archivo
     const fileIcons: { [key: string]: string } = {
-      'pdf': 'far fa-file-pdf'
+      'application/pdf': 'far fa-file-pdf', // Ícono para PDF
+      'image/png': 'far fa-file-image',
+      'image/jpeg': 'far fa-file-image',
+      'image/jpg': 'far fa-file-image',
+      'image/gif': 'far fa-file-image',
+      'image/bmp': 'far fa-file-image',
+      'image/webp': 'far fa-file-image',
+      'image/tiff': 'far fa-file-image',
+      'image/svg+xml': 'far fa-file-image',
     };
-    const iconClass = fileIcons[lowerCaseFileType] || fileIcons['default'];
-    return iconClass;
+    return fileIcons[fileType] || 'far fa-file';
   }
+  actualizarEstados() {
+    this.invGroupService.getById(this.groupId).subscribe(data => {
+      const invGroup: InvGroupForm = {
+        idGrupoInv: this.groupId,
+        idCoordinador: data.idCoordinador,
+        nombreGrupoInv: data.nombreGrupoInv,
+        estadoGrupoInv: data.estadoGrupoInv,
+        acronimoGrupoinv: data.acronimoGrupoinv,
+        proceso: '38',
+        usuarioCreacion: data.usuarioCreacion,
+        fechaCreacion: data.fechaCreacion,
+        usuarioModificacion: this.currentUser,
+        fechaModificacion: this.currentDate
+
+      }
+      this.invGroupService.update(this.groupId, invGroup).subscribe(
+        (response) => {
+          localStorage.removeItem('GI');
+          this.router.navigate(["main/dashboard"]);
+        });
+    })
+
+
+  }
+
 }

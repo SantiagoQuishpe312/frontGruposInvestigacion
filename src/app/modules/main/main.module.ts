@@ -202,9 +202,15 @@ import { MostrarSolicitud33 } from './pages/vicerectorDeInvestigacion/FaseCierre
 import { MostrarSolicitud34 } from './pages/utic/mostrarSolicitud.component';
 import { ReporteBienesComponent } from 'src/@vex/components/forms/assetsReport/assetsReport.component';
 import{Memorando36Component} from './pages/unidad-gestion-inv/fase-cierre/proceso36/memorando36/memorando36.component';
+import { LinkFormComponent } from 'src/@vex/components/forms/linkForm/linkForm.component';
+import { MostrarSolicitud39 } from './pages/unidad-gestion-inv/fase-vinculacion/mostrarSolicitud.component';
+import { SolicitudesComponent39 } from './pages/unidad-gestion-inv/fase-vinculacion/obtenerSolicitudes.component';
 @NgModule({
   declarations: [
     SolicitudesComponent30,
+    MostrarSolicitud39,
+    SolicitudesComponent39,
+    LinkFormComponent,
     Memorando36Component,
     Solicitudes36Component,
     MostrarSolicitud36,

@@ -119,6 +119,8 @@ import { SolicitudesComponent34 } from './pages/utic/obtenerSolicitudes.componen
 import { MostrarSolicitud34 } from './pages/utic/mostrarSolicitud.component';
 import { Memorando34Component } from './pages/utic/memorando34/memorando34.component';
 import { Memorando36Component } from './pages/unidad-gestion-inv/fase-cierre/proceso36/memorando36/memorando36.component';
+import { SolicitudesComponent39 } from './pages/unidad-gestion-inv/fase-vinculacion/obtenerSolicitudes.component';
+import { MostrarSolicitud39 } from './pages/unidad-gestion-inv/fase-vinculacion/mostrarSolicitud.component';
 const routes: Routes = [
   {
     path: 'principal',
@@ -611,6 +613,12 @@ component: MemorandoCreacionVITTComponent
     },{
       path:'actas-cierre',
       component: Memorando36Component
+    },{
+      path:'solicitud-vinculacion',
+      component:SolicitudesComponent39
+    },{
+      path:'mostrar-solicitud-vinculacion',
+      component:MostrarSolicitud39
     }
 ];
 
