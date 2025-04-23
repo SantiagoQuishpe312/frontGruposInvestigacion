@@ -1,0 +1,131 @@
+<div class="cont">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="header">
+                <h1>INFORME PARA CONOCIMIENTO Y REGISTRO SOBRE LA ADMISIÓN DE NUEVOS MIEMBROS Y COLABORADORES</h1>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="encabezado">
+                <div class="box">
+                    <img src="../../../../../../assets/img/espe/logo-espe.png" alt="Imagen" />
+                </div>
+                <div class="box">
+                    <h2>UNIVERSIDAD DE LAS FUERZAS ARMADAS – ESPE</h2><br /><br />
+                    <h2>VICERRECTORADO DE INVESTIGACIÓN, INNOVACIÓN Y TRANSFERENCIA
+                        TECNOLÓGICA</h2><br />
+                    <h2>INFORME PARA CONOCIMIENTO Y REGISTRO SOBRE LA ADMISIÓN DE NUEVOS MIEMBROS Y COLABORADORES</h2>
+                    <br />
+                </div>
+
+                <div class="box">
+                    <h2>Fecha de Creación:</h2><br /><br />
+                    <div *ngIf="vinculacionForm && vinculacionForm.formularioVinculacion">
+                        {{ vinculacionForm.formularioVinculacion.fechaCreacion | date : 'dd/MM/yyyy' }}
+                    </div>
+                </div>
+            </div>
+            <br />
+            <br />
+
+            <h2>DATOS DEL GRUPO DE INVESTIGACIÓN</h2>
+            <ul>
+                <li>
+                    <h2>Nombre del Grupo de Investigación: </h2><span>{{ groupName }}</span>
+                </li>
+                <li>
+                    <h2>Área de Investigación:</h2>
+                    <span *ngFor="let area of Area; let last = last">
+                        {{ area.nombreArea }}{{ !last ? ', ' : '' }}
+                    </span>
+                </li>
+                <li>
+                    <h2>Coordinador del Grupo de Investigación:</h2>
+                    <span *ngIf="coordinador">{{ coordinador.nombre }}</span>
+                </li>
+            </ul>
+
+            <h2>DATOS DEL SOLICITANTE</h2>
+            <div class="assets-container">
+                <ng-container *ngIf="vinculacionForm && vinculacionForm.nuevoInvestigador">
+                    <table class="asset-table">
+                        <tr class="asset-row">
+                            <td class="label-cell">Nombre:</td>
+                            <td class="data-cell">{{ vinculacionForm.nuevoInvestigador.nombre }}</td>
+                        </tr>
+                        <tr class="asset-row">
+                            <td class="label-cell">Cédula:</td>
+                            <td class="data-cell">{{ vinculacionForm.nuevoInvestigador.cedula }}</td>
+                        </tr>
+                        <tr class="asset-row">
+                            <td class="label-cell">Correo:</td>
+                            <td class="data-cell">{{ vinculacionForm.nuevoInvestigador.correo }}</td>
+                        </tr>
+                        <tr class="asset-row">
+                            <td class="label-cell">Institución:</td>
+                            <td class="data-cell">{{ vinculacionForm.nuevoInvestigador.institucion }}</td>
+                        </tr>
+                        <tr class="asset-row" *ngIf="vinculacionForm.nuevoInvestigador.departamento">
+                            <td class="label-cell">Departamento:</td>
+                            <td class="data-cell">{{ vinculacionForm.nuevoInvestigador.departamento }}</td>
+                        </tr>
+                        <tr class="asset-row" *ngIf="vinculacionForm.nuevoInvestigador.cargo">
+                            <td class="label-cell">Cargo:</td>
+                            <td class="data-cell">{{ vinculacionForm.nuevoInvestigador.cargo }}</td>
+                        </tr>
+                        <tr class="asset-row" *ngIf="vinculacionForm.nuevoInvestigador.idInstitucional">
+                            <td class="label-cell">ID Institucional:</td>
+                            <td class="data-cell">{{ vinculacionForm.nuevoInvestigador.idInstitucional }}</td>
+                        </tr>
+                        <tr class="asset-row" *ngIf="vinculacionForm.nuevoInvestigador.nacionalidad">
+                            <td class="label-cell">Nacionalidad:</td>
+                            <td class="data-cell">{{ vinculacionForm.nuevoInvestigador.nacionalidad }}</td>
+                        </tr>
+                        <tr class="asset-row" *ngIf="vinculacionForm.nuevoInvestigador.genero">
+                            <td class="label-cell">Género:</td>
+                            <td class="data-cell">{{ vinculacionForm.nuevoInvestigador.genero }}</td>
+                        </tr>
+                        <tr class="asset-row" *ngIf="vinculacionForm.nuevoInvestigador.grado">
+                            <td class="label-cell">Grado:</td>
+                            <td class="data-cell">{{ vinculacionForm.nuevoInvestigador.grado }}</td>
+                        </tr>
+                        <tr class="asset-row" *ngIf="vinculacionForm.nuevoInvestigador.rol">
+                            <td class="label-cell">Rol:</td>
+                            <td class="data-cell">{{ vinculacionForm.nuevoInvestigador.rol }}</td>
+                        </tr>
+                        <tr class="asset-row" *ngIf="vinculacionForm.nuevoInvestigador.sede">
+                            <td class="label-cell">Sede:</td>
+                            <td class="data-cell">{{ vinculacionForm.nuevoInvestigador.sede }}</td>
+                        </tr>
+                        <tr class="asset-row">
+                            <td class="label-cell">Fecha de Creación:</td>
+                            <td class="data-cell">{{ vinculacionForm.nuevoInvestigador.fechaCreacion | date :
+                                'dd/MM/yyyy' }}</td>
+                        </tr>
+                    </table>
+                </ng-container>
+
+                <ng-container *ngIf="vinculacionForm && vinculacionForm.formularioVinculacion">
+                    <table class="asset-table">
+                        <tr class="asset-row">
+                            <td class="label-cell">Estado:</td>
+                            <td class="data-cell">{{ vinculacionForm.formularioVinculacion.estado }}</td>
+                        </tr>
+                        <tr class="asset-row">
+                            <td class="label-cell">Tipo:</td>
+                            <td class="data-cell">{{ vinculacionForm.formularioVinculacion.tipo }}</td>
+                        </tr>
+                    </table>
+                </ng-container>
+            </div>
+
+            <h2>JUSTIFICACIÓN DE LA ADMISIÓN</h2>
+            <br />
+            <div *ngIf="vinculacionForm && vinculacionForm.formularioVinculacion">
+                {{ vinculacionForm.formularioVinculacion.justificacion }}
+            </div>
+            <br /><br />
+        </div>
+    </div>
+</div>
