@@ -25,8 +25,8 @@ export class ControlPanelService {
     return this.http.get<ControlPanelForm[]>(`${this.URL}/bydev/${id}`);
   }
 
-  createControlPanelForm(formData: ControlPanelForm): Observable<any> {
-    return this.http.post(`${this.URL}/create`, formData);
+  createControlPanelForm(formData: ControlPanelForm): Observable<number> {
+    return this.http.post<number>(`${this.URL}/create`, formData);
   }
 
   update(id: number, formData: ControlPanelForm): Observable<ControlPanelForm> {

@@ -5,7 +5,10 @@
           <h1>Solicitud de Desvinculación de Investigadores</h1>
         </header>
       </div>
-      <mat-stepper [linear]="isLinear" #stepper>
+      <div class="container-fluid" *ngIf="!groupId">
+        <h1>Proceso no disponible en este momento</h1>
+      </div>
+      <mat-stepper [linear]="isLinear" #stepper *ngIf="groupId">
         <mat-step>
           <ng-template matStepLabel>Solicitud de Desvinculación</ng-template>
       <form [formGroup]="link" (ngSubmit)="createLink()" class="container">

@@ -28,7 +28,6 @@ import { InvGroupService } from './core/http/inv-group/inv-group.service';
 import { UsuarioService } from './core/http/usuario/usuario.service';
 import { Usuario } from './types/usuario.types';
 import { InvGroupForm } from './types/invGroup.types';
-import { InformeCierreComponent } from 'src/@vex/components/forms/closedGroupReport/closeReport.component';
 @Component({
   selector: 'vex-root',
   templateUrl: './app.component.html',
@@ -38,6 +37,7 @@ export class AppComponent implements OnInit {
   public isLoggedIn = false;
   userRoles: any[] = [];
   public estado:any
+  mostrar:boolean=true;
   constructor(
     private cdr: ChangeDetectorRef,
     private configService: ConfigService,
@@ -180,6 +180,8 @@ export class AppComponent implements OnInit {
     });
 
     const menuItems = [];
+    const mostrar=true;
+   
 
     this.userRolService
       .getUserRolByUsername(this.authService.getUserName())
@@ -208,20 +210,7 @@ export class AppComponent implements OnInit {
                 {
                   type: 'subheading',
                   label: `Seguimiento Grupo Investigación`,
-                },
-                {
-                  type: 'link',
-                  label: 'Cargar Documentación Habilitante',
-                  route: 'main/seguimiento',
-                  icon: 'mat:archive'
                 }
-               /* {
-                  type: 'link',
-                  label: 'Reporte de Actividades',
-                  route: 'main/reporte-actividades',
-                  icon: 'mat:chrome_reader_mode'
-                },*/
-
                 
                 ,{
                   type: 'link',
@@ -235,34 +224,11 @@ export class AppComponent implements OnInit {
                   route: 'main/desvinculacion',
                   icon: 'mat:group_remove'
                 },
-                {
-                  type: 'link',
-                  label: 'Vista Plan Anual',
-                  route: 'main/vista-plan-anual',
-                  icon: 'mat:description'
-                },
-
-                {
-                  type: 'subheading',
-                  label: `Ejecución Grupo Investigación`,
-                },
-              /*
-                {
-                  type: 'link',
-                  label: 'Producción Científica',
-                  route: 'main/produccion-cientifica',
-                  icon: 'mat:leaderboard'
-                },
-                */
-                {
-                  type: 'link',
-                  label: 'Reporte de Actividades',
-                  route: 'main/ver-reportes',
-                  icon: 'mat:description'
-                }
+                
                 
               );
-            } else if (r.idRol === 2) {
+            } 
+            else if (r.idRol === 2) {
               roleItem.children.push(
                 {
                   type: 'subheading',
@@ -496,28 +462,9 @@ export class AppComponent implements OnInit {
                   type: 'subheading',
                   label: `Reportes`,
                 },
-                {
-                  type: 'link',
-                  label: 'Reportes y Dashboards',
-                  route: 'main/reportMenu',
-                  icon: 'mat:poll'
-                }
+                
               );
-            } else if (r.idRol === 8) {
-              roleItem.children.push({
-                type: 'link',
-                label: 'Fase 8',
-                route: 'main/fase8',
-                icon: 'mat:school'
-              });
-            } else if (r.idRol === 9) {
-              roleItem.children.push({
-                type: 'link',
-                label: 'Fase 9',
-                route: 'main/fase9',
-                icon: 'mat:school'
-              });
-            }else if (r.idRol ===11) {
+            } else if (r.idRol ===11) {
               roleItem.children.push({
                 type: 'link',
                 label: 'Cómite de Investigación',
@@ -544,12 +491,7 @@ export class AppComponent implements OnInit {
                   route: 'main/grupos-investigacion',
                   icon: 'mat:groups'
                 },
-                {
-                  type: 'link',
-                  label: 'Lista GI',
-                  route: 'main/ejecucion',
-                  icon: 'mat:description'
-                },
+                
               );
             }else if (r.idRol ===12) {
               roleItem.children.push({

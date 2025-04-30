@@ -72,7 +72,7 @@ h2 {
 }
 
 .create {
-  background-color: blue !important;
+  background-color: rgb(9, 114, 0) !important;
   color: white;
   border: solid 1px #fff;
   border-radius: 5px;
@@ -444,3 +444,32 @@ th, td {
   }
 }
 
+.graficos-container {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+
+.grafico {
+  width: 320px;
+  height: auto;
+  display: flex;
+  flex-direction: column; /* 👈 Esto es lo clave */
+  align-items: center;
+  margin: 10px;
+}
+
+
+.grafico canvas {
+  width: 380px !important;
+  height: 380px !important;
+}
+
+.grafico h3 {
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #333;
+}

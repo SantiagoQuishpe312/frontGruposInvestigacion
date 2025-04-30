@@ -386,7 +386,7 @@ export class SolCreacionComponent implements OnInit {
       }
     }
   }
-  
+
 
   borrarInvestigador(index: number) {
     console.log(this.selectedUsers)
@@ -671,7 +671,7 @@ export class SolCreacionComponent implements OnInit {
 
       })
     }
-    
+
   }
   private saveCurriculums(idGrupo: number, user: string, date: Date) {
 
@@ -776,7 +776,7 @@ export class SolCreacionComponent implements OnInit {
         this.snackBar.open('Enviado con éxito', 'Cerrar', {
           duration: 4000, // Duración del toast en milisegundos
         });
-        window.location.reload();
+//        window.location.reload();
       },
       error: (err) => {
         console.log(err);
@@ -798,10 +798,16 @@ export class SolCreacionComponent implements OnInit {
     if (files.length === 0) return;
 
     const file = files[0];
-
-    
+    if (t === 'i') {
       this.processImageFile(file);
-    
+    } if (t === 'h') {
+      this.selectedCv=file;
+      const customFileName = `Hoja_de_Vida_Coordinador${this.currentUserId}.pdf`;
+      this.validateFileType();
+      this.setFileName(customFileName);
+    }
+
+
   }
 
   onImgSelected(event: any) {

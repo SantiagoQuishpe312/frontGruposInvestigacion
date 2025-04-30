@@ -5,7 +5,12 @@
         <h1>Solicitud de Vinculación de Investigadores</h1>
       </header>
     </div>
-    <mat-stepper [linear]="isLinear" #stepper>
+    <div class="card" *ngIf="!groupId">
+      <h1>
+        Proceso no disponible en este momento
+      </h1>
+    </div>
+    <mat-stepper [linear]="isLinear" #stepper *ngIf="groupId">
       <mat-step>
         <ng-template matStepLabel>Solicitud de Vinculación</ng-template>
     <form [formGroup]="link" class="container">
@@ -58,6 +63,19 @@
             <textarea matInput formControlName="observaciones" placeholder="Observaciones" class="textarea"></textarea>
           </mat-form-field>
         </div>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Estatus</mat-label>
+          <mat-select formControlName="estatus" required>
+            <mat-option *ngFor="let est of estatusList" [value]="est.value">
+              {{ est.label }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="link.get('estatus')?.hasError('required')">
+            Este campo es obligatorio
+          </mat-error>
+        </mat-form-field>
+        
 
 
 

@@ -125,6 +125,13 @@ export class GruposControlComponent implements OnInit {
       })),
       //{ departamento: 'Total', cantidad: this.totalDepartamentosCount }
     ];
+    this.chartDepartamento = this.renderChart(
+      this.chartDepartamento,
+      'chartDepartamento',
+      conteo,
+      'Grupos por Departamento'
+    );
+    
   }
   
   actualizarConteoSedes(data: InvGroupForm[]) {
@@ -137,6 +144,13 @@ export class GruposControlComponent implements OnInit {
       })),
       //{ sede: 'Total', cantidad: this.totalSedesCount }
     ];
+    this.chartSede = this.renderChart(
+      this.chartSede,
+      'chartSede',
+      conteo,
+      'Grupos por Sede'
+    );
+    
   }
   
   contarPorCategoria(data: any[], campo: string): { [key: string]: number } {
@@ -169,4 +183,80 @@ export class GruposControlComponent implements OnInit {
   add() {
     this.router.navigate(['/main/crearGI']);
   }
+  private renderChart(
+    chartRef: Chart | undefined,
+    canvasId: string,
+    dataMap: { [key: string]: number },
+    label: string
+  ): Chart {
+    const ctx = document.getElementById(canvasId) as HTMLCanvasElement;
+    const dataLabels = Object.keys(dataMap);
+    const dataValues = Object.values(dataMap);
+  
+    if (chartRef) {
+      chartRef.destroy();
+    }
+  
+    return new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: dataLabels,
+        datasets: [{
+          label,
+          data: dataValues,
+          backgroundColor: this.generateColors(dataLabels.length),
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        layout: {
+          padding: 20 // iguala el espacio alrededor
+        },
+        plugins: {
+          legend: {
+            position: 'right', // 👈 Coloca la leyenda a la derecha del gráfico
+            labels: {
+              font: {
+                size: 7 // 👈 Tamaño más pequeño
+              },
+              boxWidth: 20,
+              padding: 10
+            }
+          },
+          
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                const value = context.parsed || 0;
+                const total = context.dataset.data.reduce((sum: number, val: number) => sum + val, 0);
+                const percentage = ((value / total) * 100).toFixed(1);
+                return `${context.label}: ${value} (${percentage}%)`;
+              }
+            }
+          }
+        }
+      }
+      
+    });
+  }
+  
+  
+  private generateColors(count: number): string[] {
+    const baseColors = [
+      '#4caf50', // verde
+      '#2196f3', // azul
+      '#ff9800', // naranja
+      '#e91e63', // rosado
+      '#9c27b0', // morado
+      '#f44336', // rojo
+      '#00bcd4', // turquesa
+      '#ffeb3b', // amarillo
+      '#795548', // marrón
+      '#3f51b5'  // índigo
+    ];
+    return Array.from({ length: count }, (_, i) => baseColors[i % baseColors.length]);
+  }
+  
+  
 }

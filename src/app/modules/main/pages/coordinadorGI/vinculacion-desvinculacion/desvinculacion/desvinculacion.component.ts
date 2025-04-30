@@ -36,6 +36,7 @@ export class DesvinculacionFormComponent implements OnInit {
   fileName: string = '';
   fileUploaded: boolean = false; 
   username:string;
+  groupId:number;
   constructor(
     private fb: FormBuilder,
     private linkService: LinkService,
@@ -55,9 +56,9 @@ export class DesvinculacionFormComponent implements OnInit {
     this.loadData();
     const currentUser = this.authService.getUserName();
     const currentDate = this.datePipe.transform(new Date(), 'yyyy-MM-ddTHH:mm:ss');
-    const groupId=sessionStorage.getItem("invGroup");
+    this.groupId=Number(sessionStorage.getItem("invGroup"));
     this.link = this.fb.group({
-      idGrupoInv: [groupId, Validators.required],
+      idGrupoInv: [this.groupId, Validators.required],
       idUser: [1, Validators.required],
       justificacion: ['', Validators.required],
       observaciones: ['', Validators.required],

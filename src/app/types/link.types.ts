@@ -8,6 +8,7 @@ export interface Link {
     justificacion: string;
     estado: string;
     tipo:string;
+    estatus: string;
     observaciones: string;
     usuarioCreacion: string;
     fechaCreacion: Date;

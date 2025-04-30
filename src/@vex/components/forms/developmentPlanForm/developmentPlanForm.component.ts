@@ -90,22 +90,18 @@ objInstitucional:InstStrategicObj;
     console.log("id Plan: "+this.planDesarrollo.idPlanDesarrollo)
     this.deveUppeService.getByDev(id).subscribe((data) => {
       this.upperLevelPlan = data;
-      console.log(data)
-    })
+  })
     this.deveNatiService.getByDev(id).subscribe((data) => {
       this.nationalPlan = data;
-      console.log(data)
 
     })
     this.deveLegaService.getByDev(id).subscribe((data) => {
       this.legalFramework = data;
-      console.log(data)
 
     })
    
     this.controlPanelService.getByPlan(id).subscribe((data) => {
       this.controlPanel = data;
-      console.log(data)
     })
 
     this.objStrategiesODSService.getByPlan(id).subscribe((data)=>{

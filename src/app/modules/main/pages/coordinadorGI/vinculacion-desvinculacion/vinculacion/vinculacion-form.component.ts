@@ -43,7 +43,11 @@ export class VinculacionFormComponent implements OnInit {
   groupId: number;
   originalFileName: string;
   loading: boolean = false;
-
+  estatusList = [
+    { value: 'm', label: 'Miembro' },
+    { value: 'c', label: 'Colaborador' }
+  ];
+  
   constructor(
     private fb: FormBuilder,
     private linkService: LinkService,
@@ -67,6 +71,7 @@ export class VinculacionFormComponent implements OnInit {
       idUser: [1, Validators.required],
       justificacion: ['', Validators.required],
       observaciones: ['', Validators.required],
+      estatus: [null, Validators.required],
       estado: ['e', Validators.required],
       tipo: ['v', Validators.required],
       usuarioCreacion: [this.currentUser, Validators.required],

@@ -86,7 +86,7 @@
             
 
             <div class="presentacionGrupo"
-                *ngIf=" !loadingData  && grupo.proceso==='1' "
+                *ngIf=" invGroupExists  && grupo.proceso==='1' "
                 style="text-align: center;">
                 <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
                 <h2>Para complementar la información y continuar con la
@@ -101,7 +101,7 @@
             </div>
 
             <div class="presentacionGrupo"
-                *ngIf=" !loadingData  && grupo.proceso==='2' "
+                *ngIf=" invGroupExists  && grupo.proceso==='2' "
                 style="text-align: center;">
                 <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
                 <h2>Mediante memorando presentar la propuesta de creación
@@ -113,7 +113,7 @@
 
             </div>
             <div class="presentacionGrupo"
-            *ngIf=" !loadingData  && (grupo.proceso === '3' || grupo.proceso === '4' || grupo.proceso === '5') "
+            *ngIf=" invGroupExists  && (grupo.proceso === '3' || grupo.proceso === '4' || grupo.proceso === '5') "
             style="text-align: center;">
             <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
             <h2>Su solicitud se encuentra en revisión</h2>
@@ -147,7 +147,7 @@
     </div>
 
     <div class="presentacionGrupo"
-                *ngIf=" !loadingData  && grupo.proceso==='12' "
+                *ngIf=" invGroupExists  && grupo.proceso==='12' "
                 style="text-align: center;">
                 <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
                 <h2>Felicidades Mediante memorando se ha inscrito el grupo de Investigación</h2>
@@ -157,7 +157,7 @@
 
             <!-- FASE DE SEGUIMIENTO DEL GRUPO DE INVESTIGACIÓN (FORMULARIO CUANDO SE ENVÍA LA SOLICITUD POR PRIMERA VEZ) -->
             <div class="presentacionGrupo"
-                *ngIf=" !loadingData  && grupo.proceso==='13' "
+                *ngIf=" invGroupExists  && grupo.proceso==='13' "
                 style="text-align: center;">
                 <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
                 <p>Mediante memorando la Unidad de Gestión de Investigación
@@ -181,7 +181,7 @@
 
             </div>
             <div class="presentacionGrupo"
-                *ngIf=" !loadingData  && grupo.proceso==='13A' "
+                *ngIf=" invGroupExists  && grupo.proceso==='13A' "
                 style="text-align: center;">
                 <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
                 <p>Adjuntar el Memorando de Seguimiento y envio de plan Anual y plan de Desarrollo
@@ -192,7 +192,7 @@
                 </div>
             </div>
             <div class="presentacionGrupo"
-                *ngIf=" !loadingData  && grupo.proceso==='14' "
+                *ngIf=" invGroupExists  && grupo.proceso==='14' "
                 style="text-align: center;">
                 <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
                 <p>
@@ -203,7 +203,7 @@
                 </div>
             </div>
             <div class="presentacionGrupo"
-                *ngIf=" !loadingData  && grupo.proceso==='34' "
+                *ngIf=" invGroupExists  && grupo.proceso==='34' "
                 style="text-align: center;">
                 <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
 
@@ -215,9 +215,16 @@
                 </div>
             </div>
 
+
         </div>
 
         <!-- FASE DE CREACIÓN DEL GRUPO DE INVESTIGACIÓN (FORMULARIO CUANDO SE ENVÍA LA SOLICITUD POR PRIMERA VEZ) -->
+<div class="presentacionGrupo"
+        *ngIf="invGroupExists && grupo && (grupo.proceso !== '1'&& grupo.proceso !== '2' && grupo.proceso !== '3' && grupo.proceso !== '4' && grupo.proceso !== '5' && grupo.proceso !== '7' && grupo.proceso !== '8' && grupo.proceso !== '9' && grupo.proceso !== '10' && grupo.proceso !== '11' && grupo.proceso !== '12' && grupo.proceso !== '13' && grupo.proceso !== '13A' && grupo.proceso !== '14' && grupo.proceso !== '34')"
+               style="text-align: center;">
+        <h1>Bienvenido al módulo de Gestión de Grupos de Investigación </h1>
+        <h1>{{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
+    </div>
 
     </div>
 </div>
