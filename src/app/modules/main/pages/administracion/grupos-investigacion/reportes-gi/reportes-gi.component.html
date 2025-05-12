@@ -18,7 +18,7 @@
     <div class="col-md-4">
       <div class="summary-card">
         <div class="card-header">
-          <h4><strong>Resumen por departamento</strong> </h4>
+          <h4><strong>Por departamento</strong> </h4>
         </div>
         <div class="card-body">
           <table class="summary-table">
@@ -48,7 +48,7 @@
     <div class="col-md-4">
       <div class="summary-card">
         <div class="card-header">
-          <h4><strong>Resumen por sede</strong> </h4>
+          <h4><strong>Por sede</strong> </h4>
         </div>
         <div class="card-body">
 
@@ -79,7 +79,7 @@
     <div class="col-md-4">
       <div class="summary-card">
         <div class="card-header">
-          <h4><strong>Resumen por género</strong> </h4>
+          <h4><strong>Por género</strong> </h4>
         </div>
         <div class="card-body">
 
@@ -109,7 +109,7 @@
     <div class="col-md-4">
       <div class="summary-card">
         <div class="card-header">
-          <h4><strong>Resumen por grado académico</strong> </h4>
+          <h4><strong>Por grado académico</strong> </h4>
         </div>
         <div class="card-body">
 
@@ -140,7 +140,7 @@
     <div class="col-md-4">
       <div class="summary-card">
         <div class="card-header">
-          <h4><strong>Resumen por funcion</strong> </h4>
+          <h4><strong>Por funcion</strong> </h4>
         </div>
         <div class="card-body">
 
@@ -167,37 +167,7 @@
         </div>
       </div>
     </div>
-    
-    <div class="col-md-4">
-      <div class="summary-card">
-        <div class="card-header">
-          <h4><strong>Resumen por tipo</strong> </h4>
-        </div>
-        <div class="card-body">
-
-          <table class="summary-table">
-            <thead>
-              <tr>
-                <th>Tipo</th>
-                <th>Cantidad</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of usuariosPorTipo | keyvalue">
-                <td>{{ item.key }}</td>
-                <td>{{ item.value }}</td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td><strong>Total</strong></td>
-                <td><strong>{{ calcularTotal(usuariosPorGrado) }}</strong></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </div>
-    </div>
+  
     
   </div>
 </div>
@@ -207,34 +177,27 @@
   </div></div>
 <div class="charts-container">
   <div class="chart-box">
-    <div class="canvas-title">Miembros por Grado</div>
+    <div class="canvas-title">Por Grado</div>
     <canvas id="usuariosPorGradoChart"></canvas>
   </div>
   <div class="chart-box">
-    <div class="canvas-title">Miembros por Departamento</div>
+    <div class="canvas-title">Por Departamento</div>
     <canvas id="usuariosPorDepartamentoChart"></canvas>
   </div>
   <div class="chart-box">
-    <div class="canvas-title">Miembros por Sede</div>
+    <div class="canvas-title">Por Sede</div>
     <canvas id="usuariosPorSedeChart"></canvas>
   </div>
   <div class="chart-box">
-    <div class="canvas-title">Miembros por Género</div>
+    <div class="canvas-title">Por Género</div>
     <canvas id="usuariosPorGeneroChart"></canvas>
   </div>
   <div class="chart-box">
-    <div class="canvas-title">Miembros por País</div>
+    <div class="canvas-title">Por País</div>
     <canvas id="usuariosPorPaisChart"></canvas>
   </div>
-  <div class="chart-box">
-    <div class="canvas-title">Miembros por Tipo</div>
-    <canvas id="usuariosPorTipoChart"></canvas>
-  </div>
-  <div class="chart-box">
-    <div class="canvas-title">Miembros por Función</div>
-    <canvas id="usuariosPorFuncionChart"></canvas>
-  </div>
-</div>
+  
+  
 
 
 </div></div>

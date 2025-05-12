@@ -74,7 +74,7 @@ export class DevelopmentPlanFormComponent implements OnInit {
   usuarioNombre: { [key: number]: string } = {};
   specificObjetives: SpecificObjetives[] = [];
   informacionObjetivos: string = '';
-
+  isSeguimientoFase: string;
   constructor(
     private fb: FormBuilder,
     private upperLevelPlanService: UpperLevelPlanService,
@@ -105,9 +105,11 @@ export class DevelopmentPlanFormComponent implements OnInit {
   public isLoading: boolean = true; // Inicializar como true para que el spinner aparezca al inicio
 
   ngOnInit(): void {
+    this.isSeguimientoFase = localStorage.getItem('isSeguimientoFase');
     this.loadData().subscribe(() => {
       this.cargaFormularios();
       this.formReady = true;
+
     });
     this.idGroup = Number(sessionStorage.getItem("invGroup"))
     this.currentUser = this.authService.getUserName();
@@ -455,6 +457,7 @@ export class DevelopmentPlanFormComponent implements OnInit {
     }
   }
   guardarPlanBase() {
+
     const DevPlan: DevelopmentPlanForms = {
       idPlanDesarrollo: 0,
       idGrupoInv: this.idGroup,
@@ -473,10 +476,19 @@ export class DevelopmentPlanFormComponent implements OnInit {
       (response) => {
         this.guardarNormas(response);
         this.ejecutarGuardado(response);
-        this.actualizarEstados();
+        if (this.isSeguimientoFase === "1") {
+          localStorage.removeItem('isSeguimientoFase');
+        } else {
+
+          this.actualizarEstados();
+        }
         setTimeout(() => {
           this.formReady = false;
-          this.router.navigateByUrl('main/dashboard');
+          if (this.isSeguimientoFase === "1") {
+            this.router.navigateByUrl('main/anual-Plan');
+          } else {
+            this.router.navigateByUrl('main/dashboard');
+          }
         }, 2000);
         this.isLoading = false;
       },

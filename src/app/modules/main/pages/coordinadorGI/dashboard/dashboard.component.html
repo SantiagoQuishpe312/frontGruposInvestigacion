@@ -26,39 +26,47 @@
 
                     <h1>Propuesta de Creación del Grupo de Investigación</h1>
                 </header>
-                <header *ngIf="invGroupExists && grupo && (grupo.proceso === '3' || grupo.proceso === '4' || grupo.proceso === '5')">
+                <header
+                    *ngIf="invGroupExists && grupo && (grupo.proceso === '3' || grupo.proceso === '4' || grupo.proceso === '5')">
                     <h1>Solicitudes en Trámite</h1>
-                  </header>
-                  
-                  <header *ngIf="invGroupExists && grupo && (grupo.proceso === '7' || grupo.proceso === '8')">
-                    <h1>Solicitudes en Trámite Fase de Criterios de Aceptación</h1>
-                  </header>
-                  <header *ngIf="invGroupExists && grupo && grupo.proceso === '9' ">
-                    <h1>Su solicitud ha sido aprobada por el Comité de Investigación</h1>
-                  </header>
+                </header>
+
+                <header
+                    *ngIf="invGroupExists && grupo && (grupo.proceso === '7' || grupo.proceso === '8')">
+                    <h1>Solicitudes en Trámite Fase de Criterios de
+                        Aceptación</h1>
+                </header>
+                <header
+                    *ngIf="invGroupExists && grupo && grupo.proceso === '9' ">
+                    <h1>Su solicitud ha sido aprobada por el Comité de
+                        Investigación</h1>
+                </header>
                 <!-- Aparece cuando se solicita Informe de Seguimiento -->
-               
-               
 
                 <!-- Seguimiento -->
                 <header *ngIf="grupo && grupo.proceso==='13'">
                     <h1>Elaborar y remitir los planes</h1>
                 </header>
                 <header
-                *ngIf="invGroupExists  && grupo && grupo.proceso==='12' ">
+                    *ngIf="invGroupExists  && grupo && grupo.proceso==='12' ">
 
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-            </header>
-            <header
-            *ngIf="invGroupExists  && grupo && (grupo.proceso==='13A'||grupo.proceso==='14') ">
+                    <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+                </header>
+                <header
+                    *ngIf="invGroupExists  && grupo && (grupo.proceso==='13A'||grupo.proceso==='14') ">
 
-            <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-        </header>
-        <header
-            *ngIf="invGroupExists  && grupo && (grupo.proceso==='34') ">
+                    <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+                </header>
+                <header
+                    *ngIf="invGroupExists  && grupo && (grupo.proceso==='34') ">
 
-            <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-        </header>
+                    <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+                </header>
+                 <header
+                    *ngIf="invGroupExists  && grupo && (grupo.proceso==='16') ">
+
+                    <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+                </header>
             </div>
 
             <div *ngIf="!invGroupExists" class="info-proceso">
@@ -81,14 +89,11 @@
                         Creación de Grupo de Investigación</span></button>
             </div>
 
-           
-            
-            
-
             <div class="presentacionGrupo"
                 *ngIf=" invGroupExists  && grupo.proceso==='1' "
                 style="text-align: center;">
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
+                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} -
+                    {{grupo.acronimoGrupoinv}}</h1>
                 <h2>Para complementar la información y continuar con la
                     solicitud de creación del grupo de investigación se debe
                     cargar el Plan de Desarrollo del Grupo de
@@ -106,52 +111,55 @@
                 <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
                 <h2>Mediante memorando presentar la propuesta de creación
                     del Grupo de Investigación al Departamento.</h2>
-                    
+
                 <button type="button" (click)="enlace('propuesta')"
                     color="primary" mat-raised-button>Cargar memorando</button>
                 <app-progress [id]="idGrupo"></app-progress>
 
             </div>
             <div class="presentacionGrupo"
-            *ngIf=" invGroupExists  && (grupo.proceso === '3' || grupo.proceso === '4' || grupo.proceso === '5') "
-            style="text-align: center;">
-            <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-            <h2>Su solicitud se encuentra en revisión</h2>
-            <app-progress [id]="idGrupo"></app-progress>
+                *ngIf=" invGroupExists  && (grupo.proceso === '3' || grupo.proceso === '4' || grupo.proceso === '5') "
+                style="text-align: center;">
+                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+                <h2>Su solicitud se encuentra en revisión</h2>
+                <app-progress [id]="idGrupo"></app-progress>
 
-        </div>
-        <div class="presentacionGrupo"
-        *ngIf="invGroupExists && grupo && (grupo.proceso === '7' || grupo.proceso === '8')"
-        style="text-align: center;">
-        <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-        <h2>Su solicitud se encuentra en revisión</h2>
-        <app-progress [id]="idGrupo"></app-progress>
+            </div>
+            <div class="presentacionGrupo"
+                *ngIf="invGroupExists && grupo && (grupo.proceso === '7' || grupo.proceso === '8')"
+                style="text-align: center;">
+                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+                <h2>Su solicitud se encuentra en revisión</h2>
+                <app-progress [id]="idGrupo"></app-progress>
 
-    </div>
-           
-    <div class="presentacionGrupo"
-        *ngIf="invGroupExists && grupo && (grupo.proceso === '9'|| grupo.proceso === '10' || grupo.proceso === '11')"
-               style="text-align: center;">
-        <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-        <h1>Su solicitud ha sido aprobada por el Comité de Investigación</h1>
-        <app-progress [id]="idGrupo"></app-progress>
+            </div>
 
-    </div>
-    <div class="presentacionGrupo"
-        *ngIf="invGroupExists && grupo && (grupo.proceso === '9'|| grupo.proceso === '10' || grupo.proceso === '11')"
-               style="text-align: center;">
-        <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-        <h1>Su solicitud ha sido aprobada por el Comité de Investigación</h1>
-        <app-progress [id]="idGrupo"></app-progress>
+            <div class="presentacionGrupo"
+                *ngIf="invGroupExists && grupo && (grupo.proceso === '9'|| grupo.proceso === '10' || grupo.proceso === '11')"
+                style="text-align: center;">
+                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+                <h1>Su solicitud ha sido aprobada por el Comité de
+                    Investigación</h1>
+                <app-progress [id]="idGrupo"></app-progress>
 
-    </div>
+            </div>
+            <div class="presentacionGrupo"
+                *ngIf="invGroupExists && grupo && (grupo.proceso === '9'|| grupo.proceso === '10' || grupo.proceso === '11')"
+                style="text-align: center;">
+                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
+                <h1>Su solicitud ha sido aprobada por el Comité de
+                    Investigación</h1>
+                <app-progress [id]="idGrupo"></app-progress>
 
-    <div class="presentacionGrupo"
+            </div>
+
+            <div class="presentacionGrupo"
                 *ngIf=" invGroupExists  && grupo.proceso==='12' "
                 style="text-align: center;">
                 <h1>Grupo de Investigación {{grupo.nombreGrupoInv}}</h1>
-                <h2>Felicidades Mediante memorando se ha inscrito el grupo de Investigación</h2>
-                 "Poner el formulario" 
+                <h2>Felicidades Mediante memorando se ha inscrito el grupo de
+                    Investigación</h2>
+                "Poner el formulario"
 
             </div>
 
@@ -159,7 +167,8 @@
             <div class="presentacionGrupo"
                 *ngIf=" invGroupExists  && grupo.proceso==='13' "
                 style="text-align: center;">
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
+                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} -
+                    {{grupo.acronimoGrupoinv}}</h1>
                 <p>Mediante memorando la Unidad de Gestión de Investigación
                     solicita que el GI revise, elabore y remita el plan de
                     desarrollo y planificación operativa anual con base a los
@@ -173,7 +182,7 @@
                         color="primary"><a href="/main/anual-Plan">Cargar Plan
                             Anual</a></button>
                 </div>
-                
+
                 <div *ngIf="pdfUrl">
                     <iframe [src]="pdfUrl" width="100%" height="600px"></iframe>
 
@@ -183,48 +192,69 @@
             <div class="presentacionGrupo"
                 *ngIf=" invGroupExists  && grupo.proceso==='13A' "
                 style="text-align: center;">
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
-                <p>Adjuntar el Memorando de Seguimiento y envio de plan Anual y plan de Desarrollo
+                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} -
+                    {{grupo.acronimoGrupoinv}}</h1>
+                <p>Adjuntar el Memorando de Seguimiento y envio de plan Anual y
+                    plan de Desarrollo
                 </p>
                 <div>
                     <button type="button" mat-raised-button
-                        color="primary"><a href="/main/baremo">Adjuntar Memorando</a></button>
+                        color="primary"><a href="/main/baremo">Adjuntar
+                            Memorando</a></button>
                 </div>
             </div>
             <div class="presentacionGrupo"
                 *ngIf=" invGroupExists  && grupo.proceso==='14' "
                 style="text-align: center;">
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
+                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} -
+                    {{grupo.acronimoGrupoinv}}</h1>
                 <p>
+                    Continúe desarrollando su actividad científica
                 </p>
-                <div>
+                
+
+            </div>
+            <div class="presentacionGrupo"
+                *ngIf=" invGroupExists  && grupo.proceso==='16' "
+                style="text-align: center;">
+                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} -
+                    {{grupo.acronimoGrupoinv}}</h1>
+                <p>
+                    remite el informe a la
+                    unidad responsable de la gestión de la
+                    investigación a través del VII con los documentos
+                    de respaldo. </p>
+<div>
                     <button type="button" mat-raised-button
-                        color="primary"><a href="/main/baremo">Adjuntar Memorando</a></button>
+                        color="primary"><a href="/main/reporte-actividades">Ir a Formulario</a></button>
                 </div>
             </div>
             <div class="presentacionGrupo"
                 *ngIf=" invGroupExists  && grupo.proceso==='34' "
                 style="text-align: center;">
-                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
+                <h1>Grupo de Investigación {{grupo.nombreGrupoInv}} -
+                    {{grupo.acronimoGrupoinv}}</h1>
 
-                <p> Se le ha asignado que el coordinador de GI emita un informe al VITT a fin que se defina y autorice el destino de los equipos, bienes u otros activos, en caso existieran.
+                <p> Se le ha asignado que el coordinador de GI emita un informe
+                    al VITT a fin que se defina y autorice el destino de los
+                    equipos, bienes u otros activos, en caso existieran.
                 </p>
                 <div>
                     <button type="button" mat-raised-button
-                        color="primary"><a href="/main/informe-bienes">Llenar Informe</a></button>
+                        color="primary"><a href="/main/informe-bienes">Llenar
+                            Informe</a></button>
                 </div>
             </div>
-
 
         </div>
 
         <!-- FASE DE CREACIÓN DEL GRUPO DE INVESTIGACIÓN (FORMULARIO CUANDO SE ENVÍA LA SOLICITUD POR PRIMERA VEZ) -->
-<div class="presentacionGrupo"
-        *ngIf="invGroupExists && grupo && (grupo.proceso !== '1'&& grupo.proceso !== '2' && grupo.proceso !== '3' && grupo.proceso !== '4' && grupo.proceso !== '5' && grupo.proceso !== '7' && grupo.proceso !== '8' && grupo.proceso !== '9' && grupo.proceso !== '10' && grupo.proceso !== '11' && grupo.proceso !== '12' && grupo.proceso !== '13' && grupo.proceso !== '13A' && grupo.proceso !== '14' && grupo.proceso !== '34')"
-               style="text-align: center;">
-        <h1>Bienvenido al módulo de Gestión de Grupos de Investigación </h1>
-        <h1>{{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
-    </div>
+        <div class="presentacionGrupo"
+            *ngIf="invGroupExists && grupo && (grupo.proceso !== '1'&& grupo.proceso !== '2' && grupo.proceso !== '3' && grupo.proceso !== '4' && grupo.proceso !== '5' && grupo.proceso !== '7' && grupo.proceso !== '8' && grupo.proceso !== '9' && grupo.proceso !== '10' && grupo.proceso !== '11' && grupo.proceso !== '12' && grupo.proceso !== '13' && grupo.proceso !== '13A' && grupo.proceso !== '14'&& grupo.proceso !== '16' && grupo.proceso !== '34')"
+            style="text-align: center;">
+            <h1>Bienvenido al módulo de Gestión de Grupos de Investigación </h1>
+            <h1>{{grupo.nombreGrupoInv}} - {{grupo.acronimoGrupoinv}}</h1>
+        </div>
 
     </div>
 </div>

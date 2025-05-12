@@ -2,6 +2,8 @@ export const environment = {
   production: false,
 appApiUrl: 'http://localhost:8080/api/v1.0/private',
 //appApiUrl: 'http://192.168.1.15:8080/api/v1.0/private',
+//appApiUrl: 'https://gruposinvestigacion-api-test.espe.edu.ec/api/v1.0/private',
+
 //wmfuertes
   appUsers:'https://api-ufa.espe.edu.ec/api/v1.0/private/apisExternals/dataUser?usuario=',
   espematicoApiUrl: 'https://espematico-api.espe.edu.ec/reporteWs',

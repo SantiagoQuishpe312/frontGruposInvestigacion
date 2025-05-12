@@ -5,21 +5,18 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { DocumentsService } from 'src/app/core/http/documentos/documents.service';
 import { InvGroupService } from 'src/app/core/http/inv-group/inv-group.service';
-import { CreationReqService } from 'src/app/core/http/creation-req/creation-req.service';
-import { CreationReqForm } from 'src/app/types/creationReq.types';
 import { InvGroupForm } from 'src/app/types/invGroup.types';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DevelopmentPlanService } from 'src/app/core/http/develop-plan-form/develop-plan-form.service';
 import { DevelopmentPlanComplete, DevelopmentPlanForms } from 'src/app/types/developPlanForm';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { SpecificObjetives } from 'src/app/types/specificObjetives.types';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalCuadroOp } from './modalCuadro.component';
 import { AnualControlService } from 'src/app/core/http/anual-control/anual-control.service';
 import { AnnualOperativePlanService } from 'src/app/core/http/annual-operative-plan/annual-operative-plan.service';
 import { AnualControl } from 'src/app/types/anualControl.types';
 @Component({
-  selector: 'app-carga-anexo',
+  selector: 'app-carga-plan-anual',
   templateUrl: './planAnual.component.html',
   styleUrls: ['./planAnual.component.scss']
 })
@@ -33,6 +30,7 @@ export class AnnualPlanComponent implements OnInit {
   developmentPlan: DevelopmentPlanForms[];
   sinPlan = false;
   mostrarPlan = false;
+  archivos: File[] = [];
 
   myForm: FormGroup;
   form: FormGroup;
@@ -119,12 +117,13 @@ export class AnnualPlanComponent implements OnInit {
   }
 
   agregarAnualControl(): void {
-    const seleccionado = this.myForm.get('idObjetivoEspecifico')?.value;
+    //const seleccionado = this.myForm.get('idObjetivoEspecifico')?.value;
     const dialogRef = this.dialog.open(ModalCuadroOp, {
       width: '600px',
       data: {
-        panelControl: seleccionado.panelControl,
-        objetivoEspecifico: seleccionado.objetivoEspecifico
+        planDesarrollo: this.planDesarrolloCompleto,
+        //panelControl: seleccionado.panelControl,
+        //objetivoEspecifico: seleccionado.objetivoEspecifico
       }
     });
 
@@ -133,6 +132,9 @@ export class AnnualPlanComponent implements OnInit {
         const nuevoControl = this.crearAnualControl();
         nuevoControl.patchValue(result);
         this.anualControles.push(nuevoControl);
+         if (result.selectedFile) {
+          this.archivos.push(result.selectedFile); // Almacenar el archivo
+        }
       }
       console.log(this.anualControles);
     });
@@ -154,7 +156,6 @@ export class AnnualPlanComponent implements OnInit {
       financiamiento: ['', Validators.required],
       monto: [null, Validators.required],
       presupuesto: ['', Validators.required],
-      periodicidad: ['', Validators.required],
       fechaInicio: [null, Validators.required],
       fechaFin: [null, Validators.required],
       mediosVerificacion: ['', Validators.required],
@@ -169,6 +170,7 @@ export class AnnualPlanComponent implements OnInit {
       (response) => {
 
         this.guardarControlAnual(response);
+        this.guardarDocumentos();
       },
       (error) => {
         this.isLoading = false;
@@ -220,6 +222,41 @@ export class AnnualPlanComponent implements OnInit {
       console.error('No se han creado controles anuales.');
     }
   }
+  guardarDocumentos() {
+    if (this.archivos.length > 0) {
+    // Iterar sobre los archivos y enviarlos uno por uno
+    this.archivos.forEach((archivo, index) => {
+      this.documentService.saveDocument(this.token, archivo, 'GruposInv').subscribe(
+        response => {
+          this.annexesService.createAnnexesForm({
+            idAnexo: null,
+            idDocumento: 1,
+            idGrupo: this.groupId,
+            nombreAnexo: response.fileName,
+            rutaAnexo: response.uuid,
+            usuarioCreacionAnexo: this.currentUser,
+            fechaCreacionAnexo: this.currentDate,
+            usuarioModificacionAnexo: '',
+            fechaModificacionAnexo: null
+          }).subscribe({
+            next: () => {
+              console.log(`Archivo ${index + 1} guardado correctamente.`);
+            },
+            error: (err) => {
+              console.error(`Error al guardar el archivo ${index + 1}:`, err);
+            }
+          });
+          console.log(`Archivo ${index + 1} enviado correctamente:`, response);
+        },
+        error => {
+          console.error(`Error al enviar el archivo ${index + 1}:`, error);
+        }
+      );
+    });
+  } else {
+    console.log('No hay archivos para enviar.');
+  }
+  }
   actualizarProcesoGrupo() {
     this.invGroupService.getById(this.groupId).subscribe(data => {
       const invGroup: InvGroupForm = {
@@ -245,6 +282,9 @@ export class AnnualPlanComponent implements OnInit {
   }
 
   ruta(path: string) {
+    if (path === 'main/developPlan') {
+      localStorage.setItem('isSeguimientoFase',"1");
+    }
     this.router.navigate([path]);
   }
   eliminarControl(index: number): void {

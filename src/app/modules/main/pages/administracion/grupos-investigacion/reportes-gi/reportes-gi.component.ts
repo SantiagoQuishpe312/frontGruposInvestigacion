@@ -71,7 +71,7 @@ export class ReportesGIComponent implements OnInit {
       this.crearGraficoUsuariosPorDepartamento();
       this.crearGraficoUsuariosPorSede(); 
       this.crearGraficoUsuariosPorGenero();
-      this.crearGraficoUsuariosPorTipo();
+      //this.crearGraficoUsuariosPorTipo();
       this.crearGraficoUsuariosPorFuncion();
     });
   }
@@ -85,10 +85,11 @@ export class ReportesGIComponent implements OnInit {
 
   crearGraficoUsuariosPorPais() {
     if (this.chart) this.chart.destroy();
-
-    const labels = Object.keys(this.usuariosPorPais);
-    const values = Object.values(this.usuariosPorPais);
-
+  
+    const datos = Object.entries(this.usuariosPorPais).sort((a, b) => b[1] - a[1]);
+    const labels = datos.map(([label]) => label);
+    const values = datos.map(([, value]) => value);
+  
     this.chart = new Chart('usuariosPorPaisChart', {
       type: 'bar',
       data: {
@@ -98,7 +99,9 @@ export class ReportesGIComponent implements OnInit {
           data: values,
           backgroundColor: 'rgba(54, 162, 235, 0.5)',
           borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1
+          borderWidth: 1,
+          barThickness: 20,
+          categoryPercentage: 0.5
         }]
       },
       options: {
@@ -108,12 +111,14 @@ export class ReportesGIComponent implements OnInit {
       }
     });
   }
+  
   crearGraficoUsuariosPorGrado() {
     if (this.chart2) this.chart2.destroy();
-
-    const labels = Object.keys(this.usuariosPorGrado);
-    const values = Object.values(this.usuariosPorGrado);
-
+  
+    const datos = Object.entries(this.usuariosPorGrado).sort((a, b) => b[1] - a[1]);
+    const labels = datos.map(([label]) => label);
+    const values = datos.map(([, value]) => value);
+  
     this.chart2 = new Chart('usuariosPorGradoChart', {
       type: 'bar',
       data: {
@@ -123,7 +128,9 @@ export class ReportesGIComponent implements OnInit {
           data: values,
           backgroundColor: 'rgba(75, 192, 192, 0.5)',
           borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1
+          borderWidth: 1,
+          barThickness: 20,
+          categoryPercentage: 0.5
         }]
       },
       options: {
@@ -133,13 +140,14 @@ export class ReportesGIComponent implements OnInit {
       }
     });
   }
-
+  
   crearGraficoUsuariosPorDepartamento() {
     if (this.chart3) this.chart3.destroy();
-
-    const labels = Object.keys(this.usuariosPorDepartamento);
-    const values = Object.values(this.usuariosPorDepartamento);
-
+  
+    const datos = Object.entries(this.usuariosPorDepartamento).sort((a, b) => b[1] - a[1]);
+    const labels = datos.map(([label]) => label);
+    const values = datos.map(([, value]) => value);
+  
     this.chart3 = new Chart('usuariosPorDepartamentoChart', {
       type: 'bar',
       data: {
@@ -149,7 +157,9 @@ export class ReportesGIComponent implements OnInit {
           data: values,
           backgroundColor: 'rgba(255, 159, 64, 0.5)',
           borderColor: 'rgba(255, 159, 64, 1)',
-          borderWidth: 1
+          borderWidth: 1,
+          barThickness: 20,
+          categoryPercentage: 0.5
         }]
       },
       options: {
@@ -159,13 +169,14 @@ export class ReportesGIComponent implements OnInit {
       }
     });
   }
-
+  
   crearGraficoUsuariosPorSede() {
     if (this.chart4) this.chart4.destroy();
-
-    const labels = Object.keys(this.usuariosPorSede);
-    const values = Object.values(this.usuariosPorSede);
-
+  
+    const datos = Object.entries(this.usuariosPorSede).sort((a, b) => b[1] - a[1]);
+    const labels = datos.map(([label]) => label);
+    const values = datos.map(([, value]) => value);
+  
     this.chart4 = new Chart('usuariosPorSedeChart', {
       type: 'bar',
       data: {
@@ -175,7 +186,9 @@ export class ReportesGIComponent implements OnInit {
           data: values,
           backgroundColor: 'rgba(153, 102, 255, 0.5)',
           borderColor: 'rgba(153, 102, 255, 1)',
-          borderWidth: 1
+          borderWidth: 1,
+          barThickness: 20,
+          categoryPercentage: 0.5
         }]
       },
       options: {
@@ -185,13 +198,14 @@ export class ReportesGIComponent implements OnInit {
       }
     });
   }
-
+  
   crearGraficoUsuariosPorGenero() {
     if (this.chart5) this.chart5.destroy();
-
-    const labels = Object.keys(this.usuariosPorGenero);
-    const values = Object.values(this.usuariosPorGenero);
-
+  
+    const datos = Object.entries(this.usuariosPorGenero).sort((a, b) => b[1] - a[1]);
+    const labels = datos.map(([label]) => label);
+    const values = datos.map(([, value]) => value);
+  
     this.chart5 = new Chart('usuariosPorGeneroChart', {
       type: 'bar',
       data: {
@@ -201,7 +215,9 @@ export class ReportesGIComponent implements OnInit {
           data: values,
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
           borderColor: 'rgba(255, 99, 132, 1)',
-          borderWidth: 1
+          borderWidth: 1,
+          barThickness: 20,
+          categoryPercentage: 0.5
         }]
       },
       options: {
@@ -211,10 +227,21 @@ export class ReportesGIComponent implements OnInit {
       }
     });
   }
+  /*
   crearGraficoUsuariosPorTipo() {
     if (this.chart6) this.chart6.destroy();
-    const labels = Object.keys(this.usuariosPorTipo);
-    const values = Object.values(this.usuariosPorTipo);
+  
+    // Paso 1: combinar labels y valores
+    const datos = Object.entries(this.usuariosPorTipo);
+  
+    // Paso 2: ordenar por valor (descendente)
+    datos.sort((a, b) => b[1] - a[1]);
+  
+    // Paso 3: separar labels y valores ordenados
+    const labels = datos.map(([label]) => label);
+    const values = datos.map(([, value]) => value);
+  
+    // Paso 4: crear el gráfico
     this.chart6 = new Chart('usuariosPorTipoChart', {
       type: 'bar',
       data: {
@@ -229,33 +256,53 @@ export class ReportesGIComponent implements OnInit {
       },
       options: {
         responsive: true,
-        plugins: { legend: { display: true } },
-        scales: { y: { beginAtZero: true } }
+        plugins: {
+          legend: { display: true }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1 // Opcional: asegura que se vea bien si son enteros
+            }
+          }
+        }
       }
     });
-  }
-  crearGraficoUsuariosPorFuncion() {
-    if (this.chart7) this.chart7.destroy();
-    const labels = Object.keys(this.usuariosPorFuncion);
-    const values = Object.values(this.usuariosPorFuncion);
-    this.chart7 = new Chart('usuariosPorFuncionChart', {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Investigadores por Función',
-          data: values,
-          backgroundColor: 'rgba(75, 192, 192, 0.5)',
-          borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: true } },
-        scales: { y: { beginAtZero: true } }
-      }
-    });
-  }
+  }*/
+  
+    crearGraficoUsuariosPorFuncion() {
+      if (this.chart7) this.chart7.destroy();
+    
+      const datos = Object.entries(this.usuariosPorFuncion).sort((a, b) => b[1] - a[1]);
+      const labels = datos.map(([label]) => label);
+      const values = datos.map(([, value]) => value);
+    
+      this.chart7 = new Chart('usuariosPorFuncionChart', {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Investigadores por Función',
+            data: values,
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1,
+            barThickness: 20,
+            categoryPercentage: 0.5
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: true } },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+    
 
 }

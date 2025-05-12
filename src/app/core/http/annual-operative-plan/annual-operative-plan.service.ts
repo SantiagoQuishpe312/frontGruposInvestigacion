@@ -20,10 +20,13 @@ export class AnnualOperativePlanService {
   getById(id:number): Observable<AnnualOperativePlan> {
     return this.http.get<AnnualOperativePlan>(`${this.URL}/${id}`);
   }
-  getAllById(id:number):Observable<DocAnnualOperativePlan[]>{
-    return this.http.get<DocAnnualOperativePlan[]>(`${this.URL}/allReport/${id}`);
+  getAllById(id:number):Observable<DocAnnualOperativePlan>{
+    return this.http.get<DocAnnualOperativePlan>(`${this.URL}/allReport/${id}`);
   } 
 
+  getAllByIdGroup(id:number):Observable<DocAnnualOperativePlan>{
+    return this.http.get<DocAnnualOperativePlan>(`${this.URL}/allReportByGroup/${id}`);
+  }
   createForm(formData: AnnualOperativePlan):Observable<any>{
     return this.http.post(`${this.URL}/created`, formData);
   }

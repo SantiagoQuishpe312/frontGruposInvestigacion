@@ -2,7 +2,10 @@ import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { AnualControl } from 'src/app/types/anualControl.types';
+import { AnualControlService } from 'src/app/core/http/anual-control/anual-control.service';
+import { AnnualOperativePlanService } from 'src/app/core/http/annual-operative-plan/annual-operative-plan.service';
+import { AnnualOperativePlan, DocAnnualOperativePlan } from 'src/app/types/annualOperativePlan.types';
 @Component({
   selector: 'app-agregar-objetivos',
   templateUrl: './agregar-objetivos.component.html',
@@ -10,15 +13,21 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class AgregarObjetivosComponent {
   objStrategiesForm: FormGroup;
-
+panelAnual: DocAnnualOperativePlan;
+groupId: number;
   constructor(
     private dialogRef: MatDialogRef<AgregarObjetivosComponent>,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
+    private anualService: AnnualOperativePlanService,
+    private anualControlService: AnualControlService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
   ngOnInit(): void {
+        this.groupId = Number(sessionStorage.getItem('invGroup'));
+
+    this.obtenerPanelAnual();
     this.objStrategiesForm = this.formBuilder.group({
       idInformeActividades: [this.data.idInformeActividades],
       objetivo: ['', Validators.required],
@@ -38,6 +47,15 @@ export class AgregarObjetivosComponent {
       }
     });
     this.capitalizeFirstLetter();
+
+  }
+  obtenerPanelAnual() {
+    console.log(this.groupId);
+    this.anualService.getAllByIdGroup(this.groupId).subscribe(data => {
+      this.panelAnual = data;
+      console.log(this.panelAnual);
+    });
+
   }
 
   capitalizeFirstLetter() {

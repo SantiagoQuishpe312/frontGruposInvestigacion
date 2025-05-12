@@ -91,14 +91,7 @@
               <!-- Paso 3: Objetivo Específico -->
               <mat-step>
                 <ng-template matStepLabel>Control Anual</ng-template>
-                <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>Selecciona el objetivo específico para generar la informacion</mat-label>
-                  <mat-select formControlName="idObjetivoEspecifico" required>
-                    <mat-option *ngFor="let obj of objetivosEspecificos" [value]="obj" onchange="console.log(this.value)">
-                      {{ obj.objetivoEspecifico.objetivo }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
+                
                 <div *ngIf="anualControles.length > 0">
                   <h3>Controles Anuales Agregados:</h3>
                   <div *ngFor="let control of anualControles.controls; let i = index" [formGroup]="control" class="control-card">
@@ -111,13 +104,12 @@
                       <div class="card-row"><strong>Financiamiento:</strong> {{ control.get('financiamiento')?.value }}</div>
                       <div class="card-row"><strong>Monto:</strong> {{ control.get('monto')?.value }}</div>
                       <div class="card-row"><strong>Presupuesto:</strong> {{ control.get('presupuesto')?.value }}</div>
-                      <div class="card-row"><strong>Periodicidad:</strong> {{ control.get('periodicidad')?.value }}</div>
                       <div class="card-row"><strong>Fecha Inicio:</strong> {{ control.get('fechaInicio')?.value | date }}</div>
                       <div class="card-row"><strong>Fecha Fin:</strong> {{ control.get('fechaFin')?.value | date }}</div>
                   
                       <div class="botones">
-                        <button mat-stroked-button color="accent" (click)="editarControl(i)">✏️ Editar</button>
-                        <button mat-stroked-button color="warn" (click)="eliminarControl(i)">🗑️ Eliminar</button>
+                        <button type="button" mat-stroked-button color="accent" (click)="editarControl(i)">✏️ Editar</button>
+                        <button  type="button" mat-stroked-button color="warn" (click)="eliminarControl(i)">🗑️ Eliminar</button>
                       </div>
                     </div>
                   </div>
