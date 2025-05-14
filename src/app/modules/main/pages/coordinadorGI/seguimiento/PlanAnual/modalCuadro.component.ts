@@ -95,9 +95,8 @@ export class ModalCuadroOp implements OnInit {
         this.panelControl = seleccionado.panelControl;
         this.objetivo = seleccionado.objetivoEspecifico;
         this.getData(this.objetivo.idObjetivo);
-    
         this.myForm.get('idPanelControl')?.setValue(this.myForm.get('idObjetivoEspecifico')?.value.panelControl.panelControl.idPanelControl);
-
+        
     }
 
 

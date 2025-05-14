@@ -9,27 +9,45 @@
         <div mat-dialog-content>
           <form [formGroup]="objStrategiesForm">
             <div class="grid-item">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Selecciona el objetivo específico para generar la
+                  información</mat-label>
+                <mat-select required
+                formControlName="objetivo"
+                  (selectionChange)="onSelectionChange($event)">
+                  <mat-option *ngFor="let obj of objetivos"
+                    [value]="obj">
+                    {{ obj.objetivoEspecifico.objetivo }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              
+
+            </div>
+            <mat-form-field appearance="outline" class="full-width" *ngIf="objStrategiesForm.get('objetivo').value">
+              <mat-select formControlName="estrategia" required>
+                <mat-option *ngFor="let est of estrategias"
+                  [value]="est.estrategia">
+                  {{ est.estrategia }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            
+
+            <div class="grid-item" *ngIf="objStrategiesForm.get('objetivo').value">
               <mat-form-field>
-                <mat-label>Ingresar Objetivo</mat-label>
-                <input matInput formControlName="objetivo" />
+                <mat-label>Verificable</mat-label>
+                <input matInput formControlName="verificable" [value]="pdfUrl" readonly />
+                <a href="{{pdfUrl}}" target="_blank">
+                  <button mat-button color="primary">
+                    <i class="fa fa-eye" aria-hidden="true"></i>
+                  </button> 
+                </a>
               </mat-form-field>
             </div>
 
-            <div class="grid-item">
-              <mat-form-field>
-                <mat-label>Ingresar Estrategia</mat-label>
-                <input matInput formControlName="estrategia" />
-              </mat-form-field>
-            </div>
-
-            <div class="grid-item">
-              <mat-form-field>
-                <mat-label>Ingresar Verificable</mat-label>
-                <input matInput formControlName="verificable" />
-              </mat-form-field>
-            </div>
-
-            <div class="gri-item">
+            <div class="gri-item" *ngIf="objStrategiesForm.get('objetivo').value">
               <mat-form-field>
                 <mat-label>Porcentaje de cumplimiento</mat-label>
                 <input
