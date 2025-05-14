@@ -61,6 +61,9 @@ export class ReporteActividadesComponent implements OnInit {
   informeActividadId: number;
   idGrupo: number;
   invGroupExists: boolean = false;
+  valoresCumplimiento: number[] = [];
+  promedioCumplimiento: number = 0;
+  colorSemaforo: 'rojo' | 'amarillo' | 'verde' = 'rojo';
   constructor(
     private formBuilder: FormBuilder,
     private activityReportService: ActivityReportService,
@@ -79,7 +82,11 @@ export class ReporteActividadesComponent implements OnInit {
     private congresoService: CongressService,
     private ejecucionService: BudgetExecuteService,
     private solCreaGiService: SolCreaGiService
-  ) { }
+  ) { const almacenado = localStorage.getItem('promedioCumplimiento');
+    if (almacenado) {
+      this.promedioCumplimiento = Number(almacenado);
+      this.actualizarColorSemaforo();
+    }}
 
   ngOnInit(): void {
     const currentUser = this.authService.getUserName();
@@ -113,7 +120,26 @@ export class ReporteActividadesComponent implements OnInit {
     this.subscribeToFieldChanges('recomendaciones');
 
   }
+calcularPromedio() {
+    const suma = this.valoresCumplimiento.reduce((a, b) => a + b, 0);
+    this.promedioCumplimiento = suma / this.valoresCumplimiento.length;
+  }
+   actualizarColorSemaforo() {
+    if (this.promedioCumplimiento < 70) {
+      this.colorSemaforo = 'rojo';
+    } else if (this.promedioCumplimiento >= 70 && this.promedioCumplimiento <= 90) {
+      this.colorSemaforo = 'amarillo';
+    } else {
+      this.colorSemaforo = 'verde';
+    }
+  }agregarCumplimiento(valor: number) {
+    this.valoresCumplimiento.push(valor);
+    this.calcularPromedio();
+    this.actualizarColorSemaforo();
 
+    // Guardar en localStorage
+    localStorage.setItem('promedioCumplimiento', this.promedioCumplimiento.toString());
+  }
   private subscribeToFieldChanges(fieldName: string): void {
     this.reporteForm.get(fieldName).valueChanges.subscribe((value: string) => {
       if (value.trim().length === 0) {
@@ -153,6 +179,9 @@ export class ReporteActividadesComponent implements OnInit {
 
         this.objStrategiesForms.push(objStrategiesForm);
       }
+       dialogRef.componentInstance.cumplimientoAgregado.subscribe((nuevoCumplimiento: number) => {
+      this.agregarCumplimiento(nuevoCumplimiento);
+    });
     });
   }
 

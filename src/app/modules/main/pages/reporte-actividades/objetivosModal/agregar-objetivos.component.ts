@@ -19,6 +19,8 @@ import { AnnexesService } from 'src/app/core/http/annexes/annexes.service';
   styleUrls: ['../estilosModales.component.scss']
 })
 export class AgregarObjetivosComponent {
+  @Output() cumplimientoAgregado = new EventEmitter<number>();
+
   objStrategiesForm: FormGroup;
   panelAnual: DocAnnualOperativePlan;
   groupId: number;
@@ -50,7 +52,7 @@ export class AgregarObjetivosComponent {
       objetivo: ['', Validators.required],
       estrategia: ['', Validators.required],
       verificable: ['', Validators.required],
-      cumplimiento: ['', [Validators.required, this.validarPorcentaje]],
+      cumplimiento: ['', [this.validarPorcentaje]],
 
       usuarioCreacion: [''],
       fechaCreacion: [''],
@@ -133,7 +135,8 @@ export class AgregarObjetivosComponent {
   save() {
     if (this.objStrategiesForm.valid) {
       this.objStrategiesForm.get('objetivo')?.setValue(this.obj);
-
+const cumplimiento = this.objStrategiesForm.get('cumplimiento')?.value;
+      this.cumplimientoAgregado.emit(Number(cumplimiento));
       this.dialogRef.close(this.objStrategiesForm.value);
 
       this.snackBar.open('Se ha guardado con éxito', 'Cerrar', {

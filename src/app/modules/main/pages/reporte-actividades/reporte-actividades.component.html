@@ -5,6 +5,7 @@
         <h1>Informe de Actividades del Grupo de Investigación</h1>
       </header>
     </div>
+
     <div class="container-fluid">
       <mat-horizontal-stepper [linear]="true" [selectedIndex]="currentStep">
         <mat-step [stepControl]="reporteForm" class="centrado-y-mayusculas"
@@ -16,12 +17,14 @@
               <h2>Antecedente</h2>
               <mat-form-field appearance="fill">
                 <mat-label>Ingresar Antecedente:</mat-label>
-                <textarea matInput class="form-control large-textarea" formControlName="antecedentes"></textarea>
+                <textarea matInput class="form-control large-textarea"
+                  formControlName="antecedentes"></textarea>
               </mat-form-field>
             </div>
 
             <div class="grid-item">
-              <button type="button" mat-raised-button color="primary" class="btn btn-primary float-right"
+              <button type="button" mat-raised-button color="primary"
+                class="btn btn-primary float-right"
                 matStepperNext>
                 Siguiente
               </button>
@@ -29,26 +32,38 @@
           </form>
         </mat-step>
 
-        <mat-step label="Objetivos" #stepForm class="centrado-y-mayusculas" [completed]="objStrategiesForms.length > 0">
+        <mat-step label="Objetivos" #stepForm class="centrado-y-mayusculas"
+          [completed]="objStrategiesForms.length > 0">
           <ng-container *ngFor="let form of objStrategiesForms">
             <form [formGroup]="form"></form>
           </ng-container>
           <div class="grid-item"></div>
           <div class="botonera">
 
-            <button type="button" mat-raised-button color="primary" (click)="openAgregarObjetivosModal()">
+            <button type="button" mat-raised-button color="primary"
+              (click)="openAgregarObjetivosModal()">
               Agregar
             </button>
 
             <div class="btn btn-primary float-right">
-              <button type="button" mat-raised-button color="primary" matStepperPrevious>
+              <button type="button" mat-raised-button color="primary"
+                matStepperPrevious>
                 Regresar
               </button>
               |
-              <button type="button" mat-raised-button color="primary" matStepperNext
+              <button type="button" mat-raised-button color="primary"
+                matStepperNext
                 [disabled]="!objStrategiesForms.length">
                 Siguiente
               </button>
+            </div>
+            <div>
+              <p>Promedio de Cumplimiento: {{ promedioCumplimiento |
+                number:'1.0-2' }}%</p>
+              <div
+                [ngStyle]="{'width.px': 100, 'height.px': 20, 'background-color': colorSemaforo}">
+                &nbsp;
+              </div>
             </div>
           </div>
           <div class="table-container">
@@ -72,12 +87,14 @@
                   <td>{{ form.get('cumplimiento').value }}</td>
                   <td>
                     <div class="action-buttons">
-                      <button class="edit" mat-mini-fab color="primary" aria-label="Actualizar" mat-icon-button
+                      <button class="edit" mat-mini-fab color="primary"
+                        aria-label="Actualizar" mat-icon-button
                         (click)="actualizarObjetivoEstrategico(i)">
                         <i class="fa fa-edit" aria-hidden="true"></i>
                       </button>
 
-                      <button class="delete" mat-mini-fab color="warn" aria-label="Borrar" mat-icon-button
+                      <button class="delete" mat-mini-fab color="warn"
+                        aria-label="Borrar" mat-icon-button
                         (click)="borrarObjetivoEstrategico(i)">
                         <i class="fa fa-trash" aria-hidden="true"></i>
                       </button>
@@ -94,15 +111,18 @@
             <form [formGroup]="form"></form>
           </ng-container>
           <div class="botonera">
-            <button type="button" mat-raised-button color="primary" (click)="openAgregarEventosModal()">
+            <button type="button" mat-raised-button color="primary"
+              (click)="openAgregarEventosModal()">
               Agregar
             </button>
             <div class="btn btn-primary float-right">
-              <button type="button" mat-raised-button color="primary" matStepperPrevious>
+              <button type="button" mat-raised-button color="primary"
+                matStepperPrevious>
                 Regresar
               </button>
               |
-              <button type="button" mat-raised-button color="primary" matStepperNext [disabled]="!eventsForm.length">
+              <button type="button" mat-raised-button color="primary"
+                matStepperNext [disabled]="!eventsForm.length">
                 Siguiente
               </button>
             </div>
@@ -128,12 +148,14 @@
                   <td>{{ form.get('fecha').value }}</td>
                   <td>
                     <div class="action-buttons">
-                      <button class="edit" mat-mini-fab color="primary" aria-label="Actualizar" mat-icon-button
+                      <button class="edit" mat-mini-fab color="primary"
+                        aria-label="Actualizar" mat-icon-button
                         (click)="actualizarEvento(i)">
                         <i class="fa fa-edit" aria-hidden="true"></i>
                       </button>
 
-                      <button class="delete" mat-mini-fab color="warn" aria-label="Borrar" mat-icon-button
+                      <button class="delete" mat-mini-fab color="warn"
+                        aria-label="Borrar" mat-icon-button
                         (click)="borrarEvento(i)">
                         <i class="fa fa-trash" aria-hidden="true"></i>
                       </button>
@@ -145,20 +167,24 @@
           </div>
         </mat-step>
 
-        <mat-step label="Proyectos" #stepForm [completed]="projectsForms.length > 0">
+        <mat-step label="Proyectos" #stepForm
+          [completed]="projectsForms.length > 0">
           <ng-container *ngFor="let form of projectsForms">
             <form [formGroup]="form"></form>
           </ng-container>
           <div class="botonera">
-            <button type="button" mat-raised-button color="primary" (click)="openAgregarProyectosModal()">
+            <button type="button" mat-raised-button color="primary"
+              (click)="openAgregarProyectosModal()">
               Agregar
             </button>
             <div class="btn btn-primary float-right">
-              <button type="button" mat-raised-button color="primary" matStepperPrevious>
+              <button type="button" mat-raised-button color="primary"
+                matStepperPrevious>
                 Regresar
               </button>
               |
-              <button type="button" mat-raised-button color="primary" matStepperNext [disabled]="!projectsForms.length">
+              <button type="button" mat-raised-button color="primary"
+                matStepperNext [disabled]="!projectsForms.length">
                 Siguiente
               </button>
             </div>
@@ -195,12 +221,14 @@
                   <td>{{ form.get('estado').value }}</td>
                   <td>
                     <div class="action-buttons">
-                      <button class="edit" mat-mini-fab color="primary" aria-label="Actualizar" mat-icon-button
+                      <button class="edit" mat-mini-fab color="primary"
+                        aria-label="Actualizar" mat-icon-button
                         (click)="actualizarProyecto(i)">
                         <i class="fa fa-edit" aria-hidden="true"></i>
                       </button>
 
-                      <button class="delete" mat-mini-fab color="warn" aria-label="Borrar" mat-icon-button
+                      <button class="delete" mat-mini-fab color="warn"
+                        aria-label="Borrar" mat-icon-button
                         (click)="borrarProyecto(i)">
                         <i class="fa fa-trash" aria-hidden="true"></i>
                       </button>
@@ -216,15 +244,18 @@
             <form [formGroup]="form"></form>
           </ng-container>
           <div class="botonera">
-            <button type="button" mat-raised-button color="primary" (click)="openAgregarPosgradoModal()">
+            <button type="button" mat-raised-button color="primary"
+              (click)="openAgregarPosgradoModal()">
               Agregar (Opcional)
             </button>
             <div class="btn btn-primary float-right">
-              <button type="button" mat-raised-button color="primary" matStepperPrevious>
+              <button type="button" mat-raised-button color="primary"
+                matStepperPrevious>
                 Regresar
               </button>
               |
-              <button type="button" mat-raised-button color="primary" matStepperNext>
+              <button type="button" mat-raised-button color="primary"
+                matStepperNext>
                 Siguiente
               </button>
             </div>
@@ -245,12 +276,14 @@
                   <td>{{ form.get('tesistas').value }}</td>
                   <td>
                     <div class="action-buttons">
-                      <button class="edit" mat-mini-fab color="primary" aria-label="Actualizar" mat-icon-button
+                      <button class="edit" mat-mini-fab color="primary"
+                        aria-label="Actualizar" mat-icon-button
                         (click)="actualizarPosgrado(i)">
                         <i class="fa fa-edit" aria-hidden="true"></i>
                       </button>
 
-                      <button class="delete" mat-mini-fab color="warn" aria-label="Borrar" mat-icon-button
+                      <button class="delete" mat-mini-fab color="warn"
+                        aria-label="Borrar" mat-icon-button
                         (click)="borrarPosgrado(i)">
                         <i class="fa fa-trash" aria-hidden="true"></i>
                       </button>
@@ -267,16 +300,19 @@
             <form [formGroup]="form"></form>
           </ng-container>
           <div class="botonera">
-            <button type="button" mat-raised-button color="primary" (click)="openAgregarTitulacionModal()">
+            <button type="button" mat-raised-button color="primary"
+              (click)="openAgregarTitulacionModal()">
               Agregar (Opcional)
             </button>
             <div class="btn btn-primary float-right">
-              <button type="button" mat-raised-button color="primary" matStepperPrevious>
+              <button type="button" mat-raised-button color="primary"
+                matStepperPrevious>
                 Regresar
               </button>
               |
 
-              <button type="button" mat-raised-button color="primary" matStepperNext>
+              <button type="button" mat-raised-button color="primary"
+                matStepperNext>
                 Siguiente
               </button>
             </div>
@@ -297,12 +333,14 @@
                   <td>{{ form.get('tesistas').value }}</td>
                   <td>
                     <div class="action-buttons">
-                      <button class="edit" mat-mini-fab color="primary" aria-label="Actualizar" mat-icon-button
+                      <button class="edit" mat-mini-fab color="primary"
+                        aria-label="Actualizar" mat-icon-button
                         (click)="actualizarTitulacion(i)">
                         <i class="fa fa-edit" aria-hidden="true"></i>
                       </button>
 
-                      <button class="delete" mat-mini-fab color="warn" aria-label="Borrar" mat-icon-button
+                      <button class="delete" mat-mini-fab color="warn"
+                        aria-label="Borrar" mat-icon-button
                         (click)="borrarTitulacion(i)">
                         <i class="fa fa-trash" aria-hidden="true"></i>
                       </button>
@@ -319,16 +357,19 @@
             <form [formGroup]="form"></form>
           </ng-container>
           <div class="botonera">
-            <button type="button" mat-raised-button color="primary" (click)="openAgregarCapitulosLibrosModal()">
+            <button type="button" mat-raised-button color="primary"
+              (click)="openAgregarCapitulosLibrosModal()">
               Agregar (Opcional)
             </button>
             <div class="btn btn-primary float-right">
-              <button type="button" mat-raised-button color="primary" matStepperPrevious>
+              <button type="button" mat-raised-button color="primary"
+                matStepperPrevious>
                 Regresar
               </button>
               |
 
-              <button type="button" mat-raised-button color="primary" matStepperNext>
+              <button type="button" mat-raised-button color="primary"
+                matStepperNext>
                 Siguiente
               </button>
             </div>
@@ -353,12 +394,14 @@
                   <td>{{ form.get('isbn').value }}</td>
                   <td>
                     <div class="action-buttons">
-                      <button class="edit" mat-mini-fab color="primary" aria-label="Actualizar" mat-icon-button
+                      <button class="edit" mat-mini-fab color="primary"
+                        aria-label="Actualizar" mat-icon-button
                         (click)="actualizarCapitulosLibros(i)">
                         <i class="fa fa-edit" aria-hidden="true"></i>
                       </button>
 
-                      <button class="delete" mat-mini-fab color="warn" aria-label="Borrar" mat-icon-button
+                      <button class="delete" mat-mini-fab color="warn"
+                        aria-label="Borrar" mat-icon-button
                         (click)="borrarCapituloLibro(i)">
                         <i class="fa fa-trash" aria-hidden="true"></i>
                       </button>
@@ -375,16 +418,19 @@
             <form [formGroup]="form"></form>
           </ng-container>
           <div class="botonera">
-            <button type="button" mat-raised-button color="primary" (click)="openAgregarRevistasModal()">
+            <button type="button" mat-raised-button color="primary"
+              (click)="openAgregarRevistasModal()">
               Agregar (Opcional)
             </button>
             <div class="btn btn-primary float-right">
-              <button type="button" mat-raised-button color="primary" matStepperPrevious>
+              <button type="button" mat-raised-button color="primary"
+                matStepperPrevious>
                 Regresar
               </button>
               |
 
-              <button type="button" mat-raised-button color="primary" matStepperNext>
+              <button type="button" mat-raised-button color="primary"
+                matStepperNext>
                 Siguiente
               </button>
             </div>
@@ -413,12 +459,14 @@
                   <td>{{ form.get('ifsjr').value }}</td>
                   <td>
                     <div class="action-buttons">
-                      <button class="edit" mat-mini-fab color="primary" aria-label="Actualizar" mat-icon-button
+                      <button class="edit" mat-mini-fab color="primary"
+                        aria-label="Actualizar" mat-icon-button
                         (click)="actualizarRevista(i)">
                         <i class="fa fa-edit" aria-hidden="true"></i>
                       </button>
 
-                      <button class="delete" mat-mini-fab color="warn" aria-label="Borrar" mat-icon-button
+                      <button class="delete" mat-mini-fab color="warn"
+                        aria-label="Borrar" mat-icon-button
                         (click)="borrarRevista(i)">
                         <i class="fa fa-trash" aria-hidden="true"></i>
                       </button>
@@ -435,16 +483,19 @@
             <form [formGroup]="form"></form>
           </ng-container>
           <div class="botonera">
-            <button type="button" mat-raised-button color="primary" (click)="openAgregarCongresosModal()">
+            <button type="button" mat-raised-button color="primary"
+              (click)="openAgregarCongresosModal()">
               Agregar (Opcional)
             </button>
             <div class="btn btn-primary float-right">
-              <button type="button" mat-raised-button color="primary" matStepperPrevious>
+              <button type="button" mat-raised-button color="primary"
+                matStepperPrevious>
                 Regresar
               </button>
               |
 
-              <button type="button" mat-raised-button color="primary" matStepperNext>
+              <button type="button" mat-raised-button color="primary"
+                matStepperNext>
                 Siguiente
               </button>
             </div>
@@ -475,12 +526,14 @@
                   <td>{{ form.get('cuartil').value }}</td>
                   <td>
                     <div class="action-buttons">
-                      <button class="edit" mat-mini-fab color="primary" aria-label="Actualizar" mat-icon-button
+                      <button class="edit" mat-mini-fab color="primary"
+                        aria-label="Actualizar" mat-icon-button
                         (click)="actualizarCongreso(i)">
                         <i class="fa fa-edit" aria-hidden="true"></i>
                       </button>
 
-                      <button class="delete" mat-mini-fab color="warn" aria-label="Borrar" mat-icon-button
+                      <button class="delete" mat-mini-fab color="warn"
+                        aria-label="Borrar" mat-icon-button
                         (click)="borrarCongreso(i)">
                         <i class="fa fa-trash" aria-hidden="true"></i>
                       </button>
@@ -497,15 +550,18 @@
             <form [formGroup]="form"></form>
           </ng-container>
           <div class="botonera">
-            <button type="button" mat-raised-button color="primary" (click)="openAgregarEjecucionModal()">
+            <button type="button" mat-raised-button color="primary"
+              (click)="openAgregarEjecucionModal()">
               Agregar (Opcional)
             </button>
             <div class="btn btn-primary float-right">
-              <button type="button" mat-raised-button color="primary" matStepperPrevious>
+              <button type="button" mat-raised-button color="primary"
+                matStepperPrevious>
                 Regresar
               </button>
               |
-              <button type="button" mat-raised-button color="primary" matStepperNext>
+              <button type="button" mat-raised-button color="primary"
+                matStepperNext>
                 Siguiente
               </button>
             </div>
@@ -532,12 +588,14 @@
                   <td>{{ form.get('bienesAdquiridos').value }}</td>
                   <td>
                     <div class="action-buttons">
-                      <button class="edit" mat-mini-fab color="primary" aria-label="Actualizar" mat-icon-button
+                      <button class="edit" mat-mini-fab color="primary"
+                        aria-label="Actualizar" mat-icon-button
                         (click)="actualizarEjecucion(i)">
                         <i class="fa fa-edit" aria-hidden="true"></i>
                       </button>
 
-                      <button class="delete" mat-mini-fab color="warn" aria-label="Borrar" mat-icon-button
+                      <button class="delete" mat-mini-fab color="warn"
+                        aria-label="Borrar" mat-icon-button
                         (click)="borrarEjecucion(i)">
                         <i class="fa fa-trash" aria-hidden="true"></i>
                       </button>
@@ -557,7 +615,8 @@
               <h2>Conclusiones</h2>
               <mat-form-field appearance="fill">
                 <mat-label>Ingresar Conclusiones:</mat-label>
-                <textarea matInput class="form-control large-textarea" formControlName="conclusiones"></textarea>
+                <textarea matInput class="form-control large-textarea"
+                  formControlName="conclusiones"></textarea>
               </mat-form-field>
             </div>
 
@@ -565,16 +624,19 @@
               <h2>Recomendaciones</h2>
               <mat-form-field appearance="fill">
                 <mat-label>Ingresar Recomendaciones:</mat-label>
-                <textarea matInput class="form-control large-textarea" formControlName="recomendaciones"></textarea>
+                <textarea matInput class="form-control large-textarea"
+                  formControlName="recomendaciones"></textarea>
               </mat-form-field>
             </div>
 
             <div class="btn btn-primary float-right">
-              <button type="button" mat-raised-button color="primary" matStepperPrevious>
+              <button type="button" mat-raised-button color="primary"
+                matStepperPrevious>
                 Regresar
               </button>
               |
-              <button type="button" mat-raised-button color="accent" (click)="onSubmit()" [disabled]="
+              <button type="button" mat-raised-button color="accent"
+                (click)="onSubmit()" [disabled]="
                   reporteForm.get('conclusiones').value === '' ||
                   reporteForm.get('recomendaciones').value === ''
                 ">
