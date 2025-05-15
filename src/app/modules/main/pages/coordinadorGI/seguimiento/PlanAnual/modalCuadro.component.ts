@@ -34,6 +34,7 @@ export class ModalCuadroOp implements OnInit {
     planDesarrolloCompleto: DevelopmentPlanComplete;
     groupId: number;
     token: string;
+    showVerificationFields: boolean = false;
 
     constructor(
         private fb: FormBuilder,
@@ -61,15 +62,47 @@ export class ModalCuadroOp implements OnInit {
             idEstrategia: [null, Validators.required],
             objetivoAnual: ['', Validators.required],
             producto: ['', Validators.required],
-            financiamiento: ['', Validators.required],
-            monto: [null, Validators.required],
+            financiamiento: [''],
+            monto: [null, [Validators.required]],
             presupuesto: ['', Validators.required],
             fechaInicio: [null, Validators.required],
             fechaFin: [null, Validators.required],
             mediosVerificacion: [''],
+            cumplimiento: [null, [Validators.required, Validators.min(0), Validators.max(100)]],
+            montoCertificado: [{ value: null, disabled: true }],
+            montoComprometido: [{ value: null, disabled: true }],
+            valorDevengado: [{ value: null, disabled: true }],
+            certificado: [{ value: '', disabled: true }],
+            fechaSeguimiento: [{ value: null, disabled: true }],
+            montoDisponible: [{ value: null, disabled: true }],
+
+
+
             usuarioCreacion: [this.currentUser, Validators.required],
             fechaCreacion: [this.currentDate, Validators.required],
-            archivo: [null, Validators.required],  // Agregar validación para el archivo
+            archivo: [null, Validators.required],  
+        });
+
+
+        this.myForm.get('financiamiento').valueChanges.subscribe(value => {
+            const controlsToToggle = [
+                'montoCertificado',
+                'montoComprometido',
+                'valorDevengado',
+                'certificado',
+                'fechaSeguimiento',
+                'montoDisponible'
+            ];
+        
+            controlsToToggle.forEach(controlName => {
+                const control = this.myForm.get(controlName);
+                if (value) {
+                    control.enable();
+                } else {
+                    control.setValue(null); 
+                    control.disable();
+                }
+            });
         });
 
     }
@@ -112,6 +145,15 @@ export class ModalCuadroOp implements OnInit {
             console.log(this.myForm.value)
         }
     }
+
+    onlyNumberInput(event: KeyboardEvent): void {
+        const char = event.key;
+        const allowedChars = '0123456789.,';
+        if (!allowedChars.includes(char)) {
+          event.preventDefault();
+        }
+      }
+      
 
     onClickClose(): void {
         this.dialogRef.close();

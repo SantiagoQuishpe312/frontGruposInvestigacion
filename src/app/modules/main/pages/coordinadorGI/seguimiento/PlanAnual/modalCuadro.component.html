@@ -2,8 +2,8 @@
     <div class="container-fluid">
         <div class="back-button-container">
             <header style="display: flex;">
-                <h1>{{ isEditing ? 'Editar Control Anual' :
-                    'Crear Nuevo Control Anual' }}</h1>
+                <h1>{{ isEditing ? 'Editar Objetivo Anual' :
+                    'Crear Nuevo Objetivo Anual' }}</h1>
             </header>
         </div>
         <div *ngIf="isLoading" class="loading-spinner-overlay">
@@ -13,7 +13,7 @@
             <form [formGroup]="myForm" (ngSubmit)="saveAnualControl()">
                 <!-- Selección del objetivo específico -->
                 <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Selecciona el objetivo específico para generar la
+                    <mat-label>Seleccionar el objetivo específico para generar la
                         información</mat-label>
                     <mat-select formControlName="idObjetivoEspecifico" required
                         (selectionChange)="onSelectionChange($event)">
@@ -27,6 +27,7 @@
                 <div *ngIf="myForm.get('idObjetivoEspecifico').value">
 
                     <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Seleccionar ODS</mat-label>
                         <mat-select formControlName="idOds" required>
                             <mat-option *ngFor="let ods of ods"
                                 [value]="ods.id">
@@ -36,6 +37,7 @@
                     </mat-form-field>
 
                     <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Seleccionar Estrategia</mat-label>
                         <mat-select formControlName="idEstrategia" required>
                             <mat-option *ngFor="let est of estrategias"
                                 [value]="est.idEstrategia">
@@ -82,17 +84,55 @@
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>Financiamiento</mat-label>
                         <input matInput type="text"
-                            formControlName="financiamiento" required>
+                            formControlName="financiamiento" (keypress)="onlyNumberInput($event)">
+                    </mat-form-field>
+
+
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Monto Certificado</mat-label>
+                        <input matInput type="number" formControlName="montoCertificado"(keypress)="onlyNumberInput($event)" >
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Monto Comprometido</mat-label>
+                        <input matInput type="number" formControlName="montoComprometido" (keypress)="onlyNumberInput($event)">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Valor Devengado</mat-label>
+                        <input matInput type="number" formControlName="valorDevengado" (keypress)="onlyNumberInput($event)">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Certificado</mat-label>
+                        <input matInput type="number" formControlName="certificado">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Fecha Seguimiento</mat-label>
+                        <input matInput [matDatepicker]="pickerSeguimiento"
+                            formControlName="fechaSeguimiento" required>
+                        <mat-datepicker-toggle matSuffix
+                            [for]="pickerSeguimiento"></mat-datepicker-toggle>
+                        <mat-datepicker #pickerSeguimiento></mat-datepicker>
                         <mat-error
-                            *ngIf="myForm.get('financiamiento').invalid && myForm.get('financiamiento').touched">
+                            *ngIf="myForm.get('fechaSeguimiento').invalid && myForm.get('fechaSeguimiento').touched">
                             El campo es obligatorio.
                         </mat-error>
                     </mat-form-field>
 
                     <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Monto Disponible</mat-label>
+                        <input matInput type="number" formControlName="montoDisponible" (keypress)="onlyNumberInput($event)">
+                    </mat-form-field>
+
+
+
+
+                    <mat-form-field appearance="outline" class="full-width">
                         <mat-label>Monto</mat-label>
                         <input matInput type="text" formControlName="monto"
-                            required>
+                            required (keypress)="onlyNumberInput($event)">
                         <mat-error
                             *ngIf="myForm.get('monto').invalid && myForm.get('monto').touched">
                             El campo es obligatorio.
@@ -148,6 +188,17 @@
                             El campo es obligatorio.
                         </mat-error>
                     </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Cumplimiento (%)</mat-label>
+                        <input matInput type="number" min="0" max="100"
+                            formControlName="cumplimiento" required (keypress)="onlyNumberInput($event)">
+                        <mat-error
+                            *ngIf="myForm.get('cumplimiento').invalid && myForm.get('cumplimiento').touched">
+                            El campo es obligatorio y debe ser un valor entre 0 y 100.
+                        </mat-error>
+                    </mat-form-field>
+
 
                     <div class="drag-drop" (drop)="onDrop($event)"
                         (dragover)="onDragOver($event)">

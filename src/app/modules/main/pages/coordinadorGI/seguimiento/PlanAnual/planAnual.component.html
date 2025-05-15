@@ -19,7 +19,7 @@
 
                 <div *ngIf="sinPlan">
                   <h1>No tiene plan de desarrollo vigente dentro del periodo de 4 años</h1>
-                  <button mat-button type="button" (click)="ruta('main/developPlan')">Revisar</button>
+                  <button mat-button type="button" (click)="ruta('main/developPlan')">Crear</button>
                 </div>
   
                 <div *ngIf="!sinPlan">
@@ -58,7 +58,7 @@
                 <div>
                   <mat-form-field appearance="fill">
                     <mat-label>OBJETIVO GENERAL</mat-label>
-                    <textarea matInput class="textarea" rows="10" formControlName="objetivoGeneral" required></textarea>
+                    <textarea matInput class="textarea no-click"  rows="10" formControlName="objetivoGeneral" readonly  tabindex="-1"></textarea>
                   </mat-form-field>
   
                   <h1>Alineación Estratégica</h1>
@@ -90,16 +90,15 @@
   
               <!-- Paso 3: Objetivo Específico -->
               <mat-step>
-                <ng-template matStepLabel>Control Anual</ng-template>
+                <ng-template matStepLabel>Objetivo Anual</ng-template>
                 
                 <div *ngIf="anualControles.length > 0">
-                  <h3>Controles Anuales Agregados:</h3>
+                  <h3>Objetivos Anuales Agregados:</h3>
                   <div *ngFor="let control of anualControles.controls; let i = index" [formGroup]="control" class="control-card">
                     <div class="card-header">
-                      <span>📝 Control Anual #{{ i + 1 }}</span>
-                    </div>
+                      <span>📝 Plan Operativo Anual {{ currentDate.getFullYear() }}</span>                    </div>
                     <div class="card-body">
-                      <div class="card-row"><strong>Objetivo Anual:</strong> {{ control.get('objetivoAnual')?.value }}</div>
+                      <div class="card-row"><strong>Objetivo - Actividad Anual:</strong> {{ control.get('objetivoAnual')?.value }}</div>
                       <div class="card-row"><strong>Producto:</strong> {{ control.get('producto')?.value }}</div>
                       <div class="card-row"><strong>Financiamiento:</strong> {{ control.get('financiamiento')?.value }}</div>
                       <div class="card-row"><strong>Monto:</strong> {{ control.get('monto')?.value }}</div>
@@ -123,7 +122,7 @@
                   color="primary"
                   (click)="agregarAnualControl()"
                 >
-                  Agregar control Anual
+                  Agregar Objetivo Anual
                 </button>
                 <div class="grid-container">
                   <div class="grid-item">

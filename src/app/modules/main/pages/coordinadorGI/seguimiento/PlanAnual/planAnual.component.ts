@@ -56,7 +56,7 @@ export class AnnualPlanComponent implements OnInit {
     this.groupId = Number(sessionStorage.getItem("invGroup"));
 
     this.myForm = this.fb.group({
-      objetivoGeneral: ['', Validators.required],
+      objetivoGeneral: [''],
       idGrupoInvestigacion: [this.groupId, Validators.required],
       anualControles: this.fb.array([]),
       idObjetivoEspecifico: [null, Validators.required],
@@ -105,6 +105,11 @@ export class AnnualPlanComponent implements OnInit {
     const { tipo, estado } = this.developmentPlan[0];
     this.developmentPlanService.getAllByIdGroupStateType(id, tipo, estado).subscribe(data => {
       this.planDesarrolloCompleto = data;
+      if (this.planDesarrolloCompleto && this.planDesarrolloCompleto.planDesarrollo.objGeneral) {
+        this.myForm.patchValue({
+          objetivoGeneral: this.planDesarrolloCompleto.planDesarrollo.objGeneral
+        });
+      }
       this.obtenerObjetivosEspecificos();
     });
   }
