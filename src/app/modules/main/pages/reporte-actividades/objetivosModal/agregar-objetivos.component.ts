@@ -133,6 +133,7 @@ export class AgregarObjetivosComponent {
   }
 
   save() {
+    console.log(this.objStrategiesForm);
     if (this.objStrategiesForm.valid) {
       this.objStrategiesForm.get('objetivo')?.setValue(this.obj);
 const cumplimiento = this.objStrategiesForm.get('cumplimiento')?.value;
