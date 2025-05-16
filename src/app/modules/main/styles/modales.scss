@@ -311,3 +311,24 @@ button.custom-button:disabled {
   background-color: #332e80 !important; /* Verde */
   color: white !important;
 }
+.cumplimiento-box {
+  font-weight: bold;
+  padding: 0.5rem;
+  border-radius: 8px;
+  width: fit-content;
+}
+
+.rojo {
+  color: white;
+  background-color: #d32f2f;
+}
+
+.amarillo {
+  color: black;
+  background-color: #ffeb3b;
+}
+
+.verde {
+  color: white;
+  background-color: #388e3c;
+}

@@ -13,7 +13,8 @@
             <form [formGroup]="myForm" (ngSubmit)="saveAnualControl()">
                 <!-- Selección del objetivo específico -->
                 <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Seleccionar el objetivo específico para generar la
+                    <mat-label>Seleccionar el objetivo específico para generar
+                        la
                         información</mat-label>
                     <mat-select formControlName="idObjetivoEspecifico" required
                         (selectionChange)="onSelectionChange($event)">
@@ -27,43 +28,44 @@
                 <div *ngIf="myForm.get('idObjetivoEspecifico').value">
 
                     <mat-form-field appearance="outline" class="full-width">
-                        <mat-label>Seleccionar ODS</mat-label>
-                        <mat-select formControlName="idOds" required>
-                            <mat-option *ngFor="let ods of ods"
-                                [value]="ods.id">
-                                {{ ods.ods }}
+                        <mat-label>ODS</mat-label>
+                        <textarea matInput readonly [value]="getTodosLosOds()"
+                            rows="5"></textarea>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Estrategias</mat-label>
+                        <textarea matInput readonly
+                            [value]="getTodasLasEstrategias()"
+                            rows="5"></textarea>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Seleccionar Actividad</mat-label>
+                        <mat-select formControlName="actividad" required
+                            (selectionChange)="onSelectionChange2($event)">
+                            <mat-option *ngFor="let act of actividades"
+                                [value]="act.idPanelControl">
+                                {{ act.actividad }}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
 
-                    <mat-form-field appearance="outline" class="full-width">
-                        <mat-label>Seleccionar Estrategia</mat-label>
-                        <mat-select formControlName="idEstrategia" required>
-                            <mat-option *ngFor="let est of estrategias"
-                                [value]="est.idEstrategia">
-                                {{ est.estrategia }}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline" class="full-width">
-                        <mat-label>Actividad</mat-label>
-                        <input matInput type="text" readOnly
-                            [value]="panelControl.panelControl.actividad"
-                            readonly>
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline" class="full-width">
+                    <mat-form-field appearance="outline" class="full-width"
+                        *ngIf="panelFiltrado">
                         <mat-label>Indicador</mat-label>
                         <input matInput type="text" readOnly
-                            [value]="panelControl.panelControl.indicadorNombre"
+                            [value]="panelFiltrado.indicadorNombre"
                             readonly>
                     </mat-form-field>
 
                     <mat-form-field appearance="outline" class="full-width">
-                        <mat-label>Meta Anual</mat-label>
+                        <mat-label>Meta Anual Planificada Ingrese un valor
+                            Numerico porcentaje o número de
+                            productos</mat-label>
                         <input matInput type="text"
-                            formControlName="objetivoAnual" required>
+                            formControlName="objetivoAnual" required
+                            type="number">
                         <mat-error
                             *ngIf="myForm.get('objetivoAnual').invalid && myForm.get('objetivoAnual').touched">
                             El campo es obligatorio.
@@ -72,40 +74,50 @@
 
                     <!-- Otros campos que dependen de la selección -->
                     <mat-form-field appearance="outline" class="full-width">
-                        <mat-label>Producto</mat-label>
+                        <mat-label>Meta Anual Real (Producto) Ingrese un valor
+                            Numerico porcentaje o número de
+                            productos</mat-label>
                         <input matInput type="text" formControlName="producto"
-                            required>
+                            type="number" required>
                         <mat-error
                             *ngIf="myForm.get('producto').invalid && myForm.get('producto').touched">
                             El campo es obligatorio.
                         </mat-error>
                     </mat-form-field>
 
-                    <mat-form-field appearance="outline" class="full-width">
+                    <mat-form-field appearance="outline" class="full-width"
+                        *ngIf="panelFiltrado">
                         <mat-label>Financiamiento</mat-label>
                         <input matInput type="text"
-                            formControlName="financiamiento" (keypress)="onlyNumberInput($event)">
+                            formControlName="financiamiento"
+                            [value]="panelFiltrado.financiamiento" readonly>
                     </mat-form-field>
-
 
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>Monto Certificado</mat-label>
-                        <input matInput type="number" formControlName="montoCertificado"(keypress)="onlyNumberInput($event)" >
+                        <input matInput type="number"
+                            formControlName="montoCertificado"
+                            (keypress)="onlyNumberInput($event)">
                     </mat-form-field>
 
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>Monto Comprometido</mat-label>
-                        <input matInput type="number" formControlName="montoComprometido" (keypress)="onlyNumberInput($event)">
+                        <input matInput type="number"
+                            formControlName="montoComprometido"
+                            (keypress)="onlyNumberInput($event)">
                     </mat-form-field>
 
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>Valor Devengado</mat-label>
-                        <input matInput type="number" formControlName="valorDevengado" (keypress)="onlyNumberInput($event)">
+                        <input matInput type="number"
+                            formControlName="valorDevengado"
+                            (keypress)="onlyNumberInput($event)">
                     </mat-form-field>
 
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>Certificado</mat-label>
-                        <input matInput type="number" formControlName="certificado">
+                        <input matInput type="number"
+                            formControlName="certificado">
                     </mat-form-field>
 
                     <mat-form-field appearance="outline" class="full-width">
@@ -123,11 +135,10 @@
 
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>Monto Disponible</mat-label>
-                        <input matInput type="number" formControlName="montoDisponible" (keypress)="onlyNumberInput($event)">
+                        <input matInput type="number"
+                            formControlName="montoDisponible"
+                            (keypress)="onlyNumberInput($event)">
                     </mat-form-field>
-
-
-
 
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>Monto</mat-label>
@@ -149,16 +160,18 @@
                         </mat-error>
                     </mat-form-field>
 
-                    <mat-form-field appearance="outline" class="full-width">
+                    <mat-form-field appearance="outline" class="full-width"
+                        *ngIf="panelFiltrado">
                         <mat-label>Responsable</mat-label>
                         <input matInput type="text" readOnly
                             [value]="encargadoNombre" readonly>
                     </mat-form-field>
 
-                    <mat-form-field appearance="outline" class="full-width">
+                    <mat-form-field appearance="outline" class="full-width"
+                        *ngIf="panelFiltrado">
                         <mat-label>Periodicidad</mat-label>
                         <input matInput type="text" readOnly
-                            [value]="panelControl.panelControl.indicadorTipo"
+                            [value]="panelFiltrado.indicadorTipo"
                             readonly>
 
                     </mat-form-field>
@@ -192,13 +205,19 @@
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>Cumplimiento (%)</mat-label>
                         <input matInput type="number" min="0" max="100"
-                            formControlName="cumplimiento" required (keypress)="onlyNumberInput($event)">
+                            formControlName="cumplimiento" required
+                            (keypress)="onlyNumberInput($event)"
+                            [value]="calcularCumplimiento()">
                         <mat-error
                             *ngIf="myForm.get('cumplimiento').invalid && myForm.get('cumplimiento').touched">
-                            El campo es obligatorio y debe ser un valor entre 0 y 100.
+                            El campo es obligatorio y debe ser un valor entre 0
+                            y 100.
                         </mat-error>
                     </mat-form-field>
-
+                    <!-- Dentro de tu template -->
+                    <div [ngClass]="colorSemaforo" class="cumplimiento-box">
+                        Cumplimiento: {{ myForm.get('cumplimiento')?.value }}%
+                    </div>
 
                     <div class="drag-drop" (drop)="onDrop($event)"
                         (dragover)="onDragOver($event)">

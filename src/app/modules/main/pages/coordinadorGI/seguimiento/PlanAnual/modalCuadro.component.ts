@@ -13,6 +13,7 @@ import { ControlPanelComplete, ControlPanelForm } from "src/app/types/controlPan
 import { UsuarioService } from "src/app/core/http/usuario/usuario.service";
 import { DevelopPlanFormComponent } from "src/@vex/components/forms/developmentPlanForm/developmentPlanForm.component";
 import { DevelopmentPlanComplete } from "src/app/types/developPlanForm";
+import { ControlPanelService } from "src/app/core/http/control-panel/control-panel.service";
 
 @Component({
     selector: 'app-modalCuadroOp',
@@ -42,12 +43,14 @@ export class ModalCuadroOp implements OnInit {
         public dialogRef: MatDialogRef<ModalCuadroOp>,
         private objStrategiesODSService: ObjStrategiesODSService,
         private usuarioService: UsuarioService,
+        private controlPanelService: ControlPanelService,
         @Inject(MAT_DIALOG_DATA) public data: any,
     ) {
         //this.objetivo = data.objetivoEspecifico;
         //this.panelControl = data.panelControl;
         this.planDesarrolloCompleto = data.planDesarrollo;
     }
+colorSemaforo: string = '';
 
     ngOnInit(): void {
         this.currentUser = this.authService.getUserName();
@@ -62,6 +65,7 @@ export class ModalCuadroOp implements OnInit {
             idEstrategia: [null, Validators.required],
             objetivoAnual: ['', Validators.required],
             producto: ['', Validators.required],
+            actividad: ['', Validators.required],
             financiamiento: [''],
             monto: [null, [Validators.required]],
             presupuesto: ['', Validators.required],
@@ -75,12 +79,9 @@ export class ModalCuadroOp implements OnInit {
             certificado: [{ value: '', disabled: true }],
             fechaSeguimiento: [{ value: null, disabled: true }],
             montoDisponible: [{ value: null, disabled: true }],
-
-
-
             usuarioCreacion: [this.currentUser, Validators.required],
             fechaCreacion: [this.currentDate, Validators.required],
-            archivo: [null, Validators.required],  
+            archivo: [null, Validators.required],
         });
 
 
@@ -93,18 +94,19 @@ export class ModalCuadroOp implements OnInit {
                 'fechaSeguimiento',
                 'montoDisponible'
             ];
-        
+
             controlsToToggle.forEach(controlName => {
                 const control = this.myForm.get(controlName);
                 if (value) {
                     control.enable();
                 } else {
-                    control.setValue(null); 
+                    control.setValue(null);
                     control.disable();
                 }
             });
         });
-
+this.myForm.get('producto')?.valueChanges.subscribe(() => this.calcularCumplimiento());
+  this.myForm.get('objetivoAnual')?.valueChanges.subscribe(() => this.calcularCumplimiento());
     }
     objetivosEspecificos: any[] = [];
 
@@ -113,25 +115,77 @@ export class ModalCuadroOp implements OnInit {
             panelControl: panel,
             objetivoEspecifico: panel.objetivoEspecífico
         }));
+        console.log(this.objetivosEspecificos)
     }
+    actividades: ControlPanelForm[] = [];
     getData(id: number) {
         this.objStrategiesODSService.getCompleteByObj(id).subscribe(objData => {
             this.estrategias = objData.strategies;
             this.ods = objData.ods;
         });
-        this.encargadoNombre = this.panelControl.responsable.nombre;
+        this.controlPanelService.getBySpecificObjetive(id).subscribe(control => {
+            this.actividades = control;
+        })
 
     }
+    getTodasLasEstrategias(): string {
+        return this.estrategias
+            .map(e => '• ' + e.estrategia)
+            .join('\n');
+    }
+
+    getTodosLosOds(): string {
+        return this.ods
+            .map(o => '• ' + o.ods)
+            .join('\n');
+    }
+
+
     onSelectionChange(event: any) {
-        // Aquí puedes ejecutar la acción que necesitas cuando cambie la selección
         const seleccionado = this.myForm.get('idObjetivoEspecifico')?.value;
         this.panelControl = seleccionado.panelControl;
         this.objetivo = seleccionado.objetivoEspecifico;
         this.getData(this.objetivo.idObjetivo);
-        this.myForm.get('idPanelControl')?.setValue(this.myForm.get('idObjetivoEspecifico')?.value.panelControl.panelControl.idPanelControl);
-        
     }
+    onSelectionChange2(event: any) {
+        const seleccionado = this.myForm.get('actividad')?.value;
+        this.myForm.get('idPanelControl')?.setValue(this.myForm.get('actividad')?.value);
+        this.getPanel(seleccionado);
+    }
+    panelFiltrado: ControlPanelForm;
+getPanel(id:number){
+    this.controlPanelService.getById(id).subscribe(panel => {
+        this.panelFiltrado = panel;
+            this.getUser(panel.idResponsable);
 
+    })
+}
+calcularCumplimiento() {
+  const planificado = Number(this.myForm.get('objetivoAnual')?.value);
+  const real = Number(this.myForm.get('producto')?.value);
+
+  if (planificado > 0 && real >= 0) {
+    const cumplimiento = (real / planificado) * 100;
+    const cumplimientoRedondeado = Number(cumplimiento.toFixed(2));
+    this.myForm.get('cumplimiento')?.setValue(cumplimientoRedondeado);
+
+    // Semaforización
+    if (cumplimientoRedondeado < 70) {
+      this.colorSemaforo = 'rojo';
+    } else if (cumplimientoRedondeado >= 70 && cumplimientoRedondeado <= 90) {
+      this.colorSemaforo = 'amarillo';
+    } else {
+      this.colorSemaforo = 'verde';
+    }
+  } else {
+    this.myForm.get('cumplimiento')?.setValue(0);
+    this.colorSemaforo = '';
+  }}
+getUser(id:number){
+    this.usuarioService.getById(id).subscribe(user => {
+        this.encargadoNombre = user.nombre ;
+    })
+}
 
     saveAnualControl(): void {
         if (this.myForm.valid) {
@@ -150,10 +204,10 @@ export class ModalCuadroOp implements OnInit {
         const char = event.key;
         const allowedChars = '0123456789.,';
         if (!allowedChars.includes(char)) {
-          event.preventDefault();
+            event.preventDefault();
         }
-      }
-      
+    }
+
 
     onClickClose(): void {
         this.dialogRef.close();

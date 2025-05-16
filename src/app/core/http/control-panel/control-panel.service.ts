@@ -24,6 +24,9 @@ export class ControlPanelService {
   getByPlan(id: number): Observable<ControlPanelForm[]> {
     return this.http.get<ControlPanelForm[]>(`${this.URL}/bydev/${id}`);
   }
+  getBySpecificObjetive(id: number): Observable<ControlPanelForm[]> {
+    return this.http.get<ControlPanelForm[]>(`${this.URL}/bySpecificObj/${id}`);
+  }
 
   createControlPanelForm(formData: ControlPanelForm): Observable<number> {
     return this.http.post<number>(`${this.URL}/create`, formData);
