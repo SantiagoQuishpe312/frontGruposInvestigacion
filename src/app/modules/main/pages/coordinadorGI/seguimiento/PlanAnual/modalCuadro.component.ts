@@ -23,6 +23,7 @@ import { ControlPanelService } from "src/app/core/http/control-panel/control-pan
 export class ModalCuadroOp implements OnInit {
     currentUser: string;
     currentDate: Date = new Date();
+    currentYear: number = new Date().getFullYear();
     objetivo: SpecificObjetives;
     panelControl: ControlPanelComplete;
     isSaved: boolean = false;
@@ -82,6 +83,7 @@ colorSemaforo: string = '';
             usuarioCreacion: [this.currentUser, Validators.required],
             fechaCreacion: [this.currentDate, Validators.required],
             archivo: [null, Validators.required],
+
         });
 
 
@@ -107,6 +109,7 @@ colorSemaforo: string = '';
         });
 this.myForm.get('producto')?.valueChanges.subscribe(() => this.calcularCumplimiento());
   this.myForm.get('objetivoAnual')?.valueChanges.subscribe(() => this.calcularCumplimiento());
+  
     }
     objetivosEspecificos: any[] = [];
 
@@ -118,16 +121,50 @@ this.myForm.get('producto')?.valueChanges.subscribe(() => this.calcularCumplimie
         console.log(this.objetivosEspecificos)
     }
     actividades: ControlPanelForm[] = [];
-    getData(id: number) {
-        this.objStrategiesODSService.getCompleteByObj(id).subscribe(objData => {
-            this.estrategias = objData.strategies;
-            this.ods = objData.ods;
-        });
-        this.controlPanelService.getBySpecificObjetive(id).subscribe(control => {
-            this.actividades = control;
-        })
+    // getData(id: number) {
+    //     this.objStrategiesODSService.getCompleteByObj(id).subscribe(objData => {
+    //         this.estrategias = objData.strategies;
+    //         this.ods = objData.ods;
+    //     });
+    //     this.controlPanelService.getBySpecificObjetive(id).subscribe(control => {
+    //         this.actividades = control;
+    //     })
 
+    // }
+
+    getData(id: number) {
+        this.isLoading = true;
+        this.objStrategiesODSService.getCompleteByObj(id).subscribe({
+            next: (objData) => {
+                this.estrategias = objData.strategies;
+                this.ods = objData.ods;                
+                if (this.estrategias.length === 1) {
+                    this.myForm.get('idEstrategia').setValue(this.estrategias[0].idEstrategia);
+                }
+                
+                if (this.ods.length === 1) {
+                    this.myForm.get('idOds').setValue(this.ods[0].id);
+                }
+                
+                this.isLoading = false;
+            },
+            error: (err) => {
+                console.error('Error loading strategies and ODS:', err);
+                this.isLoading = false;
+            }
+        });
+        
+        this.controlPanelService.getBySpecificObjetive(id).subscribe({
+            next: (control) => {
+                this.actividades = control;
+            },
+            error: (err) => {
+                console.error('Error loading activities:', err);
+            }
+        });
     }
+
+
     getTodasLasEstrategias(): string {
         return this.estrategias
             .map(e => '• ' + e.estrategia)

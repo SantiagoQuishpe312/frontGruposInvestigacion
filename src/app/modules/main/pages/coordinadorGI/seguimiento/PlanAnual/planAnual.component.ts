@@ -36,6 +36,8 @@ export class AnnualPlanComponent implements OnInit {
   form: FormGroup;
   objetivosEspecificos: any[] = [];
   planDesarrolloCompleto: DevelopmentPlanComplete;
+  colorSemaforoPromedio: string = '';
+  cumplimientoPromedio: number = 0;
 
   constructor(
     private annexesService: AnnexesService,
@@ -68,6 +70,9 @@ export class AnnualPlanComponent implements OnInit {
 
 
     this.loadDevelopmentPlan();
+    this.anualControles.valueChanges.subscribe(() => {
+      this.calcularSemaforizacionPromedio();
+    });
 
 
   }
@@ -140,9 +145,37 @@ export class AnnualPlanComponent implements OnInit {
          if (result.selectedFile) {
           this.archivos.push(result.selectedFile); // Almacenar el archivo
         }
+        this.calcularSemaforizacionPromedio();
       }
       console.log(this.anualControles);
     });
+  }
+
+  calcularSemaforizacionPromedio(): void {
+    const controles = this.anualControles.controls;
+    
+    if (controles.length === 0) {
+      this.cumplimientoPromedio = 0;
+      this.colorSemaforoPromedio = '';
+      return;
+    }
+    
+    let sumaCumplimientos = 0;
+    
+    controles.forEach(control => {
+      const cumplimiento = Number(control.get('cumplimiento')?.value || 0);
+      sumaCumplimientos += cumplimiento;
+    });
+    
+    this.cumplimientoPromedio = Number((sumaCumplimientos / controles.length).toFixed(2));
+    
+    if (this.cumplimientoPromedio < 70) {
+      this.colorSemaforoPromedio = 'rojo';
+    } else if (this.cumplimientoPromedio >= 70 && this.cumplimientoPromedio <= 90) {
+      this.colorSemaforoPromedio = 'amarillo';
+    } else {
+      this.colorSemaforoPromedio = 'verde';
+    }
   }
 
   get anualControles(): FormArray<FormGroup> {
@@ -166,6 +199,7 @@ export class AnnualPlanComponent implements OnInit {
       mediosVerificacion: ['', Validators.required],
       usuarioCreacion: [this.currentUser, Validators.required],
       fechaCreacion: [this.currentDate, Validators.required],
+      cumplimiento: [null, [Validators.required, Validators.min(0), Validators.max(100)]],
     });
   }
 
@@ -207,7 +241,8 @@ export class AnnualPlanComponent implements OnInit {
           usuarioCreacion: this.currentUser,
           fechaCreacion: this.currentDate,
           usuarioModificacion: null,
-          fechaModificacion: null
+          fechaModificacion: null,
+          cumplimiento: control.cumplimiento,
         }
         this.anualControlService.create(controlAnual).subscribe(
           (response) => {
@@ -294,6 +329,8 @@ export class AnnualPlanComponent implements OnInit {
   }
   eliminarControl(index: number): void {
     this.anualControles.removeAt(index);
+    this.calcularSemaforizacionPromedio();
+
   }
 
   editarControl(index: number): void {
@@ -310,6 +347,8 @@ export class AnnualPlanComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         control.patchValue(result);
+        this.calcularSemaforizacionPromedio();
+
       }
     });
   }

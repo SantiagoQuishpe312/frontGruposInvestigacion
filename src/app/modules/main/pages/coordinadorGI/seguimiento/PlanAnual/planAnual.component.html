@@ -1,27 +1,27 @@
 <div *ngIf="isLoading" class="loading-spinner-overlay">
-    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
-  </div>
-  
-  <div class="container-fluid">
-    <div class="card">
-      <header>
-        <h1>Plan Operativo Anual de Actividades POA</h1>
-      </header>
-  
-      <main>
-        <div *ngIf="!isLoading">
-          <form [formGroup]="myForm" (ngSubmit)="HandleSubmit()">
-            <mat-stepper [linear]="true" #stepper>
-              <!-- Paso 1: Plan de desarrollo -->
-              <mat-step>
-                <ng-template matStepLabel>Seleccionar Plan de Desarrollo</ng-template>
-                <div class="grid-container">
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+</div>
+
+<div class="container-fluid">
+  <div class="card">
+    <header>
+      <h1>Plan Operativo Anual de Actividades POA</h1>
+    </header>
+
+    <main>
+      <div *ngIf="!isLoading">
+        <form [formGroup]="myForm" (ngSubmit)="HandleSubmit()">
+          <mat-stepper [linear]="true" #stepper>
+            <!-- Paso 1: Plan de desarrollo -->
+            <mat-step>
+              <ng-template matStepLabel>Seleccionar Plan de Desarrollo</ng-template>
+              <div class="grid-container">
 
                 <div *ngIf="sinPlan">
                   <h1>No tiene plan de desarrollo vigente dentro del periodo de 4 años</h1>
                   <button mat-button type="button" (click)="ruta('main/developPlan')">Crear</button>
                 </div>
-  
+
                 <div *ngIf="!sinPlan">
                   <div *ngFor="let plan of developmentPlan">
                     <div class="grid-container">
@@ -32,7 +32,7 @@
                           <button mat-button type="button" (click)="RevisarPlan()">Revisar</button>
                         </div>
                       </div>
-  
+
                       <div *ngIf="mostrarPlan" class="grid-item">
                         <app-developmentPlanForm-component [id]="plan.idGrupoInv"></app-developmentPlanForm-component>
                       </div>
@@ -41,108 +41,130 @@
                 </div>
                 <div class="grid-item"></div>
                 <div class="grid-item">
-                    <div>
-                        <button type="button" mat-raised-button
-                            color="primary"
-                            matStepperNext
-                            matTooltip="Siguiente">Siguiente</button>
+                  <div>
+                    <button type="button" mat-raised-button color="primary" matStepperNext
+                      matTooltip="Siguiente">Siguiente</button>
 
-                    </div>
-                </div>
-            </div>
-              </mat-step>
-  
-              <!-- Paso 2: Objetivo General -->
-              <mat-step>
-                <ng-template matStepLabel>Objetivo General</ng-template>
-                <div>
-                  <mat-form-field appearance="fill">
-                    <mat-label>OBJETIVO GENERAL</mat-label>
-                    <textarea matInput class="textarea no-click"  rows="10" formControlName="objetivoGeneral" readonly  tabindex="-1"></textarea>
-                  </mat-form-field>
-  
-                  <h1>Alineación Estratégica</h1>
-                  <mat-form-field appearance="fill" *ngIf="planDesarrolloCompleto">
-                    <textarea
-                      matInput
-                      class="textarea"
-                      rows="4"
-                      maxlength="4000"
-                      [readonly]="true"
-                    >{{ planDesarrolloCompleto.objEstrategicoInst.objetivo }}</textarea>
-                  </mat-form-field>
-                </div>
-                <div class="grid-container">
-                  <div class="grid-item">
-                    <div class="button-group">
-                      <button type="button" mat-raised-button color="primary" matStepperPrevious>
-                        Regresar
-                      </button>
-                      <span class="separator">|</span>
-                      <button type="button" mat-raised-button color="primary" 
-                              [disabled]="!myForm.get('objetivoGeneral').valid" matStepperNext>
-                        Siguiente
-                      </button>
-                    </div>
                   </div>
-                  </div>
-              </mat-step>
-  
-              <!-- Paso 3: Objetivo Específico -->
-              <mat-step>
-                <ng-template matStepLabel>Objetivo Anual</ng-template>
-                
-                <div *ngIf="anualControles.length > 0">
-                  <h3>Objetivos Anuales Agregados:</h3>
-                  <div *ngFor="let control of anualControles.controls; let i = index" [formGroup]="control" class="control-card">
-                    <div class="card-header">
-                      <span>📝 Plan Operativo Anual {{ currentDate.getFullYear() }}</span>                    </div>
-                    <div class="card-body">
-                      <div class="card-row"><strong>Objetivo - Actividad Anual:</strong> {{ control.get('objetivoAnual')?.value }}</div>
-                      <div class="card-row"><strong>Producto:</strong> {{ control.get('producto')?.value }}</div>
-                      <div class="card-row"><strong>Financiamiento:</strong> {{ control.get('financiamiento')?.value }}</div>
-                      <div class="card-row"><strong>Monto:</strong> {{ control.get('monto')?.value }}</div>
-                      <div class="card-row"><strong>Presupuesto:</strong> {{ control.get('presupuesto')?.value }}</div>
-                      <div class="card-row"><strong>Fecha Inicio:</strong> {{ control.get('fechaInicio')?.value | date }}</div>
-                      <div class="card-row"><strong>Fecha Fin:</strong> {{ control.get('fechaFin')?.value | date }}</div>
-                  
-                      <div class="botones">
-                        <button type="button" mat-stroked-button color="accent" (click)="editarControl(i)">✏️ Editar</button>
-                        <button  type="button" mat-stroked-button color="warn" (click)="eliminarControl(i)">🗑️ Eliminar</button>
-                      </div>
-                    </div>
-                  </div>
-                  
-                 
-                  <hr />
                 </div>
-                <button
-                  type="button"
-                  mat-raised-button
-                  color="primary"
-                  (click)="agregarAnualControl()"
-                >
-                  Agregar Objetivo Anual
-                </button>
-                <div class="grid-container">
-                  <div class="grid-item">
-                    <div class="button-group">
-                      <button type="button" mat-raised-button color="primary" matStepperPrevious>
-                        Regresar
-                      </button>
-                      <span class="separator">|</span>
-                      <button type="submit" mat-raised-button color="primary" 
-                              [disabled]="!myForm.get('objetivoGeneral').valid">
-                        Guardar
-                      </button>
+              </div>
+            </mat-step>
+
+            <!-- Paso 2: Objetivo General -->
+            <mat-step>
+              <ng-template matStepLabel>Objetivo General</ng-template>
+              <div>
+                <mat-form-field appearance="fill">
+                  <mat-label>OBJETIVO GENERAL</mat-label>
+                  <textarea matInput class="textarea no-click" rows="10" formControlName="objetivoGeneral" readonly
+                    tabindex="-1"></textarea>
+                </mat-form-field>
+
+                <h1>Alineación Estratégica</h1>
+                <mat-form-field appearance="fill" *ngIf="planDesarrolloCompleto">
+                  <textarea matInput class="textarea" rows="4" maxlength="4000"
+                    [readonly]="true">{{ planDesarrolloCompleto.objEstrategicoInst.objetivo }}</textarea>
+                </mat-form-field>
+              </div>
+              <div class="grid-container">
+                <div class="grid-item">
+                  <div class="button-group">
+                    <button type="button" mat-raised-button color="primary" matStepperPrevious>
+                      Regresar
+                    </button>
+                    <span class="separator">|</span>
+                    <button type="button" mat-raised-button color="primary"
+                      [disabled]="!myForm.get('objetivoGeneral').valid" matStepperNext>
+                      Siguiente
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </mat-step>
+
+            <mat-step>
+              <ng-template matStepLabel>Objetivo Anual</ng-template>
+
+              <div *ngIf="anualControles.length > 0">
+                <h3>Objetivos Anuales Agregados:</h3>
+                <div *ngFor="let control of anualControles.controls; let i = index" [formGroup]="control"
+                  class="control-card">
+                  <div class="card-header">
+                    <span>📝 Plan Operativo Anual {{ currentDate.getFullYear() }}</span>
+                  </div>
+
+                  <div class="card-body">
+                    <div class="card-row"><strong>Objetivo - Actividad Anual:</strong> {{
+                      control.get('objetivoAnual')?.value }}</div>
+                    <div class="card-row"><strong>Producto:</strong> {{ control.get('producto')?.value }}</div>
+                    <div class="card-row"><strong>Financiamiento:</strong> {{ control.get('financiamiento')?.value }}
+                    </div>
+                    <div class="card-row"><strong>Monto:</strong> {{ control.get('monto')?.value }}</div>
+                    <div class="card-row"><strong>Presupuesto:</strong> {{ control.get('presupuesto')?.value }}</div>
+                    <div class="card-row"><strong>Fecha Inicio:</strong> {{ control.get('fechaInicio')?.value | date }}
+                    </div>
+                    <div class="card-row"><strong>Fecha Fin:</strong> {{ control.get('fechaFin')?.value | date }}</div>
+                    <div class="card-row">
+                      <strong>Cumplimiento: </strong>
+                      <span class="semaforo-individual">
+                        <span [ngClass]="{
+                            'semaforo-rojo': control.get('cumplimiento')?.value < 70, 
+                            'semaforo-amarillo': control.get('cumplimiento')?.value >= 70 && control.get('cumplimiento')?.value <= 90, 
+                            'semaforo-verde': control.get('cumplimiento')?.value > 90
+                          }">
+                          {{ control.get('cumplimiento')?.value }}%
+                        </span>
+                      </span>
+                    </div>
+
+
+                    <div class="botones">
+                      <button type="button" mat-stroked-button color="accent" (click)="editarControl(i)">✏️
+                        Editar</button>
+                      <button type="button" mat-stroked-button color="warn" (click)="eliminarControl(i)">🗑️
+                        Eliminar</button>
                     </div>
                   </div>
                 </div>
-              </mat-step>
-            </mat-stepper>
-          </form>
-        </div>
-      </main>
-    </div>
+
+
+                <hr />
+              </div>
+
+              <div class="cumplimiento-total" *ngIf="anualControles.length > 0">
+                <strong>Cumplimiento Total Promediado:</strong>
+                <div class="semaforo-promedio">
+                  <div [ngClass]="{
+                        'semaforo-rojo': colorSemaforoPromedio === 'rojo',
+                        'semaforo-amarillo': colorSemaforoPromedio === 'amarillo',
+                        'semaforo-verde': colorSemaforoPromedio === 'verde'
+                      }">
+                    {{ cumplimientoPromedio }}%
+                  </div>
+                </div>
+              </div>
+
+              <button type="button" mat-raised-button color="primary" (click)="agregarAnualControl()">
+                Agregar Objetivo Anual
+              </button>
+              <div class="grid-container">
+                <div class="grid-item">
+                  <div class="button-group">
+                    <button type="button" mat-raised-button color="primary" matStepperPrevious>
+                      Regresar
+                    </button>
+                    <span class="separator">|</span>
+                    <button type="submit" mat-raised-button color="primary"
+                      [disabled]="!myForm.get('objetivoGeneral').valid">
+                      Guardar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </mat-step>
+          </mat-stepper>
+        </form>
+      </div>
+    </main>
   </div>
-  
+</div>

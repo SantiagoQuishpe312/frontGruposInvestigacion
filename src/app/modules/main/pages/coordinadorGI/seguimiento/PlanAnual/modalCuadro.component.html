@@ -2,8 +2,8 @@
     <div class="container-fluid">
         <div class="back-button-container">
             <header style="display: flex;">
-                <h1>{{ isEditing ? 'Editar Objetivo Anual' :
-                    'Crear Nuevo Objetivo Anual' }}</h1>
+                <h1>{{ isEditing ? 'Editar Objetivo Anual' : 'Crear Nuevo Objetivo Anual' }} {{ currentYear }}</h1>
+
             </header>
         </div>
         <div *ngIf="isLoading" class="loading-spinner-overlay">
