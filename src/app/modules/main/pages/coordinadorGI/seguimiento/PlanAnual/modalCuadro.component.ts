@@ -37,7 +37,6 @@ export class ModalCuadroOp implements OnInit {
     groupId: number;
     token: string;
     showVerificationFields: boolean = false;
-
     constructor(
         private fb: FormBuilder,
         private authService: AuthService,
@@ -47,12 +46,9 @@ export class ModalCuadroOp implements OnInit {
         private controlPanelService: ControlPanelService,
         @Inject(MAT_DIALOG_DATA) public data: any,
     ) {
-        //this.objetivo = data.objetivoEspecifico;
-        //this.panelControl = data.panelControl;
         this.planDesarrolloCompleto = data.planDesarrollo;
     }
-colorSemaforo: string = '';
-
+    colorSemaforo: string = '';
     ngOnInit(): void {
         this.currentUser = this.authService.getUserName();
         this.obtenerObjetivosEspecificos();
@@ -85,8 +81,6 @@ colorSemaforo: string = '';
             archivo: [null, Validators.required],
 
         });
-
-
         this.myForm.get('financiamiento').valueChanges.subscribe(value => {
             const controlsToToggle = [
                 'montoCertificado',
@@ -96,7 +90,6 @@ colorSemaforo: string = '';
                 'fechaSeguimiento',
                 'montoDisponible'
             ];
-
             controlsToToggle.forEach(controlName => {
                 const control = this.myForm.get(controlName);
                 if (value) {
@@ -107,12 +100,10 @@ colorSemaforo: string = '';
                 }
             });
         });
-this.myForm.get('producto')?.valueChanges.subscribe(() => this.calcularCumplimiento());
-  this.myForm.get('objetivoAnual')?.valueChanges.subscribe(() => this.calcularCumplimiento());
-  
+        this.myForm.get('producto')?.valueChanges.subscribe(() => this.calcularCumplimiento());
+        this.myForm.get('objetivoAnual')?.valueChanges.subscribe(() => this.calcularCumplimiento());
     }
     objetivosEspecificos: any[] = [];
-
     obtenerObjetivosEspecificos(): void {
         this.objetivosEspecificos = this.planDesarrolloCompleto.panelControl.map(panel => ({
             panelControl: panel,
@@ -121,31 +112,20 @@ this.myForm.get('producto')?.valueChanges.subscribe(() => this.calcularCumplimie
         console.log(this.objetivosEspecificos)
     }
     actividades: ControlPanelForm[] = [];
-    // getData(id: number) {
-    //     this.objStrategiesODSService.getCompleteByObj(id).subscribe(objData => {
-    //         this.estrategias = objData.strategies;
-    //         this.ods = objData.ods;
-    //     });
-    //     this.controlPanelService.getBySpecificObjetive(id).subscribe(control => {
-    //         this.actividades = control;
-    //     })
-
-    // }
-
     getData(id: number) {
         this.isLoading = true;
         this.objStrategiesODSService.getCompleteByObj(id).subscribe({
             next: (objData) => {
                 this.estrategias = objData.strategies;
-                this.ods = objData.ods;                
+                this.ods = objData.ods;
                 if (this.estrategias.length === 1) {
                     this.myForm.get('idEstrategia').setValue(this.estrategias[0].idEstrategia);
                 }
-                
+
                 if (this.ods.length === 1) {
                     this.myForm.get('idOds').setValue(this.ods[0].id);
                 }
-                
+
                 this.isLoading = false;
             },
             error: (err) => {
@@ -153,7 +133,7 @@ this.myForm.get('producto')?.valueChanges.subscribe(() => this.calcularCumplimie
                 this.isLoading = false;
             }
         });
-        
+
         this.controlPanelService.getBySpecificObjetive(id).subscribe({
             next: (control) => {
                 this.actividades = control;
@@ -176,7 +156,7 @@ this.myForm.get('producto')?.valueChanges.subscribe(() => this.calcularCumplimie
             .map(o => '• ' + o.ods)
             .join('\n');
     }
-
+    seleccionado: any;
 
     onSelectionChange(event: any) {
         const seleccionado = this.myForm.get('idObjetivoEspecifico')?.value;
@@ -186,45 +166,46 @@ this.myForm.get('producto')?.valueChanges.subscribe(() => this.calcularCumplimie
     }
     onSelectionChange2(event: any) {
         const seleccionado = this.myForm.get('actividad')?.value;
-        this.myForm.get('idPanelControl')?.setValue(this.myForm.get('actividad')?.value);
+        this.myForm.get('idPanelControl')?.setValue(this.myForm.get('actividad')?.value.idPanelControl);
         this.getPanel(seleccionado);
+        this.seleccionado = seleccionado;
     }
+
     panelFiltrado: ControlPanelForm;
-getPanel(id:number){
-    this.controlPanelService.getById(id).subscribe(panel => {
-        this.panelFiltrado = panel;
+    getPanel(id: number) {
+        this.controlPanelService.getById(id).subscribe(panel => {
+            this.panelFiltrado = panel;
             this.getUser(panel.idResponsable);
-
-    })
-}
-calcularCumplimiento() {
-  const planificado = Number(this.myForm.get('objetivoAnual')?.value);
-  const real = Number(this.myForm.get('producto')?.value);
-
-  if (planificado > 0 && real >= 0) {
-    const cumplimiento = (real / planificado) * 100;
-    const cumplimientoRedondeado = Number(cumplimiento.toFixed(2));
-    this.myForm.get('cumplimiento')?.setValue(cumplimientoRedondeado);
-
-    // Semaforización
-    if (cumplimientoRedondeado < 70) {
-      this.colorSemaforo = 'rojo';
-    } else if (cumplimientoRedondeado >= 70 && cumplimientoRedondeado <= 90) {
-      this.colorSemaforo = 'amarillo';
-    } else {
-      this.colorSemaforo = 'verde';
+        })
     }
-  } else {
-    this.myForm.get('cumplimiento')?.setValue(0);
-    this.colorSemaforo = '';
-  }}
-getUser(id:number){
-    this.usuarioService.getById(id).subscribe(user => {
-        this.encargadoNombre = user.nombre ;
-    })
-}
+    calcularCumplimiento() {
+        const planificado = Number(this.myForm.get('objetivoAnual')?.value);
+        const real = Number(this.myForm.get('producto')?.value);
+        if (planificado > 0 && real >= 0) {
+            const cumplimiento = (real / planificado) * 100;
+            const cumplimientoRedondeado = Number(cumplimiento.toFixed(2));
+            this.myForm.get('cumplimiento')?.setValue(cumplimientoRedondeado);
+            // Semaforización
+            if (cumplimientoRedondeado < 70) {
+                this.colorSemaforo = 'rojo';
+            } else if (cumplimientoRedondeado >= 70 && cumplimientoRedondeado <= 90) {
+                this.colorSemaforo = 'amarillo';
+            } else {
+                this.colorSemaforo = 'verde';
+            }
+        } else {
+            this.myForm.get('cumplimiento')?.setValue(0);
+            this.colorSemaforo = '';
+        }
+    }
+    getUser(id: number) {
+        this.usuarioService.getById(id).subscribe(user => {
+            this.encargadoNombre = user.nombre;
+        })
+    }
 
     saveAnualControl(): void {
+        this.myForm.get('actividad')?.setValue(this.seleccionado.actividad);
         if (this.myForm.valid) {
             const formData = this.myForm.value;
             if (this.selectedFile) {
@@ -232,8 +213,6 @@ getUser(id:number){
             }
             this.dialogRef.close(formData); // Devuelve los valores del formulario al componente padre
         } else {
-            console.log("Formulario no válido")
-            console.log(this.myForm.value)
         }
     }
 
@@ -317,11 +296,7 @@ getUser(id:number){
     }
     getFileIcon(fileType: string | undefined): string {
         if (!fileType) return ''; // Manejar el caso en que el tipo de archivo no esté definido
-
-        // Convertir el tipo de archivo a minúsculas para manejar casos insensibles a mayúsculas y minúsculas
         const lowerCaseFileType = fileType.toLowerCase();
-
-        // Mapear extensiones de archivo comunes a sus respectivos iconos
         const fileIcons: { [key: string]: string } = {
             'pdf': 'far fa-file-pdf', // Ejemplo de clase de estilo para un archivo PDF usando FontAwesome
             'doc': 'far fa-file-word', // Ejemplo de clase de estilo para un archivo de Word
@@ -329,10 +304,7 @@ getUser(id:number){
             'txt': 'far fa-file-alt', // Ejemplo de clase de estilo para un archivo de texto
             'default': 'far fa-file' // Icono predeterminado para otros tipos de archivo
         };
-
-        // Obtener el icono del archivo según su extensión
         const iconClass = fileIcons[lowerCaseFileType] || fileIcons['default'];
-
         return iconClass; // Retornar la clase de estilo del icono
     }
 }

@@ -5,7 +5,7 @@
 <div class="container-fluid">
   <div class="card">
     <header>
-      <h1>Plan Operativo Anual de Actividades POA</h1>
+      <h1>Plan Operativo Anual de Actividades POA para el año {{ currentDate.getFullYear() }}</h1>
     </header>
 
     <main>
@@ -90,7 +90,8 @@
                 <div *ngFor="let control of anualControles.controls; let i = index" [formGroup]="control"
                   class="control-card">
                   <div class="card-header">
-                    <span>📝 Plan Operativo Anual {{ currentDate.getFullYear() }}</span>
+                    <span>{{
+                      control.get('objetivoAnual')?.value }} - {{ control.get('producto')?.value }}</span>
                   </div>
 
                   <div class="card-body">
