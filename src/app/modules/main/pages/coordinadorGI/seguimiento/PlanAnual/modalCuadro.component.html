@@ -55,25 +55,26 @@
                             readonly>
                     </mat-form-field>
 
-                    <mat-form-field appearance="outline" class="full-width">
+                    <mat-form-field appearance="outline" class="full-width" *ngIf="panelFiltrado">
                         <mat-label>Meta Anual Planificada Ingrese un valor
                             Numerico porcentaje o número de
                             productos</mat-label>
                         <input matInput type="text"
                             formControlName="objetivoAnual" required
-                            type="number">
+                            type="number"
+                            [value]="panelFiltrado.meta1">
                         <mat-error
                             *ngIf="myForm.get('objetivoAnual').invalid && myForm.get('objetivoAnual').touched">
                             El campo es obligatorio.
                         </mat-error>
                     </mat-form-field>
                     <!-- Otros campos que dependen de la selección -->
-                    <mat-form-field appearance="outline" class="full-width">
+                    <mat-form-field appearance="outline" class="full-width" *ngIf="panelFiltrado">
                         <mat-label>Meta Anual Real (Producto) Ingrese un valor
                             Númerico porcentaje o número de
                             productos</mat-label>
                         <input matInput type="text" formControlName="producto"
-                            type="number" required>
+                            type="number"  required>
                         <mat-error
                             *ngIf="myForm.get('producto').invalid && myForm.get('producto').touched">
                             El campo es obligatorio.
@@ -231,7 +232,7 @@
                         </div>
                     </div>
                     <button mat-raised-button color="primary" type="submit"
-                        [disabled]="!myForm.valid">
+                        >
                         Guardar
                     </button>
                 </div>

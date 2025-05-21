@@ -60,7 +60,7 @@ export class ModalCuadroOp implements OnInit {
             idPanelControl: [null, Validators.required],
             idOds: [null, Validators.required],
             idEstrategia: [null, Validators.required],
-            objetivoAnual: ['', Validators.required],
+            objetivoAnual: [5, Validators.required],
             producto: ['', Validators.required],
             actividad: ['', Validators.required],
             financiamiento: [''],
@@ -206,7 +206,7 @@ export class ModalCuadroOp implements OnInit {
 
     saveAnualControl(): void {
         this.myForm.get('actividad')?.setValue(this.seleccionado.actividad);
-        if (this.myForm.valid) {
+        if (this.myForm) {
             const formData = this.myForm.value;
             if (this.selectedFile) {
                 formData.selectedFile = this.selectedFile;
