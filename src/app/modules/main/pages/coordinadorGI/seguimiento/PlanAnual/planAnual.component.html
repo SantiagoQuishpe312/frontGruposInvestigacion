@@ -133,7 +133,7 @@
               </div>
 
               <div class="cumplimiento-total" *ngIf="anualControles.length > 0">
-                <strong>Cumplimiento Total Promediado:</strong>
+                <strong>Cumplimiento Total:</strong>
                 <div class="semaforo-promedio">
                   <div [ngClass]="{
                         'semaforo-rojo': colorSemaforoPromedio === 'rojo',
@@ -146,7 +146,7 @@
               </div>
 
               <button type="button" mat-raised-button color="primary" (click)="agregarAnualControl()">
-                Agregar Objetivo Anual
+                Seleccionar Objetivo Anual
               </button>
               <div class="grid-container">
                 <div class="grid-item">

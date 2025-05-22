@@ -129,7 +129,7 @@ export class AnnualPlanComponent implements OnInit {
   agregarAnualControl(): void {
     //const seleccionado = this.myForm.get('idObjetivoEspecifico')?.value;
     const dialogRef = this.dialog.open(ModalCuadroOp, {
-      width: '600px',
+      width: '1200px',
       data: {
         planDesarrollo: this.planDesarrolloCompleto,
         //panelControl: seleccionado.panelControl,
@@ -336,7 +336,7 @@ export class AnnualPlanComponent implements OnInit {
   editarControl(index: number): void {
     const control = this.anualControles.at(index);
     const dialogRef = this.dialog.open(ModalCuadroOp, {
-      width: '600px',
+      width: '1200px',
       //data: control.value
       data: {
         panelControl: control.value.panelControl,

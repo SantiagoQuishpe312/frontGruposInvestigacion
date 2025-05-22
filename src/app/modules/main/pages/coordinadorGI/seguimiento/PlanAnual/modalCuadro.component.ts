@@ -18,7 +18,7 @@ import { ControlPanelService } from "src/app/core/http/control-panel/control-pan
 @Component({
     selector: 'app-modalCuadroOp',
     templateUrl: './modalCuadro.component.html',
-    styleUrls: ['../../../../styles/modales.scss']
+    styleUrls: ['./modalCuadroStyle.scss']
 })
 export class ModalCuadroOp implements OnInit {
     currentUser: string;
@@ -61,11 +61,11 @@ export class ModalCuadroOp implements OnInit {
             idOds: [null, Validators.required],
             idEstrategia: [null, Validators.required],
             objetivoAnual: [5, Validators.required],
-            producto: ['', Validators.required],
+            producto: ['', [Validators.required, this.validateMetaReal.bind(this)]],
             actividad: ['', Validators.required],
             financiamiento: [''],
-            monto: [null, [Validators.required]],
-            presupuesto: ['', Validators.required],
+            monto: [''],
+            presupuesto: [''],
             fechaInicio: [null, Validators.required],
             fechaFin: [null, Validators.required],
             mediosVerificacion: [''],
@@ -102,6 +102,15 @@ export class ModalCuadroOp implements OnInit {
         });
         this.myForm.get('producto')?.valueChanges.subscribe(() => this.calcularCumplimiento());
         this.myForm.get('objetivoAnual')?.valueChanges.subscribe(() => this.calcularCumplimiento());
+        // this.myForm.get('producto')?.valueChanges.subscribe(() => {
+        //     this.calcularCumplimiento();
+        //     this.myForm.get('producto')?.updateValueAndValidity({ emitEvent: false });
+        // });
+        
+        // this.myForm.get('objetivoAnual')?.valueChanges.subscribe(() => {
+        //     this.calcularCumplimiento();
+        //     this.myForm.get('producto')?.updateValueAndValidity({ emitEvent: false });
+        // });
     }
     objetivosEspecificos: any[] = [];
     obtenerObjetivosEspecificos(): void {
@@ -178,10 +187,33 @@ export class ModalCuadroOp implements OnInit {
             this.getUser(panel.idResponsable);
         })
     }
+
+    validateMetaReal(control: any) {
+        if (!control.value || !this.myForm) {
+            return null;
+        }
+        
+        const metaReal = Number(control.value);
+        const metaPlanificada = Number(this.myForm.get('objetivoAnual')?.value);
+        
+        if (metaPlanificada > 0 && metaReal > metaPlanificada) {
+            return { metaRealExcedida: true };
+        }
+        
+        return null;
+    }
+    
+
+
     calcularCumplimiento() {
         const planificado = Number(this.myForm.get('objetivoAnual')?.value);
         const real = Number(this.myForm.get('producto')?.value);
         if (planificado > 0 && real >= 0) {
+            if (real > planificado) {
+                // Opcional: mostrar alerta o mensaje
+                console.warn('La meta real no puede ser mayor a la meta planificada');
+                // El validator ya manejará el error en el formulario
+            }
             const cumplimiento = (real / planificado) * 100;
             const cumplimientoRedondeado = Number(cumplimiento.toFixed(2));
             this.myForm.get('cumplimiento')?.setValue(cumplimientoRedondeado);
@@ -198,6 +230,9 @@ export class ModalCuadroOp implements OnInit {
             this.colorSemaforo = '';
         }
     }
+    
+
+
     getUser(id: number) {
         this.usuarioService.getById(id).subscribe(user => {
             this.encargadoNombre = user.nombre;
