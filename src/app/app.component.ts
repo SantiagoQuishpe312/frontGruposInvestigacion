@@ -224,8 +224,13 @@ export class AppComponent implements OnInit {
                   route: 'main/desvinculacion',
                   icon: 'mat:group_remove'
                 },
-                
-                
+                {
+                  type: 'link',
+                  label: 'Vista Plan Anual',
+                  route: 'main/vista-plan-anual',
+                  icon: 'mat:group_remove'
+                },
+
               );
             } 
             else if (r.idRol === 2) {

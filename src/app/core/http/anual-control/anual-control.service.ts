@@ -17,13 +17,13 @@ export class AnualControlService {
     }
 
     getByIdPlan(id: number): Observable<AnualControl[]> {
-        return this.http.get<AnualControl[]>(`${this.URL}/AnualPlan/${id}`);
+        return this.http.get<AnualControl[]>(`${this.URL}/AnnualPlan/${id}`);
     }
     getByIdPanel(id: number): Observable<AnualControl[]> {
         return this.http.get<AnualControl[]>(`${this.URL}/ControlPanel/${id}`);
     }
-    getSpecificByIds(idPlanAnual: number, idPanelControl: number): Observable<AnualControl> {
-        return this.http.get<AnualControl>(`${this.URL}/ap/${idPlanAnual}/pc/${idPanelControl}`);
+    getSpecificByIds(idPlan: number, idPanel: number): Observable<AnualControl> {
+        return this.http.get<AnualControl>(`${this.URL}/ap/${idPlan}/pc/${idPanel}`);
     }
 
 

@@ -60,7 +60,7 @@ export class ModalCuadroOp implements OnInit {
             idPanelControl: [null, Validators.required],
             idOds: [null, Validators.required],
             idEstrategia: [null, Validators.required],
-            objetivoAnual: [5, Validators.required],
+            objetivoAnual: [null, Validators.required],
             producto: ['', [Validators.required, this.validateMetaReal.bind(this)]],
             actividad: ['', Validators.required],
             financiamiento: [''],
@@ -184,52 +184,66 @@ export class ModalCuadroOp implements OnInit {
     getPanel(id: number) {
         this.controlPanelService.getById(id).subscribe(panel => {
             this.panelFiltrado = panel;
+            this.myForm.get('objetivoAnual')?.setValue(panel.meta1);
             this.getUser(panel.idResponsable);
         })
     }
 
-    validateMetaReal(control: any) {
-        if (!control.value || !this.myForm) {
-            return null;
+// Actualiza el método calcularCumplimiento para que no calcule si el producto es mayor:
+
+calcularCumplimiento() {
+    if (!this.panelFiltrado) {
+        return;
+    }
+    
+    const planificado = Number(this.panelFiltrado.meta1); // Usar meta1 de la tabla
+    const real = Number(this.myForm.get('producto')?.value);
+    
+    // Establecer el valor planificado en el campo objetivoAnual
+    this.myForm.get('objetivoAnual')?.setValue(planificado, { emitEvent: false });
+    
+    if (planificado > 0 && real >= 0) {
+        // Si el producto es mayor al planificado, no calcular cumplimiento
+        if (real > planificado) {
+            this.myForm.get('cumplimiento')?.setValue(null);
+            this.colorSemaforo = '';
+            console.warn('No se puede calcular cumplimiento: la meta real es mayor a la meta planificada');
+            return;
         }
         
-        const metaReal = Number(control.value);
-        const metaPlanificada = Number(this.myForm.get('objetivoAnual')?.value);
+        const cumplimiento = (real / planificado) * 100;
+        const cumplimientoRedondeado = Number(cumplimiento.toFixed(2));
+        this.myForm.get('cumplimiento')?.setValue(cumplimientoRedondeado);
         
-        if (metaPlanificada > 0 && metaReal > metaPlanificada) {
-            return { metaRealExcedida: true };
+        // Semaforización
+        if (cumplimientoRedondeado < 70) {
+            this.colorSemaforo = 'rojo';
+        } else if (cumplimientoRedondeado >= 70 && cumplimientoRedondeado <= 90) {
+            this.colorSemaforo = 'amarillo';
+        } else {
+            this.colorSemaforo = 'verde';
         }
-        
+    } else {
+        this.myForm.get('cumplimiento')?.setValue(0);
+        this.colorSemaforo = '';
+    }
+}
+
+// Actualiza también el validateMetaReal para que siga mostrando el error:
+validateMetaReal(control: any) {
+    if (!control.value || !this.myForm || !this.panelFiltrado) {
         return null;
     }
     
-
-
-    calcularCumplimiento() {
-        const planificado = Number(this.myForm.get('objetivoAnual')?.value);
-        const real = Number(this.myForm.get('producto')?.value);
-        if (planificado > 0 && real >= 0) {
-            if (real > planificado) {
-                // Opcional: mostrar alerta o mensaje
-                console.warn('La meta real no puede ser mayor a la meta planificada');
-                // El validator ya manejará el error en el formulario
-            }
-            const cumplimiento = (real / planificado) * 100;
-            const cumplimientoRedondeado = Number(cumplimiento.toFixed(2));
-            this.myForm.get('cumplimiento')?.setValue(cumplimientoRedondeado);
-            // Semaforización
-            if (cumplimientoRedondeado < 70) {
-                this.colorSemaforo = 'rojo';
-            } else if (cumplimientoRedondeado >= 70 && cumplimientoRedondeado <= 90) {
-                this.colorSemaforo = 'amarillo';
-            } else {
-                this.colorSemaforo = 'verde';
-            }
-        } else {
-            this.myForm.get('cumplimiento')?.setValue(0);
-            this.colorSemaforo = '';
-        }
+    const metaReal = Number(control.value);
+    const metaPlanificada = Number(this.panelFiltrado.meta1); // Usar meta1 de la tabla
+    
+    if (metaPlanificada > 0 && metaReal > metaPlanificada) {
+        return { metaRealExcedida: true };
     }
+    
+    return null;
+}
     
 
 

@@ -52,13 +52,20 @@
                             <input matInput type="text" [value]="panelFiltrado.indicadorNombre" readonly>
                         </mat-form-field>
 
-                        <mat-form-field appearance="outline" class="full-width autofilled-field" *ngIf="panelFiltrado">
+                        <!-- <mat-form-field appearance="outline" class="full-width autofilled-field" *ngIf="panelFiltrado">
                             <mat-label>Meta Anual Planificada Ingrese un valor Numerico porcentaje o número de
                                 productos</mat-label>
                             <input matInput type="text" formControlName="objetivoAnual" required type="number"
                                 [value]="panelFiltrado.meta1">
                             <mat-error
                                 *ngIf="myForm.get('objetivoAnual').invalid && myForm.get('objetivoAnual').touched">
+                                El campo es obligatorio.
+                            </mat-error>
+                        </mat-form-field> -->
+                        <mat-form-field appearance="outline" class="full-width autofilled-field" *ngIf="panelFiltrado">
+                            <mat-label>Meta Anual Planificada Ingrese un valor Numerico porcentaje o número de productos</mat-label>
+                            <input matInput type="number" formControlName="objetivoAnual" required readonly>
+                            <mat-error *ngIf="myForm.get('objetivoAnual').invalid && myForm.get('objetivoAnual').touched">
                                 El campo es obligatorio.
                             </mat-error>
                         </mat-form-field>
@@ -207,9 +214,15 @@
                     </mat-form-field> -->
 
 
-                        <div [ngClass]="colorSemaforo" class="cumplimiento-box">
+                    <div [ngClass]="colorSemaforo" class="cumplimiento-box">
+                        <span *ngIf="myForm.get('cumplimiento')?.value !== null; else noCumplimiento">
                             Cumplimiento: {{ myForm.get('cumplimiento')?.value }}%
-                        </div>
+                        </span>
+                        <ng-template #noCumplimiento>
+                            <span style="color: #ff5722;">Producto mayor a meta planificada</span>
+                        </ng-template>
+                    </div>
+                    
 
                     </div>
 
@@ -232,7 +245,7 @@
 
 
                     <div class="button-group">
-                        <button mat-raised-button color="primary" type="submit">
+                        <button mat-raised-button color="primary" type="submit" [disabled]="!myForm.valid">
                             Guardar
                         </button>
                     </div>
