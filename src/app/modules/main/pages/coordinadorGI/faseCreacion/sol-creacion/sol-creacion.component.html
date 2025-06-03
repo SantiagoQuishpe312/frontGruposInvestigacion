@@ -74,6 +74,7 @@
                                         <button type="button" mat-raised-button
                                             color="primary"
                                             [disabled]="!myForm.get('grupoInv1').valid"
+                                            (click)="savePartialGroup()"
                                             matStepperNext
                                             matTooltip="Siguiente">Siguiente</button>
 

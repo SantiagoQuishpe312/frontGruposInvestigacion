@@ -935,4 +935,52 @@ export class SolCreacionComponent implements OnInit {
     this.router.navigateByUrl(`main/${url}`);
 
   }
+
+  savePartialGroup(){
+    const grupoInvData: InvGroupForm = {
+        idGrupoInv: null,
+        idCoordinador: this.currentUserId,
+        nombreGrupoInv: this.myForm.value.grupoInv1.nombreGrupoInv,
+        estadoGrupoInv: "pendiente",
+        acronimoGrupoinv: this.myForm.value.grupoInv1.acronimoGrupoinv,
+        departamento: this.userCoordinador.departamento,
+        proceso: "1a",
+        sede: this.userCoordinador.sede,
+        usuarioCreacion: this.currentUser,
+        fechaCreacion: this.currentDate,
+        usuarioModificacion: null,
+        fechaModificacion: null
+      }
+      this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
+        (response) => {
+          this.reqFormResponse = response;
+          const idGrupoCreado = this.reqFormResponse;
+          sessionStorage.setItem('invGroup', idGrupoCreado.toString());
+          const reqFormData: CreationReqForm = {
+            idPeticionCreacion: null,
+            idGrupoInv: idGrupoCreado,
+            alineacionEstrategica: null,
+            estado: "p",
+            usuarioCreacionPeticion: this.currentUser,
+            fechaCreacionPeticion: this.currentDate,
+            usuarioModificacionPeticion: null,
+            fechaModificacionPeticion: null,
+          };
+          this.creationReqService.createCreationRequestForm(reqFormData).subscribe(
+            (reqFormResponse) => {
+              localStorage.setItem('invGroup', idGrupoCreado);
+            },
+            (reqFormError) => {
+            }
+          );
+        },
+        (error) => {
+          this.savedMessage = 'Error al guardar el formulario';
+          this.loadingData = false;
+
+        }
+      );
+    } 
+
+
 }

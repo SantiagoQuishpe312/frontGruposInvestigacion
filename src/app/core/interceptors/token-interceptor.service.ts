@@ -1,31 +1,70 @@
 import {
-  HttpEvent,// Clases relacionadas con las solicitudes y respuestas HTTP.
+  HttpEvent,
   HttpHandler,
-  HttpInterceptor,//Interfaz de Angular para interceptar las solicitudes HTTP.
+  HttpInterceptor,
   HttpRequest,
+  HttpErrorResponse,
 } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, from, throwError } from "rxjs";
 import { OAuthService } from "angular-oauth2-oidc";
+import { catchError, switchMap } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root",
 })
 export class TokenInterceptorService implements HttpInterceptor {
-  constructor(private authService: OAuthService) {}// Constructor que recibe una instancia de OAuthService a través de la inyección de dependencias.
+  constructor(private authService: OAuthService) {}
+
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
-  ): Observable<HttpEvent<any>> {//Método requerido por la interfaz HttpInterceptor que se ejecuta cada vez que se realiza una solicitud HTTP.
-    let token = this.authService.getAccessToken();//Obtiene el token de acceso del servicio de autenticación OAuth.
-    if (req.headers.get("skip")) return next.handle(req);// Verifica si la solicitud tiene un encabezado "skip". Si es así, la solicitud se maneja sin modificarla.
-    if (token != "") {//Verifica si hay un token de acceso disponible.
-      const authReq = req.clone({//Clona la solicitud original y agrega el token de acceso al encabezado de autorización.
+  ): Observable<HttpEvent<any>> {
+    // Si la solicitud tiene encabezado "skip" no agregamos token ni refrescamos
+    if (req.headers.get("skip")) return next.handle(req);
+
+    // Verificamos si el token es válido (no expirado)
+    if (this.authService.hasValidAccessToken()) {
+      // Token válido, agregarlo a la solicitud
+      const token = this.authService.getAccessToken();
+      const authReq = req.clone({
         headers: req.headers.set("Authorization", "Bearer " + token),
       });
-      return next.handle(authReq);// Continúa con la solicitud modificada.
+      // Manejamos la solicitud con el token y capturamos errores
+      return next.handle(authReq).pipe(
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 401) {
+            // Si recibimos 401 (token expirado o inválido), intentamos refrescar token
+            return this.handleRefreshToken(req, next);
+          }
+          return throwError(() => error);
+        })
+      );
+    } else {
+      // Token expirado o no válido, intentamos refrescar antes de hacer la solicitud
+      return this.handleRefreshToken(req, next);
     }
-    return next.handle(req);//Si no hay token de acceso, continúa con la solicitud original.
+  }
+
+  private handleRefreshToken(
+    req: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
+    // Refrescamos el token (devuelve Promise), convertimos a Observable con from()
+    return from(this.authService.refreshToken()).pipe(
+      switchMap(() => {
+        // Después de refrescar, obtenemos el nuevo token y reintentamos la solicitud original
+        const token = this.authService.getAccessToken();
+        const authReq = req.clone({
+          headers: req.headers.set("Authorization", "Bearer " + token),
+        });
+        return next.handle(authReq);
+      }),
+      catchError((err) => {
+        // Si refrescar token falla, cerramos sesión (o redirigir a login)
+        this.authService.logOut();
+        return throwError(() => err);
+      })
+    );
   }
 }
-/*Este interceptor se utiliza para agregar el token de acceso a las solicitudes HTTP salientes, lo que es común en escenarios de autenticación OAuth. La verificación del encabezado "skip" permite excluir ciertas solicitudes de este procesamiento.*/
