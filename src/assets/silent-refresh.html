@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Silent Refresh</title>
+</head>
+<body>
+    <script>
+        // Procesar el token recibido y enviarlo de vuelta a la ventana padre
+        if (window.location.hash) {
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            
+            if (params.get('access_token')) {
+                // Si hay un token, notificar a la ventana padre
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'token-refresh-success',
+                        token: params.get('access_token'),
+                        expires_in: params.get('expires_in')
+                    }, window.location.origin);
+                }
+            } else if (params.get('error')) {
+                // Si hay un error, notificar a la ventana padre
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'token-refresh-error',
+                        error: params.get('error'),
+                        error_description: params.get('error_description')
+                    }, window.location.origin);
+                }
+            }
+        }
+        
+        // Cerrar la ventana/iframe después de un breve delay
+        setTimeout(() => {
+            if (window.parent && window.parent !== window) {
+                // Es un iframe, no cerrar
+            } else {
+                // Es una ventana popup, cerrar
+                window.close();
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
