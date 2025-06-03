@@ -33,12 +33,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { NgxChartsModule } from '@swimlane/ngx-charts'
 import { MatDialogModule } from '@angular/material/dialog';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { TokenExpirationDialogComponent } from './core/interceptors/token-expiration-dialog.component';
 // import { DegreeComponent } from './modules/main/pages/degree/degree.component';
 
 registerLocaleData(localeES, GlobalConstant.LOCAL_CODE);
 
 @NgModule({
-  declarations: [AppComponent ],
+  declarations: [AppComponent, TokenExpirationDialogComponent ],
   imports: [
     BrowserModule,
     FormsModule,
