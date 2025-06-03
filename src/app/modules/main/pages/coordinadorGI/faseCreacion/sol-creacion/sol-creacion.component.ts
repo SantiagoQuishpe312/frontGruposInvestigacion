@@ -155,17 +155,23 @@ export class SolCreacionComponent implements OnInit {
     if (invGroup) {
       this.invGroupExists = true;
       this.loadGroup(invGroup);
+      this.loadCoordinador();
+
     } else {
       this.invGroupExists = false;
-      this.cargarFormularios(invGroup);
+      this.cargarFormularios(this.grupo);
       this.loadCoordinador();
     }
   }
   loadGroup(id: number) {
     this.apiInvGroupService.getById(id).subscribe((data) => {
       this.grupo = data;
+      
       this.loadingData = false;
+      this.cargarFormularios(data);
+
     },)
+
   }
   loadCoordinador() {
     this.usuarioService.getByUserName(this.currentUser).subscribe((data: Usuario) => {
@@ -175,7 +181,7 @@ export class SolCreacionComponent implements OnInit {
     });
   }
 
-  cargarFormularios(invGroup) {
+  cargarFormularios(invGroup: InvGroupForm) {
     this.loadDominios();
     this.loadAreas();
     this.dominiosControl.patchValue(this.dominios);
@@ -184,8 +190,8 @@ export class SolCreacionComponent implements OnInit {
     this.myForm = this.builder.group({
       grupoInv1: this.builder.group({
         idUser: sessionStorage.getItem('idUser'),
-        nombreGrupoInv: ['', Validators.required],
-        acronimoGrupoinv: ['', Validators.required],
+        nombreGrupoInv: [invGroup.nombreGrupoInv||  '', Validators.required],
+        acronimoGrupoinv: [invGroup.acronimoGrupoinv||  '', Validators.required],
       }),
       grupoInv2: this.builder.group({
         dominios: this.dominiosControl,
@@ -951,7 +957,8 @@ export class SolCreacionComponent implements OnInit {
         usuarioModificacion: null,
         fechaModificacion: null
       }
-      this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
+    if(!sessionStorage.getItem('invGroup')){
+this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
         (response) => {
           this.reqFormResponse = response;
           const idGrupoCreado = this.reqFormResponse;
@@ -980,7 +987,15 @@ export class SolCreacionComponent implements OnInit {
 
         }
       );
-    } 
+
+    }
+    else{
+      this.apiInvGroupService.update(Number(sessionStorage.getItem('groupId')), grupoInvData).subscribe(
+        (response) => {});
+
+    }
+    
+          } 
 
 
 }

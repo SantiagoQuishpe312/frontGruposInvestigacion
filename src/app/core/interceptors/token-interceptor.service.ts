@@ -1,4 +1,4 @@
- import {
+import {
    HttpEvent,// Clases relacionadas con las solicitudes y respuestas HTTP.
    HttpHandler,
    HttpInterceptor,//Interfaz de Angular para interceptar las solicitudes HTTP.
@@ -24,9 +24,8 @@
       const cloned = req.clone({
         setHeaders: { Authorization: `Bearer ${token}` }
       });
-      return next.handle(authReq);// Continúa con la solicitud modificada.
+      return next.handle(cloned);
     }
-    return next.handle(req);//Si no hay token de acceso, continúa con la solicitud original.
+    return next.handle(req);
   }
 }
-/*Este interceptor se utiliza para agregar el token de acceso a las solicitudes HTTP salientes, lo que es común en escenarios de autenticación OAuth. La verificación del encabezado "skip" permite excluir ciertas solicitudes de este procesamiento.*/

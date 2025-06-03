@@ -7,29 +7,15 @@
         <div class="card" *ngIf="!loadingData">
 
             <!-- Aparece Unicamente cuando se debe cargar el formulario de creación de grupo de investigación -->
-            <header *ngIf="!invGroupExists">
+            <header >
                 <h1>Formulario de Solicitud de Creación de Grupo de
                     Investigación</h1>
             </header>
-            <header *ngIf="invGroupExists">
-                <h1>!Formulario no Disponible! </h1>
-            </header>
+            
         </div>
-        <div *ngIf="!loadingData">
-            <div class="container-fluid" *ngIf="invGroupExists">
-
-                El grupo de investigación
-                <b> {{grupo.nombreGrupoInv}}</b>
-                ya ha sido creado
-                o se encuentra en un proceso de creación
-                Por favor Revisa el tablero principal de Información <br>
-                <div class="grid-item">
-                    <div>
-                        <button type="button" (click)="enlace('dashboard')"
-                            color="primary" mat-raised-button>Regresar</button>
-                    </div></div></div></div>
+ 
         <!-- FASE DE CREACIÓN DEL GRUPO DE INVESTIGACIÓN (FORMULARIO CUANDO SE ENVÍA LA SOLICITUD POR PRIMERA VEZ) -->
-        <div class="container-fluid" *ngIf="!invGroupExists">
+        <div class="container-fluid">
             <form [formGroup]="myForm" (ngSubmit)="HandleSubmit()">
                 <mat-stepper [linear]="isLinear" #stepper>
 
