@@ -47,7 +47,8 @@ export class SolCreacionComponent implements OnInit {
   areasControl = new FormControl();
   lineasControl = new FormControl();
   isLinear = true;
-  myForm: FormGroup;
+  //myForm: FormGroup;
+  myForm: FormGroup = new FormGroup({});
   reqFormResponse: any;
   usuarios: any[] = [];
   dominios: any[];
@@ -81,6 +82,8 @@ export class SolCreacionComponent implements OnInit {
   isImageFile: boolean = false;
   imageNameOriginal: string = '';
   savedMessage: string;
+  cvUploadedMap: { [userId: number]: boolean } = {};//VALOR QUEMADO CV
+
 
 
   constructor(
@@ -106,6 +109,7 @@ export class SolCreacionComponent implements OnInit {
     this.usuarios = [];
   }
   ngOnInit(): void {
+
     this.currentUser = this.authService.getUserName();
     this.currentDate = new Date();
     this.currentUserId = Number(sessionStorage.getItem("userId"));
@@ -117,11 +121,13 @@ export class SolCreacionComponent implements OnInit {
     this.dominiosControl.valueChanges.subscribe((selectedDominios: any[]) => {
       this.updateAreasByDominios(selectedDominios);
     })
+
+
   }
 
   updateAreasByDominios(selectedDominios: any[]) {
     this.areas = []; // Limpia las areas actuales
-    if (selectedDominios.length > 0) {
+    if (selectedDominios && selectedDominios.length > 0) {
       selectedDominios.forEach((idDomimioAcademico) => {
         this.areaService.getAreasByDominio(idDomimioAcademico).subscribe((areasDominio: any[]) => {
           this.areas = [
@@ -152,16 +158,18 @@ export class SolCreacionComponent implements OnInit {
   //Verificamos si existe un grupo de investigación o se ha empezado algun proceso respecto a la creacion del mismo
   checkInvGroupInSessionStorage() {
     const invGroup = Number(sessionStorage.getItem('invGroup'));
-    if (invGroup) {
+    if (invGroup && !isNaN(invGroup)) {
       this.invGroupExists = true;
+      this.idGrupo = invGroup; 
       this.loadGroup(invGroup);
-      this.loadCoordinador();
-
+      this.loadExistingMembers(invGroup);
     } else {
       this.invGroupExists = false;
+      this.idGrupo = null; 
+      this.grupo = {} as InvGroupForm;
       this.cargarFormularios(this.grupo);
-      this.loadCoordinador();
     }
+    this.loadCoordinador();
   }
   loadGroup(id: number) {
     this.apiInvGroupService.getById(id).subscribe((data) => {
@@ -184,6 +192,16 @@ export class SolCreacionComponent implements OnInit {
   cargarFormularios(invGroup: InvGroupForm) {
     this.loadDominios();
     this.loadAreas();
+    //nuevo//
+     if (invGroup && invGroup.idGrupoInv) {
+      this.loadSegmentationData(invGroup);
+    } else {
+      // Si es nuevo, inicializar vacío
+      this.dominiosControl.patchValue([]);
+      this.areasControl.patchValue([]);
+      this.lineasControl.patchValue([]);
+    }
+    //////
     this.dominiosControl.patchValue(this.dominios);
     this.areasControl.patchValue(this.areas);
     this.lineasControl.patchValue(this.lineas);
@@ -302,6 +320,10 @@ export class SolCreacionComponent implements OnInit {
           usuarioCreado.rol = rolSeleccionado; // Agregar el rol seleccionado al usuario
           this.selectedUsersExterns.push(usuarioCreado);
           console.log(this.usuarios);
+           // Guardar miembro externo en la BD si existe el grupo
+        if (this.idGrupo) {
+          this.saveSingleExternalMember(usuarioCreado, rolSeleccionado);
+        }
 
           this.snackBar.open(
             `Investigador agregado exitosamente como ${rolSeleccionado}`,
@@ -342,13 +364,24 @@ export class SolCreacionComponent implements OnInit {
           return;
         }
 
+        // if (data.user.tipo === 'SERVIDOR PUBLICO' || data.user.tipo === 'ESTUDIANTE') {
+        //   this.snackBar.open(`El usuario seleccionado es ${data.user.tipo}. Se agregará como Colaborador del GI`, 'Cerrar', { duration: 3000 });
+        //   this.selectedUsers.push({
+        //     user: data.user,
+        //     userId: idUsuarioSeleccionado,
+        //     rol: 'COLABORADOR'  // Almacenar el rol junto con el usuario
+        //   });
+
+        //NUEVO
         if (data.user.tipo === 'SERVIDOR PUBLICO' || data.user.tipo === 'ESTUDIANTE') {
-          this.snackBar.open(`El usuario seleccionado es ${data.user.tipo}. Se agregará como Colaborador del GI`, 'Cerrar', { duration: 3000 });
-          this.selectedUsers.push({
+          const nuevoUsuario = {
             user: data.user,
             userId: idUsuarioSeleccionado,
-            rol: 'COLABORADOR'  // Almacenar el rol junto con el usuario
-          });
+            rol: 'COLABORADOR'
+          };
+          this.selectedUsers.push(nuevoUsuario);
+          this.saveSingleInternalMember(nuevoUsuario);
+          ///FIN
           this.verificarDocumentosCargados();
           return;
         }
@@ -368,6 +401,11 @@ export class SolCreacionComponent implements OnInit {
             };
 
             this.selectedUsers.push(nuevoUsuario);
+            //NUEVO
+            if (this.idGrupo) {
+              this.saveSingleInternalMember(nuevoUsuario);
+            }
+            //
             this.snackBar.open(`Usuario agregado como ${rolSeleccionado}`, 'Cerrar', { duration: 3000 });
 
             if (rolSeleccionado === 'MIEMBRO') {
@@ -385,7 +423,6 @@ export class SolCreacionComponent implements OnInit {
 
   cambiarRol(): void {
     if (this.selectedMember) {
-      // Actualizar el rol en la lista de selectedUsers
       const index = this.selectedUsers.findIndex(user => user.userId === this.selectedMember.userId);
       if (index !== -1) {
         this.selectedUsers[index].rol = 'SECRETARIO'; // Cambiar el rol a "Miembro-Secretario"
@@ -430,6 +467,9 @@ export class SolCreacionComponent implements OnInit {
         const nuevoNombre = `hojaDeVida_${nombreUsuario}.${file.name.split('.').pop()}`;
         const archivoRenombrado = new File([file], nuevoNombre, { type: file.type });
         this.selectedFileByUser[index] = archivoRenombrado;
+        this.cvUploadedMap[userId] = true;//valor quemado
+        sessionStorage.setItem('cvUploadedMap', JSON.stringify(this.cvUploadedMap));//valor quemado
+
       } else {
         alert('Por favor, seleccione un archivo PDF.');
         input.value = '';
@@ -461,6 +501,9 @@ export class SolCreacionComponent implements OnInit {
         const nuevoNombre = `hojaDeVida_${nombreUsuario}.${file.name.split('.').pop()}`;
         const archivoRenombrado = new File([file], nuevoNombre, { type: file.type });
         this.selectedFileByUserExtern[index] = archivoRenombrado;
+        this.cvUploadedMap[userId] = true;//valor quemado
+        sessionStorage.setItem('cvUploadedMap', JSON.stringify(this.cvUploadedMap));//valor quemado
+
       } else {
         alert('Por favor, seleccione un archivo PDF.');
         input.value = '';
@@ -472,7 +515,49 @@ export class SolCreacionComponent implements OnInit {
   HandleSubmit() {
     this.cambiarRol();
     this.loadingData = true;
-    if (this.myForm.valid) {
+//NUEVO
+if (this.myForm.valid) {
+  // Si ya existe un grupo, usar ese ID, de lo contrario crear uno nuevo
+  if (this.idGrupo) {
+    // Actualizar el grupo existente con proceso "1" (completo)
+    const grupoInvData: InvGroupForm = {
+      idGrupoInv: this.idGrupo,
+      idCoordinador: this.currentUserId,
+      nombreGrupoInv: this.myForm.value.grupoInv1.nombreGrupoInv,
+      estadoGrupoInv: "pendiente",
+      acronimoGrupoinv: this.myForm.value.grupoInv1.acronimoGrupoinv,
+      departamento: this.userCoordinador.departamento,
+      proceso: "1", // Cambiar a proceso completo
+      sede: this.userCoordinador.sede,
+      usuarioCreacion: this.currentUser,
+      fechaCreacion: this.currentDate,
+      usuarioModificacion: this.currentUser,
+      fechaModificacion: this.currentDate
+    };
+
+    this.apiInvGroupService.update(this.idGrupo, grupoInvData).subscribe(
+      (response) => {
+        // Continuar con el guardado de los demás datos usando el ID existente
+        this.saveCurriculums(this.idGrupo, this.currentUser, this.currentDate);
+        this.saveAcademicDomain(this.idGrupo);
+        this.saveArea(this.idGrupo);
+        this.saveLine(this.idGrupo);
+        this.saveMember(this.idGrupo);
+
+        // Actualizar la petición de creación si existe
+        this.updateCreationRequest(this.idGrupo);
+        sessionStorage.setItem('cvUploadedMap', JSON.stringify(this.cvUploadedMap));//V Q
+
+      },
+      (error) => {
+        this.savedMessage = 'Error al actualizar el formulario';
+        this.loadingData = false;
+        console.error('Error al actualizar grupo:', error);
+      }
+    );
+  } else {
+//FIN NUEVO
+    //if (this.myForm.valid) {
       //const partes = this.userCoordinador.departamento.split(" - ");
       //const departamento = partes[1].trim();
       //const sede = partes[0].trim();
@@ -514,6 +599,8 @@ export class SolCreacionComponent implements OnInit {
           this.creationReqService.createCreationRequestForm(reqFormData).subscribe(
             (reqFormResponse) => {
               localStorage.setItem('invGroup', idGrupoCreado);
+              sessionStorage.setItem('cvUploadedMap', JSON.stringify(this.cvUploadedMap));// VQ
+
             },
             (reqFormError) => {
             }
@@ -523,9 +610,14 @@ export class SolCreacionComponent implements OnInit {
           this.savedMessage = 'Error al guardar el formulario';
           this.loadingData = false;
 
+          this.router.navigateByUrl('/main/principal');
+
         }
       );
-    } else {
+    }
+    
+  }//solo agrego }
+    else {
       this.savedMessage = 'Verifica los campos del formulario';
       this.loadingData = false;
 
@@ -889,7 +981,9 @@ export class SolCreacionComponent implements OnInit {
     const customFileName = `Hoja_de_Vida_Coordinador${this.currentUserId}.pdf`;
     this.validateFileType();
     this.setFileName(customFileName);
+
   }
+ 
 
 
   validateFileType() {
@@ -957,7 +1051,8 @@ export class SolCreacionComponent implements OnInit {
         usuarioModificacion: null,
         fechaModificacion: null
       }
-    if(!sessionStorage.getItem('invGroup')){
+   // if(!sessionStorage.getItem('invGroup')){
+    if (!this.idGrupo) {
 this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
         (response) => {
           this.reqFormResponse = response;
@@ -990,12 +1085,309 @@ this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
 
     }
     else{
+      grupoInvData.idGrupoInv = this.idGrupo;//nuevo
       this.apiInvGroupService.update(Number(sessionStorage.getItem('groupId')), grupoInvData).subscribe(
-        (response) => {});
+        (response) => {
+          this.snackBar.open('Guardado con éxito', 'Cerrar', { duration: 3000 });
+          sessionStorage.setItem('cvUploadedMap', JSON.stringify(this.cvUploadedMap));//VQ
+
+        });
 
     }
     
           } 
+
+
+          ///nuevos metodos
+          private saveSingleInternalMember(user: any): void {
+            const member: InvMemberForm = {
+              idGrupoInv: this.idGrupo,
+              idUsuario: user.user.idBd,
+              fechaVinculacion: null,
+              tipo: user.rol,
+              status: "INTERNO",
+              usuarioCreacion: this.currentUser,
+              fechaCreacion: this.currentDate,
+              usuarioModificacion: null,
+              fechaModificacion: null
+            };
+          
+            this.apiInvMemberService.createInvMemberFormForm(member).subscribe(
+              (response) => {
+                console.log('Miembro interno guardado:', response);
+              },
+              (error) => {
+                console.error('Error al guardar miembro interno:', error);
+              }
+            );
+          
+            const userRol: UserRoles = {
+              idUsuario: user.user.idBd,
+              idRoles: 8,
+              usuarioCreacion: this.currentUser,
+              fechaCreacion: this.currentDate,
+              usuarioModificacion: null,
+              fechaModificacion: null
+            };
+          
+            this.userRolService.createUserRol(userRol).subscribe(
+              (response) => {
+                console.log('Rol de usuario asignado:', response);
+              },
+              (error) => {
+                console.error('El usuario ya tiene el rol:', error);
+              }
+            );
+          }
+          
+          private saveSingleExternalMember(user: any, rol: string): void {
+            const member: InvMemberForm = {
+              idGrupoInv: this.idGrupo,
+              idUsuario: user.id,
+              fechaVinculacion: null,
+              tipo: rol,
+              status: "EXTERNO",
+              usuarioCreacion: this.currentUser,
+              fechaCreacion: this.currentDate,
+              usuarioModificacion: null,
+              fechaModificacion: null
+            };
+          
+            this.apiInvMemberService.createInvMemberFormForm(member).subscribe(
+              (response) => {
+                console.log('Miembro externo guardado:', response);
+              },
+              (error) => {
+                console.error('Error al guardar miembro externo:', error);
+              }
+            );
+          
+            const userRol: UserRoles = {
+              idUsuario: user.id,
+              idRoles: 8,
+              usuarioCreacion: this.currentUser,
+              fechaCreacion: this.currentDate,
+              usuarioModificacion: null,
+              fechaModificacion: null
+            };
+          
+            this.userRolService.createUserRol(userRol).subscribe(
+              (response) => {
+                console.log('Rol de usuario externo asignado:', response);
+              },
+              (error) => {
+                console.error('El usuario externo ya tiene el rol:', error);
+              }
+            );
+          }
+
+          private loadExistingMembers(idGrupo: number): void {
+            this.apiInvMemberService.getByGroup(idGrupo).subscribe(
+              (members) => {
+                members.forEach((member) => {
+                  if (member.status === 'INTERNO') {
+                    this.usuarioService.getById(member.idUsuario).subscribe(
+                      (userData) => {
+                        const userObj = {
+                          user: {
+                            ...userData,
+                            idBd: userData.id, // Forzar idBd
+                          },
+                          userId: userData.usuario,
+                          rol: member.tipo,
+                        };
+                        this.selectedUsers.push(userObj);
+          
+                        // Marcar valores quemados como cargados
+                        this.cvUploadedMap[userData.id] = true;//valor quemado
+                        this.documentosCargados[userData.id] = true;//valor quemado
+          
+                        // Valor quemado: CV ya subido
+                        const dummyFile = new File([''], `hojaDeVida_${userData.id}.pdf`, {//valor quemado
+                          type: 'application/pdf',//valor quemado
+                        });//valor quemado
+
+                        this.selectedFileByUser[this.selectedUsers.length - 1] = dummyFile;//valor quemado
+          
+                        if (member.tipo === 'MIEMBRO') {
+                          this.totalMiembrosInternos++;
+                          this.miembrosInternos.push(userObj);
+                        }
+          
+                        // ✅ Validar estado final
+                        this.verificarDocumentosCargados();
+                      },
+                      (error) => {
+                        console.error('Error al cargar datos del miembro interno:', error);
+                      }
+                    );
+                  } else if (member.status === 'EXTERNO') {
+                    this.usuarioService.getById(member.idUsuario).subscribe(
+                      (externalUserData) => {
+                        const externalUser = {
+                          id: member.idUsuario,
+                          rol: member.tipo,
+                          nombres: externalUserData.nombre,
+                          institucion: externalUserData.institucion,
+                        };
+                        this.selectedUsersExterns.push(externalUser);
+          
+                        this.cvUploadedMap[member.idUsuario] = true;//valor quemado
+                        this.documentosCargados[member.idUsuario] = true;
+          
+                        // ✅ Validar estado final
+                        this.verificarDocumentosCargados();
+                      },
+                      (error) => {
+                        console.error('Error al cargar datos del investigador externo:', error);
+                      }
+                    );
+                  }
+                });
+              },
+              (error) => {
+                console.error('Error al cargar miembros existentes:', error);
+              }
+            );
+          }
+          
+          
+
+          private updateCreationRequest(idGrupo: number): void {
+            this.creationReqService.getByGroup(idGrupo).subscribe(
+              (existingRequest) => {
+                if (existingRequest) {
+                  const updatedRequest: CreationReqForm = {
+                    ...existingRequest,
+                    estado: "p", 
+                    usuarioModificacionPeticion: this.currentUser,
+                    fechaModificacionPeticion: this.currentDate
+                  };
+                  
+                  this.creationReqService.update(existingRequest.idPeticionCreacion, updatedRequest).subscribe(
+                    (response) => {
+                      console.log('Petición actualizada:', response);
+                    },
+                    (error) => {
+                      console.error('Error al actualizar petición:', error);
+                    }
+                  );
+                } else {
+                  const reqFormData: CreationReqForm = {
+                    idPeticionCreacion: null,
+                    idGrupoInv: idGrupo,
+                    alineacionEstrategica: null,
+                    estado: "p",
+                    usuarioCreacionPeticion: this.currentUser,
+                    fechaCreacionPeticion: this.currentDate,
+                    usuarioModificacionPeticion: null,
+                    fechaModificacionPeticion: null,
+                  };
+                  
+                  this.creationReqService.createCreationRequestForm(reqFormData).subscribe(
+                    (response) => {
+                      console.log('Nueva petición creada:', response);
+                    },
+                    (error) => {
+                      console.error('Error al crear petición:', error);
+                    }
+                  );
+                }
+              },
+              (error) => {
+                console.error('Error al buscar petición existente:', error);
+              }
+            );
+          }
+
+          savePartialSegmentation() {
+            const idGrupo = Number(sessionStorage.getItem('invGroup'));
+            
+            if (!idGrupo) {
+              this.snackBar.open('Error: No se encontró el grupo de investigación en sesión', 'Cerrar', { duration: 3000 });
+              return;
+            }
+          
+            // Actualizar el proceso a "1b" para indicar que se completó la segmentación
+            const grupoInvData: InvGroupForm = {
+              idGrupoInv: idGrupo,
+              idCoordinador: this.currentUserId,
+              nombreGrupoInv: this.myForm.value.grupoInv1.nombreGrupoInv,
+              estadoGrupoInv: "pendiente",
+              acronimoGrupoinv: this.myForm.value.grupoInv1.acronimoGrupoinv,
+              departamento: this.userCoordinador.departamento,
+              proceso: "1a", // Actualizar proceso
+              sede: this.userCoordinador.sede,
+              usuarioCreacion: this.currentUser,
+              fechaCreacion: this.currentDate,
+              usuarioModificacion: this.currentUser,
+              fechaModificacion: this.currentDate
+            };
+          
+            this.loadingData = true;
+          
+            // Actualizar el grupo
+            this.apiInvGroupService.update(idGrupo, grupoInvData).subscribe(
+              (response) => {
+                // Guardar dominios, áreas y líneas
+                this.saveAcademicDomain(idGrupo);
+                this.saveArea(idGrupo);
+                this.saveLine(idGrupo);
+                
+                this.loadingData = false;
+                this.snackBar.open('Información Guardada exitosamente', 'Cerrar', { 
+                  duration: 3000,
+                  horizontalPosition: 'right',
+                  verticalPosition: 'top',
+                });
+              },
+              (error) => {
+                this.loadingData = false;
+                this.snackBar.open('Error al guardar la segmentación', 'Cerrar', { duration: 3000 });
+                console.error('Error:', error);
+              }
+            );
+          }
+
+          loadSegmentationData(invGroup: InvGroupForm) {
+            const idGrupo = invGroup.idGrupoInv;
+            
+            if (!idGrupo) return;
+          
+            // Cargar dominios académicos guardados
+            this.invGroup_academicDomainService.getByGroup(idGrupo).subscribe(
+              (dominios) => {
+                const dominiosIds = dominios.map(d => d.idDomimioAcademico);
+                this.dominiosControl.patchValue(dominiosIds);
+                
+                // Actualizar áreas basadas en dominios cargados
+                this.updateAreasByDominios(dominiosIds);
+              },
+              (error) => console.error('Error cargando dominios:', error)
+            );
+          
+            // Cargar áreas guardadas
+            this.invGroup_areaService.getByGroup(idGrupo).subscribe(
+              (areas) => {
+                const areasIds = areas.map(a => a.idArea);
+                this.areasControl.patchValue(areasIds);
+                
+                // Actualizar líneas basadas en áreas cargadas
+                this.updateLineasByAreas(areasIds);
+              },
+              (error) => console.error('Error cargando áreas:', error)
+            );
+          
+            // Cargar líneas guardadas
+            this.invGroup_linesService.getByGroup(idGrupo).subscribe(
+              (lineas) => {
+                const lineasIds = lineas.map(l => l.idLinea);
+                this.lineasControl.patchValue(lineasIds);
+              },
+              (error) => console.error('Error cargando líneas:', error)
+            );
+          }
+
 
 
 }

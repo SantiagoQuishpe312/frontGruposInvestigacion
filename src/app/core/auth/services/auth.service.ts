@@ -2375,9 +2375,9 @@ export class AuthService {
   private readonly TESTING_MODE = false; // ⚠️ Cambiar a true para testing
   private readonly SIMULATED_TOKEN_DURATION_MINUTES = 2;
 // Cambia estas constantes
-private readonly WARNING_TIME_MINUTES = 50; // Primera alarma a 5 minutos
-private readonly SECOND_WARNING_TIME_MINUTES = 49; // Segunda alarma a 3 minutos
-private readonly FINAL_WARNING_TIME_MINUTES = 45; // Alarma final a 1 minuto
+private readonly WARNING_TIME_MINUTES = 10; // Primera alarma a 5 minutos
+private readonly SECOND_WARNING_TIME_MINUTES = 5; // Segunda alarma a 3 minutos
+private readonly FINAL_WARNING_TIME_MINUTES = 1; // Alarma final a 1 minuto
 private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para renovación automática
   private simulatedTokenStartTime: number = 0;
   

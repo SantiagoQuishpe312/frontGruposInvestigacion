@@ -16,7 +16,7 @@
  
         <!-- FASE DE CREACIÓN DEL GRUPO DE INVESTIGACIÓN (FORMULARIO CUANDO SE ENVÍA LA SOLICITUD POR PRIMERA VEZ) -->
         <div class="container-fluid">
-            <form [formGroup]="myForm" (ngSubmit)="HandleSubmit()">
+            <form *ngIf="myForm.controls.grupoInv1" [formGroup]="myForm" (ngSubmit)="HandleSubmit()">
                 <mat-stepper [linear]="isLinear" #stepper>
 
                     <mat-step [stepControl]="grupoInvform"
@@ -98,7 +98,7 @@
                                 <!-- Áreas de Investigación -->
                                 <div class="grid-item">
                                     <mat-form-field appearance="fill"
-                                        *ngIf="dominiosControl.value">
+                                        *ngIf="dominiosControl.value?.length>0">
                                         <mat-label>Áreas de
                                             Investigación</mat-label>
                                         <mat-select [formControl]="areasControl"
@@ -115,7 +115,7 @@
                                 <!-- Líneas de Investigación -->
                                 <div class="grid-item">
                                     <mat-form-field appearance="fill"
-                                        *ngIf="areasControl.value">
+                                        *ngIf="areasControl.value?.length >0">
                                         <mat-label>Líneas de
                                             Investigación</mat-label>
                                         <mat-select
@@ -142,6 +142,7 @@
                                         <button type="button" mat-raised-button
                                             color="primary"
                                             [disabled]="!dominiosControl.value?.length || !areasControl.value?.length || !lineasControl.value?.length"
+                                            (click)="savePartialSegmentation()"
                                             matStepperNext
                                             matTooltip="Siguiente">Siguiente</button>
                                     </div>
@@ -162,7 +163,7 @@
                             <h1>Hoja de vida y Certificado de Talento Humano
                                 del Coordinador del Grupo de Investigación (Un
                                 solo PDF) </h1>
-                            <div class="drag-drop" (drop)="onDrop($event,'h')"
+                             <div class="drag-drop" (drop)="onDrop($event,'h')"
                                 (dragover)="onDragOver($event)">
                                 <i *ngIf="selectedCv"
                                     class="{{ getFileIcon(selectedCv.type) }}"></i>
@@ -180,8 +181,11 @@
                                     <input id="fileInput" type="file"
                                         (change)="onCVCoordSelected($event)"
                                         accept=".pdf" />
-                                </div>
-                            </div>
+                                </div> 
+                            </div> 
+
+                              
+                                  
                             <div class="grid-container">
                                 <div class="grid-item">
 
@@ -204,6 +208,7 @@
 
                         </div>
                     </mat-step>
+
                     <mat-step [stepControl]="grupoInv3"
                         label="Integrantes del Grupo">
                         <div class="creacion-grupo-investigacion">
@@ -224,18 +229,35 @@
                                         <tbody>
                                             <tr
                                                 *ngFor="let user of selectedUsers; let i = index;">
-                                                <td>{{ user.user.nombres }}</td>
-                                                <td>{{ user.user.tipo }}</td>
-                                                <td>{{ user.user.escalafon
+                                                <td>{{ user.user.nombres || user.user.nombre }}</td>
+                                                <td>{{ user.user.tipo || user.user.grado}}</td>
+                                                <td>{{ user.user.escalafon || user.user.cargo
                                                     }}</td>
 
-                                                <td>
+                                                <!-- <td>
                                                     <input type="file"
                                                         (change)="onFileSelected($event,i,user.user.idBd)"
                                                         accept=".pdf">
-                                                </td>
+                                                </td> -->
                                                 <td>
-                                                    <!-- Columna para el botón de borrar -->
+                                                    <div *ngIf="cvUploadedMap[user.user.idBd]; else
+                                                    uploadBlock">
+                                                    Subido
+                                                    </div>
+                                                    <ng-template #uploadBlock>
+                                                    <input type="file"
+                                                    (change)="onFileSelected($event, i, user.user.idBd)"
+                                                    accept=".pdf">
+                                                    </ng-template>
+                                                    </td>
+                                                    
+                                                  
+                                                  
+
+                                                  
+
+                                                  
+                                                <td>
                                                     <button type="button"
                                                         class="delete"
                                                         mat-mini-fab
@@ -267,16 +289,25 @@
                                     <tbody>
                                         <tr
                                             *ngFor="let user of selectedUsersExterns; let i = index;">
-                                            <td>{{ user.nombre }}</td>
+                                            <td>{{ user.nombres || user.nombre }}</td>
                                             <td>{{ user.institucion }}</td>
 
-                                            <td>
+                                            <!-- <td>
                                                 <input type="file"
                                                     (change)="onFileSelectedExtern($event,i,user.id)"
                                                     accept=".pdf">
-                                            </td>
+                                            </td> -->
                                             <td>
-                                                <!-- Columna para el botón de borrar -->
+                                                <div *ngIf="cvUploadedMap[user.id]; else uploadBlockExtern">
+                                                  Subido
+                                                </div>
+                                                <ng-template #uploadBlockExtern>
+                                                  <input type="file" 
+                                                         (change)="onFileSelectedExtern($event, i, user.id)" 
+                                                         accept=".pdf">
+                                                </ng-template>
+                                              </td>
+                                            <td>
                                                 <button type="button"
                                                     class="delete"
                                                     mat-mini-fab
@@ -298,7 +329,6 @@
                                     <button type="button"
                                         mat-raised-button color="primary"
                                         matStepperPrevious>Regresar</button>
-                                    <!-- Deshabilitar el botón Enviar hasta que documentosCompletosCargados sea true -->
                                     <button type="button" mat-raised-button
                                         color="primary" matStepperNext
                                         [disabled]="totalMiembrosInternos <3   || !documentosCompletosCargados">Siguiente</button>
@@ -308,6 +338,7 @@
 
                         </div>
                     </mat-step>
+                    
                     <mat-step [stepControl]="grupoInv4"
                         label="Imagen del Grupo">
                         <div class="creacion-grupo-investigacion">
@@ -318,7 +349,6 @@
                                 <div class="drag-drop"
                                     (drop)="onDrop($event,'i')"
                                     (dragover)="onDragOver($event)">
-                                    <!-- Contenedor para previsualización o ícono -->
                                     <div class="vista-previa-img"
                                         *ngIf="filePreview">
                                         <img *ngIf="isImageFile"
@@ -355,7 +385,7 @@
                                         <mat-option
                                             *ngFor="let miembro of miembrosInternos"
                                             [value]="miembro">
-                                            {{ miembro.user.nombres }}
+                                            {{ miembro.user.nombres || miembro.user.nombre}}
                                         </mat-option>
                                     </mat-select>
                                 </mat-form-field>
