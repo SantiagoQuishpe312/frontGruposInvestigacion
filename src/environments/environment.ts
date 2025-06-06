@@ -8,7 +8,7 @@ appApiUrl: 'http://localhost:8080/api/v1.0/private',
   appUsers:'https://api-ufa.espe.edu.ec/api/v1.0/private/apisExternals/dataUser?usuario=',
   espematicoApiUrl: 'https://espematico-api.espe.edu.ec/reporteWs',
   imageApiUrl: 'https://image-api.espe.edu.ec/imagen/',
-  appDocuments:'https://api-ufa-test.espe.edu.ec/api/v1.0/private/files/',
+  appDocuments:'https://api-ufa.espe.edu.ec/api/v1.0/private/files/',
   sso: {
     serverUrl: 'https://srvcas.espe.edu.ec',
     clientId: 'F_13VTNPdVHPSstUZtYmldfl2UYa',

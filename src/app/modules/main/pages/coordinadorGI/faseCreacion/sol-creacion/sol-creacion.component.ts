@@ -82,7 +82,8 @@ export class SolCreacionComponent implements OnInit {
   isImageFile: boolean = false;
   imageNameOriginal: string = '';
   savedMessage: string;
-  cvUploadedMap: { [userId: number]: boolean } = {};//VALOR QUEMADO CV
+  cvsSavedInDatabase: { [userId: number]: boolean } = {};
+  existingCvsInfo: { [userId: number]: any } = {};
 
 
 
@@ -121,6 +122,9 @@ export class SolCreacionComponent implements OnInit {
     this.dominiosControl.valueChanges.subscribe((selectedDominios: any[]) => {
       this.updateAreasByDominios(selectedDominios);
     })
+    if (this.idGrupo) {
+    this.loadExistingDocuments(this.idGrupo);
+  }
 
 
   }
@@ -177,6 +181,7 @@ export class SolCreacionComponent implements OnInit {
       
       this.loadingData = false;
       this.cargarFormularios(data);
+      
 
     },)
 
@@ -431,7 +436,8 @@ export class SolCreacionComponent implements OnInit {
   }
 
 
-  borrarInvestigador(index: number) {
+  borrarInvestigador(index: number, idBD: number) {
+    console.log(idBD);
     console.log(this.selectedUsers)
     if (this.selectedUsers[index].rol === 'MIEMBRO') {
       this.totalMiembrosInternos--;
@@ -439,7 +445,13 @@ export class SolCreacionComponent implements OnInit {
     this.investigadores.splice(index, 1);
     this.userIdSelect.splice(index, 1);
     delete this.selectedFileByUser[index];
+    const id=this.selectedUsers[index].user.id
+
     this.selectedUsers.splice(index, 1);
+    console.log(id)
+    this.apiInvMemberService.deleteUserGroup(id,Number(sessionStorage.getItem("invGroup"))).subscribe((response=>{
+      console.log(response);
+    }));
 
   }
   borrarInvestigadorExtern(index: number) {
@@ -467,9 +479,14 @@ export class SolCreacionComponent implements OnInit {
         const nuevoNombre = `hojaDeVida_${nombreUsuario}.${file.name.split('.').pop()}`;
         const archivoRenombrado = new File([file], nuevoNombre, { type: file.type });
         this.selectedFileByUser[index] = archivoRenombrado;
-        this.cvUploadedMap[userId] = true;//valor quemado
-        sessionStorage.setItem('cvUploadedMap', JSON.stringify(this.cvUploadedMap));//valor quemado
+// Guardar automáticamente si el grupo existe
+if (this.idGrupo) {
+  this.saveSingleCV(archivoRenombrado, userId, 'INTERNO');
+}
 
+this.contadorDocumentos++;
+this.documentosCargados[userId] = true;
+this.verificarDocumentosCargados();
       } else {
         alert('Por favor, seleccione un archivo PDF.');
         input.value = '';
@@ -501,9 +518,14 @@ export class SolCreacionComponent implements OnInit {
         const nuevoNombre = `hojaDeVida_${nombreUsuario}.${file.name.split('.').pop()}`;
         const archivoRenombrado = new File([file], nuevoNombre, { type: file.type });
         this.selectedFileByUserExtern[index] = archivoRenombrado;
-        this.cvUploadedMap[userId] = true;//valor quemado
-        sessionStorage.setItem('cvUploadedMap', JSON.stringify(this.cvUploadedMap));//valor quemado
+ // Guardar automáticamente si el grupo existe
+ if (this.idGrupo) {
+  this.saveSingleCV(archivoRenombrado, userId, 'EXTERNO');
+}
 
+this.contadorDocumentos++;
+this.documentosCargados[userId] = true;
+this.verificarDocumentosCargados();
       } else {
         alert('Por favor, seleccione un archivo PDF.');
         input.value = '';
@@ -545,8 +567,7 @@ if (this.myForm.valid) {
         this.saveMember(this.idGrupo);
 
         // Actualizar la petición de creación si existe
-        this.updateCreationRequest(this.idGrupo);
-        sessionStorage.setItem('cvUploadedMap', JSON.stringify(this.cvUploadedMap));//V Q
+        //this.updateCreationRequest(this.idGrupo);
 
       },
       (error) => {
@@ -599,7 +620,6 @@ if (this.myForm.valid) {
           this.creationReqService.createCreationRequestForm(reqFormData).subscribe(
             (reqFormResponse) => {
               localStorage.setItem('invGroup', idGrupoCreado);
-              sessionStorage.setItem('cvUploadedMap', JSON.stringify(this.cvUploadedMap));// VQ
 
             },
             (reqFormError) => {
@@ -771,15 +791,133 @@ if (this.myForm.valid) {
     }
 
   }
-  private saveCurriculums(idGrupo: number, user: string, date: Date) {
+//   private saveCurriculums(idGrupo: number, user: string, date: Date) {
 
-    const sistema = 'GruposInv'
-    const token = sessionStorage.getItem('access_token');
+//     const sistema = 'GruposInv'
+//     const token = sessionStorage.getItem('access_token');
 
-    const cv = this.selectedCv;
-    const img = this.selectedImg;
-    let observables = [];
+//     const cv = this.selectedCv;
+//     const img = this.selectedImg;
+//     let observables = [];
 
+//     const imgObservable = this.documentService.saveDocument(token, img, sistema).pipe(
+//       switchMap(response => {
+//         const annexes: Annexes = {
+//           idAnexo: null,
+//           idDocumento: 3,
+//           idGrupo: idGrupo,
+//           nombreAnexo: response.fileName,
+//           rutaAnexo: response.uuid,
+//           usuarioCreacionAnexo: user,
+//           fechaCreacionAnexo: date,
+//           usuarioModificacionAnexo: null,
+//           fechaModificacionAnexo: null
+//         };
+//         return this.annexesServices.createAnnexesForm(annexes);
+//       })
+//     );
+
+//     observables.push(imgObservable);
+//     const cvObservable = this.documentService.saveDocument(token, cv, sistema).pipe(
+//       switchMap(response => {
+//         const annexes: Annexes = {
+//           idAnexo: null,
+//           idDocumento: 2,
+//           idGrupo: idGrupo,
+//           nombreAnexo: response.fileName,
+//           rutaAnexo: response.uuid,
+//           usuarioCreacionAnexo: user,
+//           fechaCreacionAnexo: date,
+//           usuarioModificacionAnexo: null,
+//           fechaModificacionAnexo: null
+//         };
+//         return this.annexesServices.createAnnexesForm(annexes);
+//       })
+//     );
+
+//     observables.push(cvObservable);
+
+//     for (let index in this.selectedFileByUser) {
+//       if (this.selectedFileByUser.hasOwnProperty(index)) {
+//         const archivo = this.selectedFileByUser[index];
+//         const archivoObservable = this.documentService.saveDocument(token, archivo, sistema).pipe(
+//           switchMap(response => {
+//             const annexes: Annexes = {
+//               idAnexo: null,
+//               idDocumento: 2,
+//               idGrupo: idGrupo,
+//               nombreAnexo: response.fileName,
+//               rutaAnexo: response.uuid,
+//               usuarioCreacionAnexo: user,
+//               fechaCreacionAnexo: date,
+//               usuarioModificacionAnexo: null,
+//               fechaModificacionAnexo: null
+//             };
+//             return this.annexesServices.createAnnexesForm(annexes);
+//           })
+//         );
+
+//         observables.push(archivoObservable);
+//       }
+//     }
+
+//     for (let index in this.selectedFileByUserExtern) {
+//       if (this.selectedFileByUserExtern.hasOwnProperty(index)) {
+//         const archivo = this.selectedFileByUserExtern[index];
+//         const archivoObservable = this.documentService.saveDocument(token, archivo, sistema).pipe(
+//           switchMap(response => {
+//             const annexes: Annexes = {
+//               idAnexo: null,
+//               idDocumento: 1,
+//               idGrupo: idGrupo,
+//               nombreAnexo: response.fileName,
+//               rutaAnexo: response.uuid,
+//               usuarioCreacionAnexo: user,
+//               fechaCreacionAnexo: date,
+//               usuarioModificacionAnexo: null,
+//               fechaModificacionAnexo: null
+//             };
+//             return this.annexesServices.createAnnexesForm(annexes);
+//           })
+//         );
+
+//         observables.push(archivoObservable);
+//       }
+//     }
+
+//     // Usamos forkJoin para esperar a que todos los observables se completen
+//     forkJoin(observables).subscribe({
+//       next: (responses) => {
+//         // Si todo ha sido exitoso, navegamos a la siguiente página
+//         this.router.navigateByUrl('main/principal');
+//         this.loadingData = false;
+//         this.snackBar.open('Enviado con éxito', 'Cerrar', {
+//           duration: 4000, // Duración del toast en milisegundos
+//         });
+// //        window.location.reload();
+//       },
+//       error: (err) => {
+//         console.log(err);
+//         // Si ocurre un error, puedes manejarlo aquí, por ejemplo, habilitar loadingData para permitir reintentos
+//         this.loadingData = false;
+//       }
+//     });
+
+//     // Si deseas poner el estado de loadingData en true antes de iniciar las cargas de documentos, puedes hacerlo al inicio del método:
+//     this.loadingData = true;
+
+
+//   }
+private saveCurriculums(idGrupo: number, user: string, date: Date) {
+  const sistema = 'GruposInv';
+  const token = sessionStorage.getItem('access_token');
+
+  const cv = this.selectedCv;
+  const img = this.selectedImg;
+  let observables = [];
+
+  // Guardar imagen si existe
+  if (img) {
     const imgObservable = this.documentService.saveDocument(token, img, sistema).pipe(
       switchMap(response => {
         const annexes: Annexes = {
@@ -796,8 +934,11 @@ if (this.myForm.valid) {
         return this.annexesServices.createAnnexesForm(annexes);
       })
     );
-
     observables.push(imgObservable);
+  }
+
+  // Guardar CV del coordinador si existe
+  if (cv) {
     const cvObservable = this.documentService.saveDocument(token, cv, sistema).pipe(
       switchMap(response => {
         const annexes: Annexes = {
@@ -814,12 +955,18 @@ if (this.myForm.valid) {
         return this.annexesServices.createAnnexesForm(annexes);
       })
     );
-
     observables.push(cvObservable);
+  }
 
-    for (let index in this.selectedFileByUser) {
-      if (this.selectedFileByUser.hasOwnProperty(index)) {
-        const archivo = this.selectedFileByUser[index];
+  // Solo guardar CVs que no hayan sido guardados automáticamente
+  for (let index in this.selectedFileByUser) {
+    if (this.selectedFileByUser.hasOwnProperty(index)) {
+      const archivo = this.selectedFileByUser[index];
+      const match = archivo.name.match(/hojaDeVida_(\d+)\.pdf/);
+      const userId = match ? parseInt(match[1]) : null;
+
+      // Solo guardar si no se ha guardado automáticamente
+      if (!userId || !this.cvsSavedInDatabase[userId]) {
         const archivoObservable = this.documentService.saveDocument(token, archivo, sistema).pipe(
           switchMap(response => {
             const annexes: Annexes = {
@@ -836,14 +983,20 @@ if (this.myForm.valid) {
             return this.annexesServices.createAnnexesForm(annexes);
           })
         );
-
         observables.push(archivoObservable);
       }
     }
+  }
 
-    for (let index in this.selectedFileByUserExtern) {
-      if (this.selectedFileByUserExtern.hasOwnProperty(index)) {
-        const archivo = this.selectedFileByUserExtern[index];
+  // Solo guardar CVs externos que no hayan sido guardados automáticamente
+  for (let index in this.selectedFileByUserExtern) {
+    if (this.selectedFileByUserExtern.hasOwnProperty(index)) {
+      const archivo = this.selectedFileByUserExtern[index];
+      const match = archivo.name.match(/hojaDeVida_(\d+)\.pdf/);
+      const userId = match ? parseInt(match[1]) : null;
+
+      // Solo guardar si no se ha guardado automáticamente
+      if (!userId || !this.cvsSavedInDatabase[userId]) {
         const archivoObservable = this.documentService.saveDocument(token, archivo, sistema).pipe(
           switchMap(response => {
             const annexes: Annexes = {
@@ -860,34 +1013,37 @@ if (this.myForm.valid) {
             return this.annexesServices.createAnnexesForm(annexes);
           })
         );
-
         observables.push(archivoObservable);
       }
     }
+  }
 
-    // Usamos forkJoin para esperar a que todos los observables se completen
+  // Ejecutar todas las operaciones pendientes
+  if (observables.length > 0) {
     forkJoin(observables).subscribe({
       next: (responses) => {
-        // Si todo ha sido exitoso, navegamos a la siguiente página
         this.router.navigateByUrl('main/principal');
         this.loadingData = false;
         this.snackBar.open('Enviado con éxito', 'Cerrar', {
-          duration: 4000, // Duración del toast en milisegundos
+          duration: 4000,
         });
-//        window.location.reload();
       },
       error: (err) => {
         console.log(err);
-        // Si ocurre un error, puedes manejarlo aquí, por ejemplo, habilitar loadingData para permitir reintentos
         this.loadingData = false;
       }
     });
-
-    // Si deseas poner el estado de loadingData en true antes de iniciar las cargas de documentos, puedes hacerlo al inicio del método:
-    this.loadingData = true;
-
-
+  } else {
+    // Si no hay observables, continuar directamente
+    this.router.navigateByUrl('main/principal');
+    this.loadingData = false;
+    this.snackBar.open('Enviado con éxito', 'Cerrar', {
+      duration: 4000,
+    });
   }
+
+  this.loadingData = true;
+}
 
   onDrop(event: any, t: string) {
     event.preventDefault();
@@ -1058,6 +1214,9 @@ this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
           this.reqFormResponse = response;
           const idGrupoCreado = this.reqFormResponse;
           sessionStorage.setItem('invGroup', idGrupoCreado.toString());
+          if (this.selectedCv) {
+            this.saveCvCoordinador(idGrupoCreado);
+          }
           const reqFormData: CreationReqForm = {
             idPeticionCreacion: null,
             idGrupoInv: idGrupoCreado,
@@ -1088,8 +1247,10 @@ this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
       grupoInvData.idGrupoInv = this.idGrupo;//nuevo
       this.apiInvGroupService.update(Number(sessionStorage.getItem('groupId')), grupoInvData).subscribe(
         (response) => {
+          if (this.selectedCv) {
+            this.saveCvCoordinador(this.idGrupo);
+          }
           this.snackBar.open('Guardado con éxito', 'Cerrar', { duration: 3000 });
-          sessionStorage.setItem('cvUploadedMap', JSON.stringify(this.cvUploadedMap));//VQ
 
         });
 
@@ -1189,25 +1350,11 @@ this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
                     this.usuarioService.getById(member.idUsuario).subscribe(
                       (userData) => {
                         const userObj = {
-                          user: {
-                            ...userData,
-                            idBd: userData.id, // Forzar idBd
-                          },
+                          user: userData,
                           userId: userData.usuario,
                           rol: member.tipo,
                         };
                         this.selectedUsers.push(userObj);
-          
-                        // Marcar valores quemados como cargados
-                        this.cvUploadedMap[userData.id] = true;//valor quemado
-                        this.documentosCargados[userData.id] = true;//valor quemado
-          
-                        // Valor quemado: CV ya subido
-                        const dummyFile = new File([''], `hojaDeVida_${userData.id}.pdf`, {//valor quemado
-                          type: 'application/pdf',//valor quemado
-                        });//valor quemado
-
-                        this.selectedFileByUser[this.selectedUsers.length - 1] = dummyFile;//valor quemado
           
                         if (member.tipo === 'MIEMBRO') {
                           this.totalMiembrosInternos++;
@@ -1232,7 +1379,6 @@ this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
                         };
                         this.selectedUsersExterns.push(externalUser);
           
-                        this.cvUploadedMap[member.idUsuario] = true;//valor quemado
                         this.documentosCargados[member.idUsuario] = true;
           
                         // ✅ Validar estado final
@@ -1243,6 +1389,8 @@ this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
                       }
                     );
                   }
+                  this.loadExistingCVs(idGrupo);
+
                 });
               },
               (error) => {
@@ -1251,7 +1399,22 @@ this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
             );
           }
           
-          
+         // 3. Nuevo método para cargar CVs existentes
+  loadExistingCVs(idGrupo: number) {
+    this.annexesServices.getByGroupType(idGrupo, '2').subscribe((cvs: any[]) => {
+      cvs.forEach(cv => {
+        // Extraer el ID del usuario del nombre del archivo
+        const match = cv.nombreAnexo.match(/hojaDeVida_(\d+)\.pdf/);
+        if (match) {
+          const userId = parseInt(match[1]);
+          this.cvsSavedInDatabase[userId] = true;
+          this.existingCvsInfo[userId] = cv;
+          this.documentosCargados[userId] = true;
+        }
+      });
+      this.verificarDocumentosCargados();
+    });
+  }  
 
           private updateCreationRequest(idGrupo: number): void {
             this.creationReqService.getByGroup(idGrupo).subscribe(
@@ -1389,5 +1552,169 @@ this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
           }
 
 
+        // 1. Agregar método para guardar CV del coordinador individualmente
+private saveCvCoordinador(idGrupo: number): void {
+  if (!this.selectedCv) return;
+
+  const sistema = 'GruposInv';
+  const token = sessionStorage.getItem('access_token');
+
+  this.documentService.saveDocument(token, this.selectedCv, sistema).pipe(
+    switchMap(response => {
+      const annexes: Annexes = {
+        idAnexo: null,
+        idDocumento: 2, // Tipo documento para CV coordinador
+        idGrupo: idGrupo,
+        nombreAnexo: response.fileName,
+        rutaAnexo: response.uuid,
+        usuarioCreacionAnexo: this.currentUser,
+        fechaCreacionAnexo: this.currentDate,
+        usuarioModificacionAnexo: null,
+        fechaModificacionAnexo: null
+      };
+      return this.annexesServices.createAnnexesForm(annexes);
+    })
+  ).subscribe(
+    (response) => {
+      console.log('CV del coordinador guardado exitosamente');
+      this.snackBar.open('CV guardado exitosamente', 'Cerrar', { duration: 3000 });
+    },
+    (error) => {
+      console.error('Error al guardar CV del coordinador:', error);
+    }
+  );
+}
+
+// 2. Método para manejar el click en "Siguiente" en el step del CV
+onCvStepNext(): void {
+  if (this.selectedCv && this.idGrupo) {
+    this.saveCvCoordinador(this.idGrupo);
+  }
+}  
+// 4. Método para cargar documentos existentes
+private loadExistingDocuments(idGrupo: number): void {
+  // Cargar CV del coordinador
+  this.annexesServices.getByGroupType(idGrupo, '2').subscribe(
+    (annexes: Annexes[]) => {
+      if (annexes && annexes.length > 0) {
+        const cvCoordinador = annexes.find(a => a.idDocumento === 2);
+        if (cvCoordinador) {
+          this.CvNameOriginal = cvCoordinador.nombreAnexo;
+          // Crear un archivo "dummy" para mostrar que ya está cargado
+          this.selectedCv = new File([''], cvCoordinador.nombreAnexo, { type: 'application/pdf' });
+        }
+      }
+    },
+    (error) => {
+      console.error('Error al cargar documentos existentes:', error);
+    }
+  );
+}
+ // 6. Nuevo método para guardar un CV individual
+ private saveSingleCV(file: File, userId: number, tipoMiembro: string) {
+  const sistema = 'GruposInv';
+  const token = sessionStorage.getItem('access_token');
+
+  // Si ya existe un CV para este usuario, actualizarlo
+  if (this.cvsSavedInDatabase[userId] && this.existingCvsInfo[userId]) {
+    this.updateExistingCV(file, userId, tipoMiembro);
+    return;
+  }
+
+  this.documentService.saveDocument(token, file, sistema).subscribe(
+    (response) => {
+      const annexes: Annexes = {
+        idAnexo: null,
+        idDocumento: tipoMiembro === 'INTERNO' ? 2 : 1,
+        idGrupo: this.idGrupo,
+        nombreAnexo: response.fileName,
+        rutaAnexo: response.uuid,
+        usuarioCreacionAnexo: this.currentUser,
+        fechaCreacionAnexo: this.currentDate,
+        usuarioModificacionAnexo: null,
+        fechaModificacionAnexo: null
+      };
+
+      this.annexesServices.createAnnexesForm(annexes).subscribe(
+        (annexeResponse) => {
+          this.cvsSavedInDatabase[userId] = true;
+          this.existingCvsInfo[userId] = annexeResponse;
+          this.snackBar.open('CV guardado automáticamente', 'Cerrar', {
+            duration: 2000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+          });
+        },
+        (error) => {
+          console.error('Error al guardar anexo del CV:', error);
+          this.snackBar.open('Error al guardar CV', 'Cerrar', {
+            duration: 3000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+          });
+        }
+      );
+    },
+    (error) => {
+      console.error('Error al subir CV:', error);
+      this.snackBar.open('Error al subir CV', 'Cerrar', {
+        duration: 3000,
+        horizontalPosition: 'right',
+        verticalPosition: 'top',
+      });
+    }
+  );
+}
+
+// 7. Nuevo método para actualizar un CV existente
+private updateExistingCV(file: File, userId: number, tipoMiembro: string) {
+  const sistema = 'GruposInv';
+  const token = sessionStorage.getItem('access_token');
+
+  this.documentService.saveDocument(token, file, sistema).subscribe(
+    (response) => {
+      const existingCV = this.existingCvsInfo[userId];
+      const updatedAnnexes: Annexes = {
+        ...existingCV,
+        nombreAnexo: response.fileName,
+        rutaAnexo: response.uuid,
+        usuarioModificacionAnexo: this.currentUser,
+        fechaModificacionAnexo: this.currentDate
+      };
+
+      this.annexesServices.update(existingCV.idAnexo, updatedAnnexes).subscribe(
+        (updateResponse) => {
+          this.existingCvsInfo[userId] = updateResponse;
+          this.snackBar.open('CV actualizado automáticamente', 'Cerrar', {
+            duration: 2000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+          });
+        },
+        (error) => {
+          console.error('Error al actualizar anexo del CV:', error);
+        }
+      );
+    },
+    (error) => {
+      console.error('Error al subir CV actualizado:', error);
+    }
+  );
+}
+
+// 9. Método para mostrar estado del CV en la interfaz
+getCVStatus(userId: number): string {
+  if (this.cvsSavedInDatabase[userId]) {
+    return 'Guardado';
+  } else if (this.documentosCargados[userId]) {
+    return 'Seleccionado';
+  }
+  return 'Pendiente';
+}
+
+// 10. Método para verificar si un CV está guardado
+isCVSaved(userId: number): boolean {
+  return this.cvsSavedInDatabase[userId] === true;
+}
 
 }
