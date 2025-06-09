@@ -276,3 +276,29 @@ button.custom-button:disabled {
   margin-left:30%;
 
 }
+.cv-upload-container {
+  position: relative;
+}
+
+.cv-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-top: 5px;
+  display: inline-block;
+}
+
+.cv-saved {
+  background-color: #4caf50;
+  color: white;
+}
+
+.cv-selected {
+  background-color: #ff9800;
+  color: white;
+}
+
+.cv-pending {
+  background-color: #f44336;
+  color: white;
+}

@@ -82,10 +82,9 @@ export class SolCreacionComponent implements OnInit {
   isImageFile: boolean = false;
   imageNameOriginal: string = '';
   savedMessage: string;
+  loadingMembers: boolean = false;
   cvsSavedInDatabase: { [userId: number]: boolean } = {};
   existingCvsInfo: { [userId: number]: any } = {};
-
-
 
   constructor(
     private builder: FormBuilder,
@@ -123,10 +122,8 @@ export class SolCreacionComponent implements OnInit {
       this.updateAreasByDominios(selectedDominios);
     })
     if (this.idGrupo) {
-    this.loadExistingDocuments(this.idGrupo);
-  }
-
-
+      this.loadExistingDocuments(this.idGrupo);
+    }
   }
 
   updateAreasByDominios(selectedDominios: any[]) {
@@ -178,11 +175,8 @@ export class SolCreacionComponent implements OnInit {
   loadGroup(id: number) {
     this.apiInvGroupService.getById(id).subscribe((data) => {
       this.grupo = data;
-      
       this.loadingData = false;
       this.cargarFormularios(data);
-      
-
     },)
 
   }
@@ -296,6 +290,7 @@ export class SolCreacionComponent implements OnInit {
     });
   }
   totalMiembrosInternos: number = 0; // Contador de miembros agregados
+  totalMiembrosExternos: number = 0;
 
   loadAreas(): void {
     this.areaService.getAll().subscribe(data => {
@@ -454,12 +449,44 @@ export class SolCreacionComponent implements OnInit {
     }));
 
   }
-  borrarInvestigadorExtern(index: number) {
-    this.selectedUsersExterns.splice(index, 1);
-    this.investigadoresExterns.splice(index, 1);
-    this.userIdSelect.splice(index, 1);
-    delete this.selectedFileByUserExtern[index];
+  // borrarInvestigadorExtern(index: number) {
+  //   this.selectedUsersExterns.splice(index, 1);
+  //   this.investigadoresExterns.splice(index, 1);
+  //   this.userIdSelect.splice(index, 1);
+  //   delete this.selectedFileByUserExtern[index];
+    
+  // }
+  borrarInvestigadorExtern(index: number, idBD: number) {
+    const id = this.selectedUsersExterns[index]?.id || this.selectedUsersExterns[index]?.idBd;
+    
+    this.apiInvMemberService.deleteUserGroup(id, Number(sessionStorage.getItem("invGroup")))
+      .subscribe({
+        next: (response) => {
+          
+          this.selectedUsersExterns.splice(index, 1);
+          
+          if (this.investigadoresExterns && this.investigadoresExterns.length > index) {
+            this.investigadoresExterns.splice(index, 1);
+          }
+          
+          if (this.userIdSelect && this.userIdSelect.length > index) {
+            this.userIdSelect.splice(index, 1);
+          }
+          
+          if (this.selectedFileByUserExtern && this.selectedFileByUserExtern[index]) {
+            delete this.selectedFileByUserExtern[index];
+          }
+          
+          if (this.documentosCargados && this.documentosCargados[id]) {
+            delete this.documentosCargados[id];
+          }
+        },
+        error: (err) => {
+          console.error('Error al eliminar del backend:', err);
+        }
+      });
   }
+  
   contadorDocumentos = 0;
   onFileSelected(event: Event, index: number, userId: number) {
     const input = event.target as HTMLInputElement;
@@ -479,26 +506,41 @@ export class SolCreacionComponent implements OnInit {
         const nuevoNombre = `hojaDeVida_${nombreUsuario}.${file.name.split('.').pop()}`;
         const archivoRenombrado = new File([file], nuevoNombre, { type: file.type });
         this.selectedFileByUser[index] = archivoRenombrado;
-// Guardar automáticamente si el grupo existe
-if (this.idGrupo) {
-  this.saveSingleCV(archivoRenombrado, userId, 'INTERNO');
-}
+        if (this.idGrupo) {
+          this.saveSingleCV(archivoRenombrado, userId, 'INTERNO');
+        }
+        
+        this.contadorDocumentos++;
+        this.documentosCargados[userId] = true;
+        this.verificarDocumentosCargados();
 
-this.contadorDocumentos++;
-this.documentosCargados[userId] = true;
-this.verificarDocumentosCargados();
       } else {
         alert('Por favor, seleccione un archivo PDF.');
         input.value = '';
       }
     }
   }
-
   verificarDocumentosCargados(): void {
-    const usuariosInternosCompletos = this.selectedUsers.every(user => this.documentosCargados[user.user.idBd]);
-    const usuariosExternosCompletos = this.selectedUsersExterns.every(user => this.documentosCargados[user.id]);
+    const usuariosInternosCompletos = this.selectedUsers.length === 0 || 
+      this.selectedUsers.every(user => {
+        const userId = user.user.idBd || user.user.id;
+        const isLoaded = this.documentosCargados[userId] === true;
+        return isLoaded;
+      });
+  
+    const usuariosExternosCompletos = this.selectedUsersExterns.length === 0 || 
+      this.selectedUsersExterns.every(user => {
+        const isLoaded = this.documentosCargados[user.id] === true;
+        return isLoaded;
+      });
+  
     this.documentosCompletosCargados = usuariosInternosCompletos && usuariosExternosCompletos;
   }
+  // verificarDocumentosCargados(): void {
+  //   const usuariosInternosCompletos = this.selectedUsers.every(user => this.documentosCargados[user.user.idBd]);
+  //   const usuariosExternosCompletos = this.selectedUsersExterns.every(user => this.documentosCargados[user.id]);
+  //   this.documentosCompletosCargados = usuariosInternosCompletos && usuariosExternosCompletos;
+  // }
   onFileSelectedExtern(event: Event, index: number, userId: number) {
     const input = event.target as HTMLInputElement;
     const files = input.files;
@@ -518,14 +560,14 @@ this.verificarDocumentosCargados();
         const nuevoNombre = `hojaDeVida_${nombreUsuario}.${file.name.split('.').pop()}`;
         const archivoRenombrado = new File([file], nuevoNombre, { type: file.type });
         this.selectedFileByUserExtern[index] = archivoRenombrado;
- // Guardar automáticamente si el grupo existe
- if (this.idGrupo) {
-  this.saveSingleCV(archivoRenombrado, userId, 'EXTERNO');
-}
 
-this.contadorDocumentos++;
-this.documentosCargados[userId] = true;
-this.verificarDocumentosCargados();
+        if (this.idGrupo) {
+          this.saveSingleCV(archivoRenombrado, userId, 'EXTERNO');
+        }
+        
+        this.contadorDocumentos++;
+        this.documentosCargados[userId] = true;
+        this.verificarDocumentosCargados();
       } else {
         alert('Por favor, seleccione un archivo PDF.');
         input.value = '';
@@ -565,10 +607,6 @@ if (this.myForm.valid) {
         this.saveArea(this.idGrupo);
         this.saveLine(this.idGrupo);
         this.saveMember(this.idGrupo);
-
-        // Actualizar la petición de creación si existe
-        //this.updateCreationRequest(this.idGrupo);
-
       },
       (error) => {
         this.savedMessage = 'Error al actualizar el formulario';
@@ -620,7 +658,6 @@ if (this.myForm.valid) {
           this.creationReqService.createCreationRequestForm(reqFormData).subscribe(
             (reqFormResponse) => {
               localStorage.setItem('invGroup', idGrupoCreado);
-
             },
             (reqFormError) => {
             }
@@ -631,18 +668,14 @@ if (this.myForm.valid) {
           this.loadingData = false;
 
           this.router.navigateByUrl('/main/principal');
-
         }
       );
     }
-    
   }//solo agrego }
     else {
       this.savedMessage = 'Verifica los campos del formulario';
       this.loadingData = false;
-
     }
-
   }
 
   //Guardamos los dominios academicos,lineas y areas relacionadas al la solicitud de creacion y al grupo de Investigacion
@@ -791,133 +824,16 @@ if (this.myForm.valid) {
     }
 
   }
-//   private saveCurriculums(idGrupo: number, user: string, date: Date) {
+  private saveCurriculums(idGrupo: number, user: string, date: Date) {
 
-//     const sistema = 'GruposInv'
-//     const token = sessionStorage.getItem('access_token');
+    const sistema = 'GruposInv'
+    const token = sessionStorage.getItem('access_token');
 
-//     const cv = this.selectedCv;
-//     const img = this.selectedImg;
-//     let observables = [];
+    const cv = this.selectedCv;
+    const img = this.selectedImg;
+    let observables = [];
 
-//     const imgObservable = this.documentService.saveDocument(token, img, sistema).pipe(
-//       switchMap(response => {
-//         const annexes: Annexes = {
-//           idAnexo: null,
-//           idDocumento: 3,
-//           idGrupo: idGrupo,
-//           nombreAnexo: response.fileName,
-//           rutaAnexo: response.uuid,
-//           usuarioCreacionAnexo: user,
-//           fechaCreacionAnexo: date,
-//           usuarioModificacionAnexo: null,
-//           fechaModificacionAnexo: null
-//         };
-//         return this.annexesServices.createAnnexesForm(annexes);
-//       })
-//     );
-
-//     observables.push(imgObservable);
-//     const cvObservable = this.documentService.saveDocument(token, cv, sistema).pipe(
-//       switchMap(response => {
-//         const annexes: Annexes = {
-//           idAnexo: null,
-//           idDocumento: 2,
-//           idGrupo: idGrupo,
-//           nombreAnexo: response.fileName,
-//           rutaAnexo: response.uuid,
-//           usuarioCreacionAnexo: user,
-//           fechaCreacionAnexo: date,
-//           usuarioModificacionAnexo: null,
-//           fechaModificacionAnexo: null
-//         };
-//         return this.annexesServices.createAnnexesForm(annexes);
-//       })
-//     );
-
-//     observables.push(cvObservable);
-
-//     for (let index in this.selectedFileByUser) {
-//       if (this.selectedFileByUser.hasOwnProperty(index)) {
-//         const archivo = this.selectedFileByUser[index];
-//         const archivoObservable = this.documentService.saveDocument(token, archivo, sistema).pipe(
-//           switchMap(response => {
-//             const annexes: Annexes = {
-//               idAnexo: null,
-//               idDocumento: 2,
-//               idGrupo: idGrupo,
-//               nombreAnexo: response.fileName,
-//               rutaAnexo: response.uuid,
-//               usuarioCreacionAnexo: user,
-//               fechaCreacionAnexo: date,
-//               usuarioModificacionAnexo: null,
-//               fechaModificacionAnexo: null
-//             };
-//             return this.annexesServices.createAnnexesForm(annexes);
-//           })
-//         );
-
-//         observables.push(archivoObservable);
-//       }
-//     }
-
-//     for (let index in this.selectedFileByUserExtern) {
-//       if (this.selectedFileByUserExtern.hasOwnProperty(index)) {
-//         const archivo = this.selectedFileByUserExtern[index];
-//         const archivoObservable = this.documentService.saveDocument(token, archivo, sistema).pipe(
-//           switchMap(response => {
-//             const annexes: Annexes = {
-//               idAnexo: null,
-//               idDocumento: 1,
-//               idGrupo: idGrupo,
-//               nombreAnexo: response.fileName,
-//               rutaAnexo: response.uuid,
-//               usuarioCreacionAnexo: user,
-//               fechaCreacionAnexo: date,
-//               usuarioModificacionAnexo: null,
-//               fechaModificacionAnexo: null
-//             };
-//             return this.annexesServices.createAnnexesForm(annexes);
-//           })
-//         );
-
-//         observables.push(archivoObservable);
-//       }
-//     }
-
-//     // Usamos forkJoin para esperar a que todos los observables se completen
-//     forkJoin(observables).subscribe({
-//       next: (responses) => {
-//         // Si todo ha sido exitoso, navegamos a la siguiente página
-//         this.router.navigateByUrl('main/principal');
-//         this.loadingData = false;
-//         this.snackBar.open('Enviado con éxito', 'Cerrar', {
-//           duration: 4000, // Duración del toast en milisegundos
-//         });
-// //        window.location.reload();
-//       },
-//       error: (err) => {
-//         console.log(err);
-//         // Si ocurre un error, puedes manejarlo aquí, por ejemplo, habilitar loadingData para permitir reintentos
-//         this.loadingData = false;
-//       }
-//     });
-
-//     // Si deseas poner el estado de loadingData en true antes de iniciar las cargas de documentos, puedes hacerlo al inicio del método:
-//     this.loadingData = true;
-
-
-//   }
-private saveCurriculums(idGrupo: number, user: string, date: Date) {
-  const sistema = 'GruposInv';
-  const token = sessionStorage.getItem('access_token');
-
-  const cv = this.selectedCv;
-  const img = this.selectedImg;
-  let observables = [];
-
-  // Guardar imagen si existe
-  if (img) {
+    if(img) {
     const imgObservable = this.documentService.saveDocument(token, img, sistema).pipe(
       switchMap(response => {
         const annexes: Annexes = {
@@ -934,11 +850,10 @@ private saveCurriculums(idGrupo: number, user: string, date: Date) {
         return this.annexesServices.createAnnexesForm(annexes);
       })
     );
+
     observables.push(imgObservable);
   }
-
-  // Guardar CV del coordinador si existe
-  if (cv) {
+  if(cv){
     const cvObservable = this.documentService.saveDocument(token, cv, sistema).pipe(
       switchMap(response => {
         const annexes: Annexes = {
@@ -955,19 +870,17 @@ private saveCurriculums(idGrupo: number, user: string, date: Date) {
         return this.annexesServices.createAnnexesForm(annexes);
       })
     );
+
     observables.push(cvObservable);
   }
 
-  // Solo guardar CVs que no hayan sido guardados automáticamente
-  for (let index in this.selectedFileByUser) {
-    if (this.selectedFileByUser.hasOwnProperty(index)) {
-      const archivo = this.selectedFileByUser[index];
-      const match = archivo.name.match(/hojaDeVida_(\d+)\.pdf/);
-      const userId = match ? parseInt(match[1]) : null;
-
-      // Solo guardar si no se ha guardado automáticamente
-      if (!userId || !this.cvsSavedInDatabase[userId]) {
-        const archivoObservable = this.documentService.saveDocument(token, archivo, sistema).pipe(
+    for (let index in this.selectedFileByUser) {
+      if (this.selectedFileByUser.hasOwnProperty(index)) {
+        const archivo = this.selectedFileByUser[index];
+        const match = archivo.name.match(/hojaDeVida_(\d+)\.pdf/);
+        const userId = match ? parseInt(match[1]):null;   
+        if(!userId || this.cvsSavedInDatabase[userId]){
+          const archivoObservable = this.documentService.saveDocument(token, archivo, sistema).pipe(
           switchMap(response => {
             const annexes: Annexes = {
               idAnexo: null,
@@ -983,21 +896,18 @@ private saveCurriculums(idGrupo: number, user: string, date: Date) {
             return this.annexesServices.createAnnexesForm(annexes);
           })
         );
+
         observables.push(archivoObservable);
       }
     }
   }
-
-  // Solo guardar CVs externos que no hayan sido guardados automáticamente
-  for (let index in this.selectedFileByUserExtern) {
-    if (this.selectedFileByUserExtern.hasOwnProperty(index)) {
-      const archivo = this.selectedFileByUserExtern[index];
-      const match = archivo.name.match(/hojaDeVida_(\d+)\.pdf/);
-      const userId = match ? parseInt(match[1]) : null;
-
-      // Solo guardar si no se ha guardado automáticamente
-      if (!userId || !this.cvsSavedInDatabase[userId]) {
-        const archivoObservable = this.documentService.saveDocument(token, archivo, sistema).pipe(
+    for (let index in this.selectedFileByUserExtern) {
+      if (this.selectedFileByUserExtern.hasOwnProperty(index)) {
+        const archivo = this.selectedFileByUserExtern[index];
+        const match = archivo.name.match(/hojaDeVida_(\d+)\.pdf/);
+        const userId = match ? parseInt(match[1]) : null;
+        if(!userId || !this.cvsSavedInDatabase[userId]){
+          const archivoObservable = this.documentService.saveDocument(token,archivo,sistema).pipe(
           switchMap(response => {
             const annexes: Annexes = {
               idAnexo: null,
@@ -1013,35 +923,36 @@ private saveCurriculums(idGrupo: number, user: string, date: Date) {
             return this.annexesServices.createAnnexesForm(annexes);
           })
         );
+
         observables.push(archivoObservable);
       }
     }
   }
-
-  // Ejecutar todas las operaciones pendientes
-  if (observables.length > 0) {
+if(observables.length > 0){
+    // Usamos forkJoin para esperar if(oa que todos los observables se completen
     forkJoin(observables).subscribe({
       next: (responses) => {
+        // Si todo ha sido exitoso, navegamos a la siguiente página
         this.router.navigateByUrl('main/principal');
         this.loadingData = false;
         this.snackBar.open('Enviado con éxito', 'Cerrar', {
-          duration: 4000,
+          duration: 4000, // Duración del toast en milisegundos
         });
+//        window.location.reload();
       },
       error: (err) => {
         console.log(err);
+        // Si ocurre un error, puedes manejarlo aquí, por ejemplo, habilitar loadingData para permitir reintentos
         this.loadingData = false;
       }
     });
-  } else {
-    // Si no hay observables, continuar directamente
-    this.router.navigateByUrl('main/principal');
-    this.loadingData = false;
+  }else{
+this.router.navigateByUrl('main/principal');
+    this.loadingData = true;
     this.snackBar.open('Enviado con éxito', 'Cerrar', {
       duration: 4000,
     });
   }
-
   this.loadingData = true;
 }
 
@@ -1192,71 +1103,7 @@ private saveCurriculums(idGrupo: number, user: string, date: Date) {
 
   }
 
-  savePartialGroup(){
-    const grupoInvData: InvGroupForm = {
-        idGrupoInv: null,
-        idCoordinador: this.currentUserId,
-        nombreGrupoInv: this.myForm.value.grupoInv1.nombreGrupoInv,
-        estadoGrupoInv: "pendiente",
-        acronimoGrupoinv: this.myForm.value.grupoInv1.acronimoGrupoinv,
-        departamento: this.userCoordinador.departamento,
-        proceso: "1a",
-        sede: this.userCoordinador.sede,
-        usuarioCreacion: this.currentUser,
-        fechaCreacion: this.currentDate,
-        usuarioModificacion: null,
-        fechaModificacion: null
-      }
-   // if(!sessionStorage.getItem('invGroup')){
-    if (!this.idGrupo) {
-this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
-        (response) => {
-          this.reqFormResponse = response;
-          const idGrupoCreado = this.reqFormResponse;
-          sessionStorage.setItem('invGroup', idGrupoCreado.toString());
-          if (this.selectedCv) {
-            this.saveCvCoordinador(idGrupoCreado);
-          }
-          const reqFormData: CreationReqForm = {
-            idPeticionCreacion: null,
-            idGrupoInv: idGrupoCreado,
-            alineacionEstrategica: null,
-            estado: "p",
-            usuarioCreacionPeticion: this.currentUser,
-            fechaCreacionPeticion: this.currentDate,
-            usuarioModificacionPeticion: null,
-            fechaModificacionPeticion: null,
-          };
-          this.creationReqService.createCreationRequestForm(reqFormData).subscribe(
-            (reqFormResponse) => {
-              localStorage.setItem('invGroup', idGrupoCreado);
-            },
-            (reqFormError) => {
-            }
-          );
-        },
-        (error) => {
-          this.savedMessage = 'Error al guardar el formulario';
-          this.loadingData = false;
 
-        }
-      );
-
-    }
-    else{
-      grupoInvData.idGrupoInv = this.idGrupo;//nuevo
-      this.apiInvGroupService.update(Number(sessionStorage.getItem('groupId')), grupoInvData).subscribe(
-        (response) => {
-          if (this.selectedCv) {
-            this.saveCvCoordinador(this.idGrupo);
-          }
-          this.snackBar.open('Guardado con éxito', 'Cerrar', { duration: 3000 });
-
-        });
-
-    }
-    
-          } 
 
 
           ///nuevos metodos
@@ -1345,6 +1192,10 @@ this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
           private loadExistingMembers(idGrupo: number): void {
             this.apiInvMemberService.getByGroup(idGrupo).subscribe(
               (members) => {
+                this.selectedUsers = [];
+      this.selectedUsersExterns = [];
+      this.miembrosInternos = [];
+      this.totalMiembrosInternos = 0;
                 members.forEach((member) => {
                   if (member.status === 'INTERNO') {
                     this.usuarioService.getById(member.idUsuario).subscribe(
@@ -1355,13 +1206,14 @@ this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
                           rol: member.tipo,
                         };
                         this.selectedUsers.push(userObj);
-          
                         if (member.tipo === 'MIEMBRO') {
                           this.totalMiembrosInternos++;
                           this.miembrosInternos.push(userObj);
                         }
           
-                        // ✅ Validar estado final
+                        //console.log(`Miembro interno cargado: ${userData.nombre || userData.nombre}, Rol: ${member.tipo}`);
+                        
+                        // Verificar documentos después de cargar cada miembro
                         this.verificarDocumentosCargados();
                       },
                       (error) => {
@@ -1378,9 +1230,8 @@ this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
                           institucion: externalUserData.institucion,
                         };
                         this.selectedUsersExterns.push(externalUser);
-          
                         this.documentosCargados[member.idUsuario] = true;
-          
+
                         // ✅ Validar estado final
                         this.verificarDocumentosCargados();
                       },
@@ -1389,32 +1240,47 @@ this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
                       }
                     );
                   }
-                  this.loadExistingCVs(idGrupo);
-
                 });
+                setTimeout(() => {
+                  this.loadExistingCVs(idGrupo);
+                 // console.log(`Total miembros internos cargados: ${this.totalMiembrosInternos}`);
+                }, 500);
+
               },
               (error) => {
                 console.error('Error al cargar miembros existentes:', error);
               }
             );
           }
+          loadExistingCVs(idGrupo: number) {
+            this.annexesServices.getByGroupType(idGrupo, '2').subscribe(
+              (cvs: any[]) => {
+                //console.log('CVs encontrados en BD:', cvs);
+                
+                cvs.forEach(cv => {
+                  // Extraer el ID del usuario del nombre del archivo
+                  const match = cv.nombreAnexo.match(/hojaDeVida_(\d+)\.pdf/);
+                  if (match) {
+                    const userId = parseInt(match[1]);
+                    this.cvsSavedInDatabase[userId] = true;
+                    this.existingCvsInfo[userId] = cv;
+                    this.documentosCargados[userId] = true;
+                    
+                    //console.log(`CV encontrado para usuario ${userId}: ${cv.nombreAnexo}`);
+                  }
+                });
+                
+                // Verificar documentos después de cargar CVs
+                this.verificarDocumentosCargados();
+                
+                //console.log('CVs cargados:', this.documentosCargados);
+              },
+              (error) => {
+                console.error('Error al cargar CVs existentes:', error);
+              }
+            );
+          }    
           
-         // 3. Nuevo método para cargar CVs existentes
-  loadExistingCVs(idGrupo: number) {
-    this.annexesServices.getByGroupType(idGrupo, '2').subscribe((cvs: any[]) => {
-      cvs.forEach(cv => {
-        // Extraer el ID del usuario del nombre del archivo
-        const match = cv.nombreAnexo.match(/hojaDeVida_(\d+)\.pdf/);
-        if (match) {
-          const userId = parseInt(match[1]);
-          this.cvsSavedInDatabase[userId] = true;
-          this.existingCvsInfo[userId] = cv;
-          this.documentosCargados[userId] = true;
-        }
-      });
-      this.verificarDocumentosCargados();
-    });
-  }  
 
           private updateCreationRequest(idGrupo: number): void {
             this.creationReqService.getByGroup(idGrupo).subscribe(
@@ -1429,7 +1295,7 @@ this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
                   
                   this.creationReqService.update(existingRequest.idPeticionCreacion, updatedRequest).subscribe(
                     (response) => {
-                      console.log('Petición actualizada:', response);
+                    //Console.log('Petición actualizada:', response);
                     },
                     (error) => {
                       console.error('Error al actualizar petición:', error);
@@ -1449,7 +1315,7 @@ this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
                   
                   this.creationReqService.createCreationRequestForm(reqFormData).subscribe(
                     (response) => {
-                      console.log('Nueva petición creada:', response);
+                      //console.log('Nueva petición creada:', response);
                     },
                     (error) => {
                       console.error('Error al crear petición:', error);
@@ -1551,8 +1417,7 @@ this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
             );
           }
 
-
-        // 1. Agregar método para guardar CV del coordinador individualmente
+          // 1. Agregar método para guardar CV del coordinador individualmente
 private saveCvCoordinador(idGrupo: number): void {
   if (!this.selectedCv) return;
 
@@ -1576,7 +1441,7 @@ private saveCvCoordinador(idGrupo: number): void {
     })
   ).subscribe(
     (response) => {
-      console.log('CV del coordinador guardado exitosamente');
+      //console.log('CV del coordinador guardado exitosamente');
       this.snackBar.open('CV guardado exitosamente', 'Cerrar', { duration: 3000 });
     },
     (error) => {
@@ -1717,4 +1582,70 @@ isCVSaved(userId: number): boolean {
   return this.cvsSavedInDatabase[userId] === true;
 }
 
+
+savePartialGroup(){
+  const grupoInvData: InvGroupForm = {
+      idGrupoInv: null,
+      idCoordinador: this.currentUserId,
+      nombreGrupoInv: this.myForm.value.grupoInv1.nombreGrupoInv,
+      estadoGrupoInv: "pendiente",
+      acronimoGrupoinv: this.myForm.value.grupoInv1.acronimoGrupoinv,
+      departamento: this.userCoordinador.departamento,
+      proceso: "1a",
+      sede: this.userCoordinador.sede,
+      usuarioCreacion: this.currentUser,
+      fechaCreacion: this.currentDate,
+      usuarioModificacion: null,
+      fechaModificacion: null
+    }
+ // if(!sessionStorage.getItem('invGroup')){
+  if (!this.idGrupo) {
+this.apiInvGroupService.createInvGroupForm(grupoInvData).subscribe(
+      (response) => {
+        this.reqFormResponse = response;
+        const idGrupoCreado = this.reqFormResponse;
+        sessionStorage.setItem('invGroup', idGrupoCreado.toString());
+        if (this.selectedCv) {
+          this.saveCvCoordinador(idGrupoCreado);
+        }
+        const reqFormData: CreationReqForm = {
+          idPeticionCreacion: null,
+          idGrupoInv: idGrupoCreado,
+          alineacionEstrategica: null,
+          estado: "p",
+          usuarioCreacionPeticion: this.currentUser,
+          fechaCreacionPeticion: this.currentDate,
+          usuarioModificacionPeticion: null,
+          fechaModificacionPeticion: null,
+        };
+        this.creationReqService.createCreationRequestForm(reqFormData).subscribe(
+          (reqFormResponse) => {
+            localStorage.setItem('invGroup', idGrupoCreado);
+          },
+          (reqFormError) => {
+          }
+        );
+      },
+      (error) => {
+        this.savedMessage = 'Error al guardar el formulario';
+        this.loadingData = false;
+
+      }
+    );
+
+  }
+  else{
+    grupoInvData.idGrupoInv = this.idGrupo;//nuevo
+    this.apiInvGroupService.update(Number(sessionStorage.getItem('groupId')), grupoInvData).subscribe(
+      (response) => {
+        if (this.selectedCv) {
+          this.saveCvCoordinador(this.idGrupo);
+        }
+        this.snackBar.open('Guardado con éxito', 'Cerrar', { duration: 3000 });
+
+      });
+
+  }
+  
+        } 
 }
