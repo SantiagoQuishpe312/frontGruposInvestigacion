@@ -187,10 +187,11 @@
                         formControlName="objetivo" rows="3"></textarea>
                     </mat-form-field>
                     <button class="btn_add" type="button" mat-icon-button
-                      (click)="openDialogObj(i)"
+                      (click)="guardarYabrirDialogObj(i)"
                       matTooltip="Añadir nuevas Estrategias y ODS">
                       <mat-icon class="material-symbols-outlined">add</mat-icon>
                     </button>
+
                     <button class="btn_delete" type="button" mat-icon-button
                       (click)="eliminarObjetivo(i)"
                       matTooltip="Eliminar Objetivo">
@@ -202,9 +203,8 @@
                   <!-- Estrategias en una columna -->
                   <td class="strategies">
                     <div class="list"
-                      *ngFor="let estrategia of objetivo.value.estrategias; let j = index">
-                      {{ estrategia.descripcion }}
-
+                      *ngFor="let estrategia of objetivo.get('estrategias')?.value; let j = index">
+                      {{ estrategia.descripcion || ('ID: ' + estrategia.id) }}
                     </div>
                   </td>
 

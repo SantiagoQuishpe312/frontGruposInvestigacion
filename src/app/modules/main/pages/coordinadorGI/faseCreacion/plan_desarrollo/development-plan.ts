@@ -101,10 +101,39 @@ export class DevelopmentPlanFormComponent implements OnInit {
     this.currentDate = this.datePipe.transform(new Date(), 'yyyy-MM-ddTHH:mm:ss');
     this.obtenerPlanVigente();
     this.isSeguimientoFase = localStorage.getItem('isSeguimientoFase');
+    this.cargarObjetivosDesdeBD();
 
 
 
   }
+  async cargarObjetivosDesdeBD(): Promise<void> {
+  try {
+    const objetivos = await this.specificObjetivesService.getAll().toPromise(); // Ajusta según tu servicio
+const objetivosFormArray = this.fb.array<FormGroup<any>>([]);
+
+    for (const obj of objetivos) {
+      const relaciones = await this.objStrategiesODSService.getCompleteByObj(obj.idObjetivo).toPromise(); // Ajusta tu método
+
+      const estrategias = relaciones.strategies.map(r => ({ id: r.idEstrategia }));
+      const ods = relaciones.ods.map(r => ({ id: r.id }));
+
+      const objetivoForm = this.fb.group({
+        idObjetivo: [obj.idObjetivo],
+        objetivo: [obj.objetivo],
+        estrategias: [estrategias],
+        ods: [ods]
+      });
+
+      objetivosFormArray.push(objetivoForm);
+    }
+
+    this.myForm.setControl('planDesarrolloForm3', objetivosFormArray);
+
+  } catch (error) {
+    console.error('Error al cargar objetivos y relaciones desde la base de datos', error);
+  }
+}
+
   planVigente: DevelopmentPlanForms;
   obtenerPlanVigente() {
     this.developmentPlanService.getByIdGroupC(this.idGroup).subscribe(data => {
@@ -387,47 +416,65 @@ export class DevelopmentPlanFormComponent implements OnInit {
       })
     );
   }
+
   //campo de objetivos especificos - Agregar con ODS y estrategias institucionales
   crearObjetivo(): FormGroup {
     return this.fb.group({
-      idObjetivo: [0],                       // ← nuevo
-      objetivo: ['', Validators.required],
+      idObjetivo: [null],  // <-- nuevo campo para guardar ID
+      objetivo: [''],
       estrategias: [[]],
       ods: [[]]
     });
   }
+  async guardarYabrirDialogObj(index: number): Promise<void> {
+    const objetivoForm = this.objetivos.at(index);
+    const objetivoData = objetivoForm.value;
 
+    // Si ya fue guardado, solo abre el modal
+    if (objetivoData.idObjetivo) {
+      this.openDialogObj(index);
+      return;
+    }
 
-  async agregarObjetivo(): Promise<void> {
-    const objetivoForm = this.fb.group({
-      objetivo: [''],
-      estrategias: [[]],
-      ods: [[]],
-      idObjetivo: [null] // ← para guardar el ID de la BD
-    });
+    // Validación mínima
+    if (!objetivoData.objetivo || objetivoData.objetivo.trim() === '') {
+      alert('Debes ingresar un objetivo específico antes de añadir estrategias y ODS.');
+      return;
+    }
 
-    // Crear en backend inmediatamente
     const nuevoObjetivo: SpecificObjetives = {
       idObjetivo: 0,
-      objetivo: '',
+      objetivo: objetivoData.objetivo,
       usuarioCreacion: this.currentUser,
       fechaCreacion: this.currentDate,
       usuarioModificacion: null,
-      fechaModificacion: null
+      fechaModificacion: null,
     };
 
     try {
-      const idCreado = await this.specificObjetivesService.createSpecificObjetive(nuevoObjetivo).toPromise();
-      objetivoForm.patchValue({ idObjetivo: idCreado });
+      const idGenerado = await this.specificObjetivesService.createSpecificObjetive(nuevoObjetivo).toPromise();
 
-      this.objetivos.push(objetivoForm);
-      this.actualizarInformacion();
+      // Guardamos el ID dentro del FormGroup
+      objetivoForm.patchValue({ idObjetivo: idGenerado });
 
+      // Abrimos el modal con el ID ya generado
+      this.openDialogObj(index);
     } catch (error) {
-      console.error('Error al crear el objetivo en el backend:', error);
+      console.error('Error al guardar el objetivo específico:', error);
+      alert('No se pudo guardar el objetivo. Intenta nuevamente.');
     }
   }
 
+
+  agregarObjetivo(): void {
+    if (this.objetivos) {
+      this.objetivos.push(this.crearObjetivo());
+      this.actualizarInformacion(); // Actualizar la información
+
+    } else {
+      console.error('El FormArray "objetivos" no está definido.');
+    }
+  }
 
   getObjetivoEspecifico(posicion: number): string {
     const objetivo = this.objetivos.value[posicion];  // Usar la posición para acceder al arreglo
@@ -484,12 +531,15 @@ export class DevelopmentPlanFormComponent implements OnInit {
   }
   openDialogObj(index: number): void {
     const objetivoActual = this.objetivos.at(index).value;
-
+    const objetivoInstitucional = this.myForm.get('planDesarrolloForm2_2.objInstitucional')?.value;
+    const currentObjetivo = this.objetivos.at(index);
     const dialogRef = this.dialog.open(ObjControl, {
       width: '50%',
       height: '70%',
       data: {
+        idObjetivoEspecifico: objetivoActual.idObjetivo, // <-- Aquí va el ID
         objetivoEspecifico: objetivoActual,
+        objetivoInstitucional: objetivoInstitucional,
         estrategiasSeleccionadas: objetivoActual.estrategias || [],
         odsSeleccionados: objetivoActual.ods || []
       }
@@ -498,41 +548,40 @@ export class DevelopmentPlanFormComponent implements OnInit {
     dialogRef.afterClosed().subscribe(async result => {
       if (result) {
         const currentObjetivo = this.objetivos.at(index);
-        const idObjetivo = currentObjetivo.value.idObjetivo;
+        const currentEstrategias = currentObjetivo.value.estrategias || [];
+        const currentOds = currentObjetivo.value.ods || [];
 
-        // Guardar las estrategias + ODS en la BD
-        try {
-          if (result.estrategias.length !== result.ods.length) {
-            throw new Error("El número de estrategias y ODS no coincide");
+        const updatedEstrategias = [...currentEstrategias, ...result.estrategias];
+        const updatedOds = [...currentOds, ...result.ods];
+
+        currentObjetivo.patchValue({
+          estrategias: updatedEstrategias,
+          ods: updatedOds
+        });
+
+        // Guardar en BD las asociaciones
+        for (let i = 0; i < result.estrategias.length; i++) {
+          const estrategia = result.estrategias[i];
+          const ods = result.ods[i];
+
+          const asociacion: Objectives_Strategies_Ods = {
+            idEstrategia: estrategia.id,
+            idODS: ods.id,
+            idObjetivoEspecifico: objetivoActual.idObjetivo,
+            usuarioCreacion: this.currentUser,
+            fechaCreacion: this.currentDate,
+            usuarioModificacion: null,
+            fechaModificacion: null,
+          };
+
+          try {
+            await this.objStrategiesODSService.create(asociacion).toPromise();
+          } catch (error) {
+            console.error('Error al guardar asociación ODS-Estrategia:', error);
           }
-
-          for (let i = 0; i < result.estrategias.length; i++) {
-            const estrategia = result.estrategias[i];
-            const odsItem = result.ods[i];
-
-            const relacion: Objectives_Strategies_Ods = {
-              idEstrategia: estrategia.id,
-              idObjetivoEspecifico: idObjetivo,
-              idODS: odsItem.id,
-              usuarioCreacion: this.currentUser,
-              fechaCreacion: this.currentDate,
-              usuarioModificacion: null,
-              fechaModificacion: null,
-            };
-
-            await this.objStrategiesODSService.create(relacion).toPromise();
-          }
-
-          currentObjetivo.patchValue({
-            estrategias: result.estrategias,
-            ods: result.ods
-          });
-
-          this.actualizarInformacion();
-        } catch (error) {
-          console.error('Error al guardar estrategias y ODS:', error);
         }
       }
+      this.actualizarInformacion(); // Refresca el estado del form
     });
   }
 
@@ -576,17 +625,19 @@ export class DevelopmentPlanFormComponent implements OnInit {
   }
 
   esFormularioValido(): boolean {
+    // Verifica si el formulario es válido
     if (!this.myForm.get('planDesarrolloForm3').valid) {
       return false;
     }
 
+    // Verifica cada objetivo para asegurar que tenga al menos una estrategia
     for (const objetivo of this.objetivos.controls) {
       if (!objetivo.value.objetivo || objetivo.value.estrategias.length === 0) {
-        return false;
+        return false; // Si un objetivo no tiene descripción o estrategias, el formulario no es válido
       }
     }
 
-    return true;
+    return true; // Todo está lleno y válido
   }
 
   getName(id: number): Observable<string> {
