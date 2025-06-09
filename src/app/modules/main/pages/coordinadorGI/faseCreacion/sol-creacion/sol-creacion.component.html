@@ -200,9 +200,6 @@
                                             color="primary"
                                             [disabled]="!selectedCv"
                                             matStepperNext
-                                            (click)="onCvStepNext()"
-
-
                                             matTooltip="Siguiente">
                                             Siguiente
                                         </button></div>
@@ -233,39 +230,57 @@
                                             <tr
                                                 *ngFor="let user of selectedUsers; let i = index;">
                                                 <td>{{ user.user.nombres || user.user.nombre }}</td>
-                                                <td>{{ user.user.tipo }}</td>
-                                                <td>{{ user.user.escalafon
+                                                <td>{{ user.user.tipo || user.user.grado}}</td>
+                                                <td>{{ user.user.escalafon || user.user.cargo
                                                     }}</td>
 
-                                             <!-- <td>
+                                                <!-- <td>
                                                     <input type="file"
                                                         (change)="onFileSelected($event,i,user.user.idBd)"
                                                         accept=".pdf">
-                                                </td>  -->
-                                                <td>
-                                                    <div class="cv-upload-container">
-                                                      <input type="file"
-                                                             (change)="onFileSelected($event,i,user.user.idBd)"
-                                                             accept=".pdf"
-                                                             [id]="'cv-input-' + i">
-                                                      <div class="cv-status" [ngClass]="{
-                                                        'cv-saved': isCVSaved(user.user.idBd),
-                                                        'cv-pending': !documentosCargados[user.user.idBd],
-                                                        'cv-selected': documentosCargados[user.user.idBd] && !isCVSaved(user.user.idBd)
-                                                      }">
-                                                        {{ getCVStatus(user.user.idBd) }}
-                                                      </div>
+                                                </td> -->
+                                                <!-- <td>
+                                                    <div *ngIf="cvUploadedMap[user.user.idBd]; else
+                                                    uploadBlock">
+                                                    Subido
                                                     </div>
-                                                  </td>
-                                                <td>
-                                                    <button type="button"
-                                                        class="delete"
-                                                        mat-mini-fab
-                                                        (click)="borrarInvestigador(i, user.user.idBd)">
-                                                        <i
-                                                            class="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </td>
+                                                    <ng-template #uploadBlock>
+                                                    <input type="file"
+                                                    (change)="onFileSelected($event, i, user.user.idBd)"
+                                                    accept=".pdf">
+                                                    </ng-template>
+                                                    </td> -->
+                                                    <td>
+                                                        <div class="cv-upload-container">
+                                                          <!-- Usar el ID correcto del usuario -->
+                                                          <input type="file"
+                                                                 (change)="onFileSelected($event, i, user.user.idBd || user.user.id)"
+                                                                 accept=".pdf"
+                                                                 [id]="'cv-input-' + i">
+                                                          <div class="cv-status" [ngClass]="{
+                                                            'cv-saved': isCVSaved(user.user.idBd || user.user.id),
+                                                            'cv-pending': !documentosCargados[user.user.idBd || user.user.id],
+                                                            'cv-selected': documentosCargados[user.user.idBd || user.user.id] && !isCVSaved(user.user.idBd || user.user.id)
+                                                          }">
+                                                            {{ getCVStatus(user.user.idBd || user.user.id) }}
+                                                          </div>
+                                                        </div>
+                                                      </td>
+                                                    
+                                                  
+                                                  
+
+                                                  
+
+                                                  
+                                                      <td>
+                                                        <button type="button"
+                                                                class="delete"
+                                                                mat-mini-fab
+                                                                (click)="borrarInvestigador(i, user.user.idBd || user.user.id)">
+                                                          <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                      </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -296,11 +311,21 @@
                                                 <input type="file"
                                                     (change)="onFileSelectedExtern($event,i,user.id)"
                                                     accept=".pdf">
-                                            </td> -->
+                                            </td> 
                                             <td>
+                                                <div *ngIf="cvUploadedMap[user.id]; else uploadBlockExtern">
+                                                  Subido
+                                                </div>
+                                                <ng-template #uploadBlockExtern>
+                                                  <input type="file" 
+                                                         (change)="onFileSelectedExtern($event, i, user.id)" 
+                                                         accept=".pdf">
+                                                </ng-template>
+                                              </td>-->
+                                              <td>
                                                 <div class="cv-upload-container">
                                                   <input type="file"
-                                                         (change)="onFileSelectedExtern($event,i,user.id)"
+                                                         (change)="onFileSelectedExtern($event, i, user.id)"
                                                          accept=".pdf"
                                                          [id]="'cv-extern-input-' + i">
                                                   <div class="cv-status" [ngClass]="{
@@ -312,11 +337,12 @@
                                                   </div>
                                                 </div>
                                               </td>
+
                                             <td>
                                                 <button type="button"
                                                     class="delete"
                                                     mat-mini-fab
-                                                    (click)="borrarInvestigadorExtern(i)">
+                                                    (click)="borrarInvestigadorExtern(i, user.idBd || user.id)">
                                                     <i
                                                         class="fas fa-trash-alt"></i>
                                                 </button>
@@ -336,7 +362,10 @@
                                         matStepperPrevious>Regresar</button>
                                     <button type="button" mat-raised-button
                                         color="primary" matStepperNext
-                                        [disabled]="totalMiembrosInternos <3   || !documentosCompletosCargados">Siguiente</button>
+                                        [disabled]="totalMiembrosInternos <3   || !documentosCompletosCargados">Siguiente
+                                            <span *ngIf="false"> - Miembros: {{totalMiembrosInternos}}, Docs: {{documentosCompletosCargados}}</span>
+
+                                        </button>
 
                                 </div>
                             </div>
@@ -352,7 +381,7 @@
                                 </h1>
 
                                 <div class="drag-drop"
-                                    (drop)="onDrop($event,'i')"
+                                    (drop)="onDrop($event,'h')"
                                     (dragover)="onDragOver($event)">
                                     <div class="vista-previa-img"
                                         *ngIf="filePreview">
