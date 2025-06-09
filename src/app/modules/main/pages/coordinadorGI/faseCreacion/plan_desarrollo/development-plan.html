@@ -1,6 +1,6 @@
 <link rel="stylesheet"
   href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=add,delete,edit" />
-<div class="cont" >
+<div class="cont">
   <div class="container-fluid">
     <div class="card">
       <header>
@@ -59,7 +59,8 @@
                 <div>
                   <button type="button" mat-raised-button color="primary"
                     [disabled]="!marcoControl.value?.length || !planNacionalControl.value?.length! || !planSuperiorControl.value?.length"
-                    matStepperNext>
+                    matStepperNext
+                    (click)="savePartialPlan(1)">
                     Siguiente
                   </button></div>
               </div>
@@ -88,6 +89,7 @@
                     matStepperPrevious>Regresar</button>
                   <button type="button" mat-raised-button color="primary"
                     [disabled]="!myForm.get('planDesarrolloForm2_1').valid"
+                    (click)="savePartialPlan(2)"
                     matStepperNext>
                     Siguiente
                   </button>
@@ -113,6 +115,7 @@
                     matStepperPrevious>Regresar</button>
                   <button type="button" mat-raised-button color="primary"
                     [disabled]="!myForm.get('planDesarrolloForm2').valid"
+                    (click)="savePartialPlan(3)"
                     matStepperNext>
                     Siguiente
                   </button></div>
@@ -151,6 +154,7 @@
                     matStepperPrevious>Regresar</button>
                   <button type="button" mat-raised-button color="primary"
                     [disabled]="!myForm.get('planDesarrolloForm2_2').valid"
+                    (click)="savePartialPlan(4)"
                     matStepperNext>
                     Siguiente
                   </button></div>

@@ -14,5 +14,5 @@ export interface UpperLevelPlanFilter{
     usuarioCreacion?:string;
     fechaCreacion?:Date;
     usuarioModificacion?:string;
-    fechaModificacion?:Date;}[];
+    fechaModificacion?:Date;};
 }

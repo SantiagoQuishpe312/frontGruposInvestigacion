@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CreationReqService } from 'src/app/core/http/creation-req/creation-req.service';
 import { InvGroupService } from 'src/app/core/http/inv-group/inv-group.service';
 import { InvMemberService } from 'src/app/core/http/inv-member/inv-member.service';
 import { UsuarioService } from 'src/app/core/http/usuario/usuario.service';
@@ -11,14 +10,10 @@ import { Usuario } from 'src/app/types/usuario.types';
 import { InvGroup_academicDomainService } from 'src/app/core/http/invGroup_academicDomain/invGroup_academicDomain.service';
 import { InvGroup_linesService } from 'src/app/core/http/InvGroup_line/invGroup_linesService.service';
 import { Line } from 'src/app/types/line.types';
-import { LineCreaCompleto } from 'src/app/types/invGroup_line';
-import { AcadCreaCompleto } from 'src/app/types/invGroup_academicDomain';
-import { CreaAreaCompleto } from 'src/app/types/invGroup_area.types';
 import { InvGroup_areaService } from 'src/app/core/http/invGroup_area/crea-area.service';
 import { DevelopmentPlanService } from 'src/app/core/http/develop-plan-form/develop-plan-form.service';
 import { DevelopmentPlanForms } from 'src/app/types/developPlanForm';
 import { LegalFrameworkFilter } from 'src/app/types/deveLega.types';
-import { NationalPlanFilter } from 'src/app/types/deveNati.types';
 import { UpperLevelPlanFilter } from 'src/app/types/deveUppe.types';
 import { DeveLegaService } from 'src/app/core/http/deve-lega/deve-lega.service';
 import { DeveNationalService } from 'src/app/core/http/deve-national/deve-national.service'; 
@@ -32,6 +27,9 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser'; // Im
 import { DocumentsService } from 'src/app/core/http/documentos/documents.service';
 import { AcademicDomain } from 'src/app/types/academicDomain.types';
 import { Area } from 'src/app/types/area.types';
+import { LegalFramework } from 'src/app/types/legalFramework.types';
+import { NationalPlan } from 'src/app/types/nationalPlan.types';
+import { UpperLevelPlan } from 'src/app/types/upperLevelPlan.types';
 @Component({
   selector: 'app-solicitud-componente',
   templateUrl: './mostrarSolicitud.component.html',
@@ -51,9 +49,9 @@ export class MostrarSolicitudForVicerector implements OnInit {
 
   loadingData: boolean = true;
   invGroupId: number ;
-  legalFramework: LegalFrameworkFilter;
-  nationalPlan:NationalPlanFilter;
-  upperLevelPlan: UpperLevelPlanFilter;
+  legalFramework: LegalFramework[];
+  nationalPlan:NationalPlan[];
+  upperLevelPlan: UpperLevelPlan[];
   objStrategies:ObjStrategiesComplete[]=[];
   controlPanel:ControlPanelForm[]=[];
   token:string;
@@ -64,7 +62,6 @@ export class MostrarSolicitudForVicerector implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private solicitudService: CreationReqService,
     private invGroupService: InvGroupService,
     private userService: UsuarioService,
     private invMemberService: InvMemberService,

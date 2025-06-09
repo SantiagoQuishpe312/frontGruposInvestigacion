@@ -24,6 +24,9 @@ import { InstStrategicObj } from 'src/app/types/InstStrategicObj.types';
 import { InstStrategicObjService } from 'src/app/core/http/instStrategicObj/inst-strategic-obj.service';
 import { ObjectiveCompleteOds } from 'src/app/types/obj_strategies_ods.types';
 import { ObjStrategiesODSService } from 'src/app/core/http/obj_strategies_ods/obj_strategies_ods.service';
+import { LegalFramework } from 'src/app/types/legalFramework.types';
+import { NationalPlan } from 'src/app/types/nationalPlan.types';
+import { UpperLevelPlan } from 'src/app/types/upperLevelPlan.types';
 @Component({
   selector: 'app-developmentPlanForm-component',
   templateUrl: './developmentPlanForm.component.html',
@@ -39,9 +42,9 @@ export class DevelopPlanFormComponent implements OnInit {
   member: InvMemberForm[];
   loadingData: boolean = true;
   invGroupId: number ;
-  legalFramework: LegalFrameworkFilter;
-  nationalPlan:NationalPlanFilter;
-  upperLevelPlan: UpperLevelPlanFilter;
+  legalFramework: LegalFramework[];
+  nationalPlan:NationalPlan[];
+  upperLevelPlan: UpperLevelPlan[];
   objStrategies:ObjStrategiesComplete[]=[];
   controlPanel:ControlPanelForm[]=[];
   specificObj:ObjectiveCompleteOds[]=[];

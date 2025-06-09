@@ -32,6 +32,9 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser'; // Im
 import { DocumentsService } from 'src/app/core/http/documentos/documents.service';
 import{Area} from 'src/app/types/area.types';
 import { AcademicDomain } from 'src/app/types/academicDomain.types';
+import { LegalFramework } from 'src/app/types/legalFramework.types';
+import { NationalPlan } from 'src/app/types/nationalPlan.types';
+import { UpperLevelPlan } from 'src/app/types/upperLevelPlan.types';
 @Component({
   selector: 'app-solicitud-componente',
   templateUrl: './mostrarSolicitud.component.html',
@@ -51,9 +54,9 @@ export class MostrarSolicitudForComision implements OnInit {
   area:Area[];
   loadingData: boolean = true;
   invGroupId: number ;
-  legalFramework: LegalFrameworkFilter;
-  nationalPlan:NationalPlanFilter;
-  upperLevelPlan: UpperLevelPlanFilter;
+  legalFramework: LegalFramework[];
+  nationalPlan:NationalPlan[];
+  upperLevelPlan: UpperLevelPlan[];
   objStrategies:ObjStrategiesComplete[]=[];
   controlPanel:ControlPanelForm[]=[];
   token:string;

@@ -36,14 +36,14 @@
     <h3>2. REFERENCIAS</h3>
     <ul style="text-indent: 40px;" *ngIf="upperLevelPlan  && legalFramework && nationalPlan">
       <li >a.    Plan del Nivel Superior</li>
-      <li *ngFor="let plan of upperLevelPlan.planDeNivelSuperior"  style="text-indent: 60px;">
+      <li *ngFor="let plan of upperLevelPlan"  style="text-indent: 60px;">
         <ul>
           <li>{{ plan.nombre }}</li>
         </ul>
       </li>
       <br/>
       <li *ngIf="legalFramework">b.   Marco Legal específico del nivel</li>
-      <li *ngFor="let legal of legalFramework.marcoLegal; let i = index"  style="text-indent: 80px;">
+      <li *ngFor="let legal of legalFramework; let i = index"  style="text-indent: 80px;">
         <ul>
          
           <li>{{ i+1 }}. {{ legal.nombre }}</li>
@@ -51,7 +51,7 @@
       </li>
       <br/>
       <li *ngIf="nationalPlan">c.  Plan de Creación de Oportunidades - PNBV (2021 – 2025)</li>
-      <li *ngFor="let nat of nationalPlan.planNacional"  style="text-indent: 60px;">
+      <li *ngFor="let nat of nationalPlan"  style="text-indent: 60px;">
         <ul>
           <li>{{ nat.numeroPolitica }}: {{ nat.descripcion }}</li>
         </ul>

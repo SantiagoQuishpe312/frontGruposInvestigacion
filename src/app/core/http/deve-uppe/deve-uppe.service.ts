@@ -3,6 +3,7 @@ import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DeveUppe,UpperLevelPlanFilter } from 'src/app/types/deveUppe.types';
+import { UpperLevelPlan } from 'src/app/types/upperLevelPlan.types';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,10 @@ export class DeveUppeService {
   createDeveUppeForm(formData: DeveUppe): Observable<any> {
     return this.http.post(`${this.URL}/create`, formData);
   }
-  getByDev(id:number):Observable<UpperLevelPlanFilter>{
-    return this.http.get<UpperLevelPlanFilter>(`${this.URL}/bydev/${id}`);
+  getByDev(id:number):Observable<UpperLevelPlan[]>{
+    return this.http.get<UpperLevelPlan[]>(`${this.URL}/bydev/${id}`);
+  }
+  delete(id:number,idDev:number):Observable<any>{
+    return this.http.delete(`${this.URL}/${id}/dev/${idDev}`);
   }
 }

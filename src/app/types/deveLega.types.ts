@@ -13,5 +13,5 @@ export interface LegalFrameworkFilter{
      usuarioCreacion?:string;
      fechaCreacion?:Date;
      usuarioModificacion?:string;
-     fechaModificacion?:Date;}[];
+     fechaModificacion?:Date;};
  }    

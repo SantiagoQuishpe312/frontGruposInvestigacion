@@ -32,13 +32,14 @@ import { OdsService } from 'src/app/core/http/ods/ods.service';
 import { ODS } from 'src/app/types/ods.types';
 import { ObjStrategiesODSService } from 'src/app/core/http/obj_strategies_ods/obj_strategies_ods.service';
 import { Objectives_Strategies_Ods } from 'src/app/types/obj_strategies_ods.types';
-import { catchError, forkJoin, map, Observable, of } from 'rxjs';
+import { catchError, forkJoin, map, Observable, of, switchMap } from 'rxjs';
 import { ObjControl } from './modal_objetivos.component';
 import { ChangeDetectorRef } from '@angular/core';
 import { ActControl } from './modal_cuadro_actividades.component';
 import { UsuarioService } from 'src/app/core/http/usuario/usuario.service';
 import { SpecificObjetives } from 'src/app/types/specificObjetives.types';
 import { SpecificObjetivesService } from 'src/app/core/http/specific-objetives/specific-objetives.service';
+
 @Component({
   selector: 'vex-development-plan-form',
   templateUrl: './development-plan.html',
@@ -54,17 +55,7 @@ export class DevelopmentPlanFormComponent implements OnInit {
   marcoLegal: any[] = [];
   planNacional: any[] = [];
   idPlanDesarrollo: number;
-  planSuperiorControl = new FormControl<any>(0, Validators.required);
-  alcanceControl = new FormControl("", Validators.required);
-  contextoControl = new FormControl("", Validators.required);
-  objGeneralControl = new FormControl("", Validators.required);
-  objEstrategicoControl = new FormControl("", Validators.required);
-  alineacionEstrategicaControl = new FormControl("", Validators.required);
-  marcoControl = new FormControl<any>(0, Validators.required);
-  planNacionalControl = new FormControl<any>(0, Validators.required);
-  objetivoInstitucionalControl = new FormControl<any>(0, Validators.required);
-  odsControl = new FormControl<any>(0, Validators.required);
-  myForm: FormGroup;
+
   currentUser: string;
   currentDate: any;
   objetivoInstitucional: InstStrategicObj[];
@@ -105,18 +96,214 @@ export class DevelopmentPlanFormComponent implements OnInit {
   public isLoading: boolean = true; // Inicializar como true para que el spinner aparezca al inicio
 
   ngOnInit(): void {
-    this.isSeguimientoFase = localStorage.getItem('isSeguimientoFase');
-    this.loadData().subscribe(() => {
-      this.cargaFormularios();
-      this.formReady = true;
-
-    });
     this.idGroup = Number(sessionStorage.getItem("invGroup"))
     this.currentUser = this.authService.getUserName();
     this.currentDate = this.datePipe.transform(new Date(), 'yyyy-MM-ddTHH:mm:ss');
+    this.obtenerPlanVigente();
+    this.isSeguimientoFase = localStorage.getItem('isSeguimientoFase');
+
+
 
   }
-  //Estado inicial de cargar los formularios 
+  planVigente: DevelopmentPlanForms;
+  obtenerPlanVigente() {
+    this.developmentPlanService.getByIdGroupC(this.idGroup).subscribe(data => {
+      if (data && data.length > 0) {
+        // Obtener el plan con la fecha más reciente
+        this.planVigente = data.reduce((latest, current) => {
+          const latestDate = new Date(
+            latest.fechaModificacionUsuario || latest.fechaCreacionUsuario
+          );
+          const currentDate = new Date(
+            current.fechaModificacionUsuario || current.fechaCreacionUsuario
+          );
+          return currentDate > latestDate ? current : latest;
+        });
+        this.loadData().subscribe(() => {
+          this.cargaFormularios(); // crea el formulario con opciones ya cargadas
+          this.loadDataForm(this.planVigente.idPlanDesarrollo); // ahora sí, setear seleccionados desde BD
+          this.formReady = true;
+        });
+
+      } else {
+        this.planVigente = null;
+        const planDesarrollo: DevelopmentPlanForms = {
+          idPlanDesarrollo: 0,
+          idGrupoInv: this.idGroup,
+          idObjetivoInst: 22,
+          tipo: "c",
+          estado: "e",
+          alcance: "",
+          contexto: "",
+          objGeneral: "",
+          usuarioCreacionUsuario: this.currentUser,
+          fechaCreacionUsuario: this.currentDate,
+          usuarioModificacionUsuario: null,
+          fechaModificacionUsuario: null
+        }
+        this.developmentPlanService.create(planDesarrollo).subscribe(response => {
+          this.planVigente.idPlanDesarrollo = response;
+        });
+        this.loadData().subscribe(() => {
+          this.cargaFormularios();
+          this.formReady = true;
+        });
+      }
+    });
+  }
+  loadDataForm(idPlan: number) {
+    if (!idPlan) return;
+    this.deveNationalService.getByDev(idPlan).subscribe((data) => {
+      const planNacionalIds = data.map(d => d.idPlanNacional);
+      this.planNacionalControl.patchValue(planNacionalIds);
+    })
+    this.develegaService.getByDev(idPlan).subscribe((data) => {
+      const marcoLegalIds = data.map(d => d.idMarcoLegal);
+      this.marcoControl.patchValue(marcoLegalIds);
+    })
+    this.deveUppeService.getByDev(idPlan).subscribe((data) => {
+      const planSuperiorIds = data.map(d => d.idPlanNivelSuperior);
+      this.planSuperiorControl.patchValue(planSuperiorIds);
+    })
+    this.objetivoInstitucionalControl.patchValue(this.planVigente.idObjetivoInst);
+
+  }
+  private sincronizarReferencias(
+    formControl: FormControl,
+    obtenerDesdeBD: () => Observable<any[]>,
+    getId: (item: any) => number,
+    crearRelacion: (id: number) => Observable<any>,
+    eliminarRelacion: (id: number) => Observable<any>
+  ) {
+    obtenerDesdeBD().subscribe((data) => {
+      const bdIds = data.map(getId);
+      const formIds = formControl.value || [];
+
+      // IDs que están en el formulario pero no en la BD → Crear
+      const nuevos = formIds.filter(id => !bdIds.includes(id));
+
+      // IDs que están en la BD pero ya no en el formulario → Eliminar
+      const eliminados = bdIds.filter(id => !formIds.includes(id));
+
+      // Crear nuevas relaciones
+      nuevos.forEach(id => {
+        crearRelacion(id).subscribe({
+          next: () => console.log('Relación creada:', id),
+          error: err => console.error('Error al crear relación', err)
+        });
+      });
+
+      // Eliminar relaciones obsoletas
+      eliminados.forEach(id => {
+        eliminarRelacion(id).subscribe({
+          next: () => console.log('Relación eliminada:', id),
+          error: err => console.error('Error al eliminar relación', err)
+        });
+      });
+    });
+  }
+  guardarNormas(idPlanDesarrollo: number) {
+    this.sincronizarReferencias(
+      this.planNacionalControl,
+      () => this.deveNationalService.getByDev(idPlanDesarrollo),
+      (item) => item.idPlanNacional,
+      (id) => this.deveNationalService.createDevelopNatiForm({
+        idPlan: idPlanDesarrollo,
+        idPlanNacional: id,
+        usuarioCreacion: this.currentUser,
+        fechaCreacion: this.currentDate,
+        usuarioModificacion: null,
+        fechaModificacion: null
+      }),
+      (id) => this.deveNationalService.delete(id, idPlanDesarrollo)
+    );
+
+    this.sincronizarReferencias(
+      this.marcoControl,
+      () => this.develegaService.getByDev(idPlanDesarrollo),
+      (item) => item.idMarcoLegal,
+      (id) => this.develegaService.createDeveLegaForm({
+        idPlan: idPlanDesarrollo,
+        idMarco: id,
+        usuarioCreacion: this.currentUser,
+        fechaCreacion: this.currentDate,
+        usuarioModificacion: null,
+        fechaModificacion: null
+      }),
+      (id) => this.develegaService.delete(id, idPlanDesarrollo)
+    );
+
+    this.sincronizarReferencias(
+      this.planSuperiorControl,
+      () => this.deveUppeService.getByDev(idPlanDesarrollo),
+      (item) => item.idPlanNivelSuperior,
+      (id) => this.deveUppeService.createDeveUppeForm({
+        idPlan: idPlanDesarrollo,
+        idPlanNivelSuperior: id,
+        usuarioCreacion: this.currentUser,
+        fechaCreacion: this.currentDate,
+        usuarioModificacion: null,
+        fechaModificacion: null
+      }),
+      (id) => this.deveUppeService.delete(id, idPlanDesarrollo)
+    );
+  }
+
+  savePartialPlan(step: number) {
+    if (step === 1) {
+      this.guardarNormas(this.planVigente.idPlanDesarrollo);
+    } if (step === 2) {
+      this.guardarContexto();
+    } if (step === 3) {
+      this.guardarAlcance();
+    } if (step === 4) {
+      this.guardarObjetivosParcial();
+    }
+
+  }
+  guardarContexto() {
+    {
+      let plan = this.planVigente;
+      if (plan.contexto === this.myForm.value.planDesarrolloForm2_1.contexto) {
+        return;
+      }
+      plan.contexto = this.myForm.value.planDesarrolloForm2_1.contexto;
+      this.developmentPlanService.update(this.planVigente.idPlanDesarrollo, plan).subscribe(
+        () => {
+        });
+    }
+
+
+  }
+  guardarAlcance() {
+    let plan = this.planVigente;
+    if (plan.alcance === this.myForm.value.planDesarrolloForm2.alcance) {
+      return;
+    }
+    plan.alcance = this.myForm.value.planDesarrolloForm2.alcance;
+    this.developmentPlanService.update(this.planVigente.idPlanDesarrollo, plan).subscribe(
+      () => {
+      });
+  }
+  guardarObjetivosParcial() {
+    let plan = this.planVigente;
+    if (plan.objGeneral === this.myForm.value.planDesarrolloForm2_2.objGeneral && plan.idObjetivoInst === this.myForm.value.planDesarrolloForm2_2.objInstitucional) {
+      return;
+    }
+    plan.idObjetivoInst = this.myForm.value.planDesarrolloForm2_2.objInstitucional;
+    plan.objGeneral = this.myForm.value.planDesarrolloForm2_2.objGeneral;
+    this.developmentPlanService.update(this.planVigente.idPlanDesarrollo, plan).subscribe(
+      () => {
+      });
+  }
+  planSuperiorControl = new FormControl();
+  objEstrategicoControl = new FormControl();
+  alineacionEstrategicaControl = new FormControl("", Validators.required);
+  marcoControl = new FormControl();
+  planNacionalControl = new FormControl();
+  objetivoInstitucionalControl = new FormControl();
+  odsControl = new FormControl<any>(0, Validators.required);
+  myForm: FormGroup;
   cargaFormularios() {
     this.myForm = this.fb.group({
       planDesarrolloForm1: this.fb.group({
@@ -125,14 +312,14 @@ export class DevelopmentPlanFormComponent implements OnInit {
         planNacional: this.planNacionalControl,
       }),
       planDesarrolloForm2: this.fb.group({
-        alcance: this.alcanceControl,
+        alcance: [this.planVigente.alcance || "", Validators.required],
       }),
       planDesarrolloForm2_1: this.fb.group({
-        contexto: this.contextoControl,
+        contexto: [this.planVigente.contexto || "", Validators.required],
       }),
       planDesarrolloForm2_2: this.fb.group({
         objInstitucional: this.objetivoInstitucionalControl,
-        objGeneral: this.objGeneralControl,
+        objGeneral: [this.planVigente.objGeneral || "", Validators.required],
       }),
       planDesarrolloForm3: this.fb.array([
         this.crearObjetivo()
@@ -203,21 +390,44 @@ export class DevelopmentPlanFormComponent implements OnInit {
   //campo de objetivos especificos - Agregar con ODS y estrategias institucionales
   crearObjetivo(): FormGroup {
     return this.fb.group({
-      objetivo: [''],
+      idObjetivo: [0],                       // ← nuevo
+      objetivo: ['', Validators.required],
       estrategias: [[]],
       ods: [[]]
     });
   }
 
-  agregarObjetivo(): void {
-    if (this.objetivos) {
-      this.objetivos.push(this.crearObjetivo());
-      this.actualizarInformacion(); // Actualizar la información
 
-    } else {
-      console.error('El FormArray "objetivos" no está definido.');
+  async agregarObjetivo(): Promise<void> {
+    const objetivoForm = this.fb.group({
+      objetivo: [''],
+      estrategias: [[]],
+      ods: [[]],
+      idObjetivo: [null] // ← para guardar el ID de la BD
+    });
+
+    // Crear en backend inmediatamente
+    const nuevoObjetivo: SpecificObjetives = {
+      idObjetivo: 0,
+      objetivo: '',
+      usuarioCreacion: this.currentUser,
+      fechaCreacion: this.currentDate,
+      usuarioModificacion: null,
+      fechaModificacion: null
+    };
+
+    try {
+      const idCreado = await this.specificObjetivesService.createSpecificObjetive(nuevoObjetivo).toPromise();
+      objetivoForm.patchValue({ idObjetivo: idCreado });
+
+      this.objetivos.push(objetivoForm);
+      this.actualizarInformacion();
+
+    } catch (error) {
+      console.error('Error al crear el objetivo en el backend:', error);
     }
   }
+
 
   getObjetivoEspecifico(posicion: number): string {
     const objetivo = this.objetivos.value[posicion];  // Usar la posición para acceder al arreglo
@@ -274,32 +484,58 @@ export class DevelopmentPlanFormComponent implements OnInit {
   }
   openDialogObj(index: number): void {
     const objetivoActual = this.objetivos.at(index).value;
-    const objetivoInstitucional = this.myForm.get('planDesarrolloForm2_2').get('objInstitucional').value;
+
     const dialogRef = this.dialog.open(ObjControl, {
       width: '50%',
       height: '70%',
       data: {
         objetivoEspecifico: objetivoActual,
-        objetivoInstitucional: objetivoInstitucional,
         estrategiasSeleccionadas: objetivoActual.estrategias || [],
         odsSeleccionados: objetivoActual.ods || []
       }
     });
-    dialogRef.afterClosed().subscribe(result => {
+
+    dialogRef.afterClosed().subscribe(async result => {
       if (result) {
         const currentObjetivo = this.objetivos.at(index);
-        const currentEstrategias = currentObjetivo.value.estrategias || [];
-        const currentOds = currentObjetivo.value.ods || [];
-        const updatedEstrategias = [...currentEstrategias, ...result.estrategias];
-        const updatedOds = [...currentOds, ...result.ods];
-        currentObjetivo.patchValue({
-          estrategias: updatedEstrategias,
-          ods: updatedOds
-        });
-      } this.actualizarInformacion(); // Actualizar la información
+        const idObjetivo = currentObjetivo.value.idObjetivo;
 
+        // Guardar las estrategias + ODS en la BD
+        try {
+          if (result.estrategias.length !== result.ods.length) {
+            throw new Error("El número de estrategias y ODS no coincide");
+          }
+
+          for (let i = 0; i < result.estrategias.length; i++) {
+            const estrategia = result.estrategias[i];
+            const odsItem = result.ods[i];
+
+            const relacion: Objectives_Strategies_Ods = {
+              idEstrategia: estrategia.id,
+              idObjetivoEspecifico: idObjetivo,
+              idODS: odsItem.id,
+              usuarioCreacion: this.currentUser,
+              fechaCreacion: this.currentDate,
+              usuarioModificacion: null,
+              fechaModificacion: null,
+            };
+
+            await this.objStrategiesODSService.create(relacion).toPromise();
+          }
+
+          currentObjetivo.patchValue({
+            estrategias: result.estrategias,
+            ods: result.ods
+          });
+
+          this.actualizarInformacion();
+        } catch (error) {
+          console.error('Error al guardar estrategias y ODS:', error);
+        }
+      }
     });
   }
+
   eliminarOds(objetivoIndex: number, itemIndex: number): void {
     const objetivo = this.objetivos.at(objetivoIndex);
 
@@ -340,19 +576,17 @@ export class DevelopmentPlanFormComponent implements OnInit {
   }
 
   esFormularioValido(): boolean {
-    // Verifica si el formulario es válido
     if (!this.myForm.get('planDesarrolloForm3').valid) {
       return false;
     }
 
-    // Verifica cada objetivo para asegurar que tenga al menos una estrategia
     for (const objetivo of this.objetivos.controls) {
       if (!objetivo.value.objetivo || objetivo.value.estrategias.length === 0) {
-        return false; // Si un objetivo no tiene descripción o estrategias, el formulario no es válido
+        return false;
       }
     }
 
-    return true; // Todo está lleno y válido
+    return true;
   }
 
   getName(id: number): Observable<string> {
@@ -497,66 +731,7 @@ export class DevelopmentPlanFormComponent implements OnInit {
       }
     )
   }
-  guardarNormas(idPlanDesarrollo: number) {
-    const planesNacionales = this.planNacionalControl.value;
-    const planNivelSuperiores = this.planSuperiorControl.value;
-    const legal = this.marcoControl.value;
-    if (planesNacionales && planesNacionales.length > 0) {
-      planesNacionales.forEach((id: number) => {
-        const planNacional: DeveNati = {
-          idPlan: idPlanDesarrollo,
-          idPlanNacional: id,
-          usuarioCreacion: this.currentUser,
-          fechaCreacion: this.currentDate,
-          usuarioModificacion: null,
-          fechaModificacion: null
-        }
-        this.deveNationalService.createDevelopNatiForm(planNacional).subscribe(
-          (response) => { }
-        )
-      });
 
-    } else {
-
-    }
-
-    if (legal && legal.length > 0) {
-      legal.forEach((id: number) => {
-        const marcoLegal: DeveLegaForm = {
-          idPlan: idPlanDesarrollo,
-          idMarco: id,
-          usuarioCreacion: this.currentUser,
-          fechaCreacion: this.currentDate,
-          usuarioModificacion: null,
-          fechaModificacion: null
-        }
-        this.develegaService.createDeveLegaForm(marcoLegal).subscribe(
-          (response) => { }
-        )
-      });
-
-    } else {
-
-    }
-    if (planNivelSuperiores && planNivelSuperiores.length > 0) {
-      planNivelSuperiores.forEach((id: number) => {
-        const planSuperior: DeveUppe = {
-          idPlan: idPlanDesarrollo,
-          idPlanNivelSuperior: id,
-          usuarioCreacion: this.currentUser,
-          fechaCreacion: this.currentDate,
-          usuarioModificacion: null,
-          fechaModificacion: null
-        }
-        this.deveUppeService.createDeveUppeForm(planSuperior).subscribe(
-          (response) => { }
-        )
-      });
-
-    } else {
-
-    }
-  }
   idMap: { [key: number]: number } = {}; // Este mapa guardará el id de cada objetivo asociado con su posición
 
   async ejecutarGuardado(idPlan: number): Promise<void> {

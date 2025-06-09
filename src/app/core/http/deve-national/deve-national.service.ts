@@ -3,6 +3,7 @@ import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DeveNati,NationalPlanFilter } from 'src/app/types/deveNati.types';
+import { NationalPlan } from 'src/app/types/nationalPlan.types';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,10 @@ export class DeveNationalService {
   createDevelopNatiForm(formData: DeveNati): Observable<any> {
     return this.http.post(`${this.URL}/create`, formData);
   }
-  getByDev(id:number):Observable<NationalPlanFilter>{
-    return this.http.get<NationalPlanFilter>(`${this.URL}/bydev/${id}`);
+  getByDev(id:number):Observable<NationalPlan[]>{
+    return this.http.get<NationalPlan[]>(`${this.URL}/bydev/${id}`);
+  }
+  delete(id:number,idDev:number):Observable<any>{
+    return this.http.delete(`${this.URL}/${id}/dev/${idDev}`);
   }
 }

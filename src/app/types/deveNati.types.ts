@@ -15,5 +15,5 @@ export interface NationalPlanFilter{
      usuarioCreacion?:string;
      fechaCreacion?:Date;
      usuarioModificacion?:string;
-     fechaModificacion?:Date;}[];
+     fechaModificacion?:Date;};
  } 
