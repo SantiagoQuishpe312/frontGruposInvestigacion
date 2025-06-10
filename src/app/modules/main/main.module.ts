@@ -205,6 +205,7 @@ import{Memorando36Component} from './pages/unidad-gestion-inv/fase-cierre/proces
 import { LinkFormComponent } from 'src/@vex/components/forms/linkForm/linkForm.component';
 import { MostrarSolicitud39 } from './pages/unidad-gestion-inv/fase-vinculacion/mostrarSolicitud.component';
 import { SolicitudesComponent39 } from './pages/unidad-gestion-inv/fase-vinculacion/obtenerSolicitudes.component';
+import { Modal_ObjEspecifico } from './pages/coordinadorGI/faseCreacion/plan_desarrollo/modal_specificObj.component';
 @NgModule({
   declarations: [
     SolicitudesComponent30,
@@ -373,7 +374,8 @@ import { SolicitudesComponent39 } from './pages/unidad-gestion-inv/fase-vinculac
     SolicitudesComponent34,
     MostrarSolicitud32,
     MostrarSolicitud33,
-    MostrarSolicitud34
+    MostrarSolicitud34,
+    Modal_ObjEspecifico
 
   ],
   imports: [

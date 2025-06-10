@@ -20,7 +20,7 @@ import { DeveLegaForm } from 'src/app/types/deveLega.types';
 import { ObjectivesService } from 'src/app/core/http/objectives/objectives.service';
 import { StrategiesService } from 'src/app/core/http/strategies/strategies.service';
 import { ControlPanelService } from 'src/app/core/http/control-panel/control-panel.service';
-import { Strategies } from 'src/app/types/strategies.types';
+import { ObjStrategiesComplete, Strategies } from 'src/app/types/strategies.types';
 import { ControlPanelForm } from 'src/app/types/controlPanel.types';
 import { CreationReqService } from 'src/app/core/http/creation-req/creation-req.service';
 import { InvGroupService } from 'src/app/core/http/inv-group/inv-group.service';
@@ -31,7 +31,7 @@ import { InstStrategicObjService } from 'src/app/core/http/instStrategicObj/inst
 import { OdsService } from 'src/app/core/http/ods/ods.service';
 import { ODS } from 'src/app/types/ods.types';
 import { ObjStrategiesODSService } from 'src/app/core/http/obj_strategies_ods/obj_strategies_ods.service';
-import { Objectives_Strategies_Ods } from 'src/app/types/obj_strategies_ods.types';
+import { ObjectiveCompleteOds, Objectives_Strategies_Ods } from 'src/app/types/obj_strategies_ods.types';
 import { catchError, forkJoin, map, Observable, of, switchMap } from 'rxjs';
 import { ObjControl } from './modal_objetivos.component';
 import { ChangeDetectorRef } from '@angular/core';
@@ -39,6 +39,7 @@ import { ActControl } from './modal_cuadro_actividades.component';
 import { UsuarioService } from 'src/app/core/http/usuario/usuario.service';
 import { SpecificObjetives } from 'src/app/types/specificObjetives.types';
 import { SpecificObjetivesService } from 'src/app/core/http/specific-objetives/specific-objetives.service';
+import { Modal_ObjEspecifico } from './modal_specificObj.component';
 
 @Component({
   selector: 'vex-development-plan-form',
@@ -66,6 +67,8 @@ export class DevelopmentPlanFormComponent implements OnInit {
   specificObjetives: SpecificObjetives[] = [];
   informacionObjetivos: string = '';
   isSeguimientoFase: string;
+  dataCompleteobjetivos: ObjectiveCompleteOds[] = [];
+
   constructor(
     private fb: FormBuilder,
     private upperLevelPlanService: UpperLevelPlanService,
@@ -101,38 +104,9 @@ export class DevelopmentPlanFormComponent implements OnInit {
     this.currentDate = this.datePipe.transform(new Date(), 'yyyy-MM-ddTHH:mm:ss');
     this.obtenerPlanVigente();
     this.isSeguimientoFase = localStorage.getItem('isSeguimientoFase');
-    this.cargarObjetivosDesdeBD();
-
-
 
   }
-  async cargarObjetivosDesdeBD(): Promise<void> {
-  try {
-    const objetivos = await this.specificObjetivesService.getAll().toPromise(); // Ajusta según tu servicio
-const objetivosFormArray = this.fb.array<FormGroup<any>>([]);
 
-    for (const obj of objetivos) {
-      const relaciones = await this.objStrategiesODSService.getCompleteByObj(obj.idObjetivo).toPromise(); // Ajusta tu método
-
-      const estrategias = relaciones.strategies.map(r => ({ id: r.idEstrategia }));
-      const ods = relaciones.ods.map(r => ({ id: r.id }));
-
-      const objetivoForm = this.fb.group({
-        idObjetivo: [obj.idObjetivo],
-        objetivo: [obj.objetivo],
-        estrategias: [estrategias],
-        ods: [ods]
-      });
-
-      objetivosFormArray.push(objetivoForm);
-    }
-
-    this.myForm.setControl('planDesarrolloForm3', objetivosFormArray);
-
-  } catch (error) {
-    console.error('Error al cargar objetivos y relaciones desde la base de datos', error);
-  }
-}
 
   planVigente: DevelopmentPlanForms;
   obtenerPlanVigente() {
@@ -140,14 +114,14 @@ const objetivosFormArray = this.fb.array<FormGroup<any>>([]);
       if (data && data.length > 0) {
         // Obtener el plan con la fecha más reciente
         this.planVigente = data.reduce((latest, current) => {
-          const latestDate = new Date(
-            latest.fechaModificacionUsuario || latest.fechaCreacionUsuario
-          );
-          const currentDate = new Date(
-            current.fechaModificacionUsuario || current.fechaCreacionUsuario
-          );
+          const latestDate = new Date(latest.fechaModificacionUsuario || latest.fechaCreacionUsuario);
+          const currentDate = new Date(current.fechaModificacionUsuario || current.fechaCreacionUsuario);
           return currentDate > latestDate ? current : latest;
         });
+
+        // ✅ Ahora que ya se ha definido planVigente, puedes actualizar los objetivos
+        this.actualizarInformacionObjetivos();
+
         this.loadData().subscribe(() => {
           this.cargaFormularios(); // crea el formulario con opciones ya cargadas
           this.loadDataForm(this.planVigente.idPlanDesarrollo); // ahora sí, setear seleccionados desde BD
@@ -169,10 +143,15 @@ const objetivosFormArray = this.fb.array<FormGroup<any>>([]);
           fechaCreacionUsuario: this.currentDate,
           usuarioModificacionUsuario: null,
           fechaModificacionUsuario: null
-        }
+        };
+
         this.developmentPlanService.create(planDesarrollo).subscribe(response => {
           this.planVigente.idPlanDesarrollo = response;
+
+          // ✅ También puedes actualizar los objetivos aquí si lo necesitas
+          this.actualizarInformacionObjetivos();
         });
+
         this.loadData().subscribe(() => {
           this.cargaFormularios();
           this.formReady = true;
@@ -180,6 +159,7 @@ const objetivosFormArray = this.fb.array<FormGroup<any>>([]);
       }
     });
   }
+
   loadDataForm(idPlan: number) {
     if (!idPlan) return;
     this.deveNationalService.getByDev(idPlan).subscribe((data) => {
@@ -301,9 +281,9 @@ const objetivosFormArray = this.fb.array<FormGroup<any>>([]);
         () => {
         });
     }
-
-
   }
+
+
   guardarAlcance() {
     let plan = this.planVigente;
     if (plan.alcance === this.myForm.value.planDesarrolloForm2.alcance) {
@@ -432,7 +412,7 @@ const objetivosFormArray = this.fb.array<FormGroup<any>>([]);
 
     // Si ya fue guardado, solo abre el modal
     if (objetivoData.idObjetivo) {
-      this.openDialogObj(index);
+      // this.openDialogObj(index);
       return;
     }
 
@@ -444,6 +424,7 @@ const objetivosFormArray = this.fb.array<FormGroup<any>>([]);
 
     const nuevoObjetivo: SpecificObjetives = {
       idObjetivo: 0,
+      idPlanDesarrollo: this.planVigente.idPlanDesarrollo,
       objetivo: objetivoData.objetivo,
       usuarioCreacion: this.currentUser,
       fechaCreacion: this.currentDate,
@@ -458,7 +439,7 @@ const objetivosFormArray = this.fb.array<FormGroup<any>>([]);
       objetivoForm.patchValue({ idObjetivo: idGenerado });
 
       // Abrimos el modal con el ID ya generado
-      this.openDialogObj(index);
+      //this.openDialogObj(index);
     } catch (error) {
       console.error('Error al guardar el objetivo específico:', error);
       alert('No se pudo guardar el objetivo. Intenta nuevamente.');
@@ -467,14 +448,36 @@ const objetivosFormArray = this.fb.array<FormGroup<any>>([]);
 
 
   agregarObjetivo(): void {
-    if (this.objetivos) {
-      this.objetivos.push(this.crearObjetivo());
-      this.actualizarInformacion(); // Actualizar la información
+    const dialogRef = this.dialog.open(Modal_ObjEspecifico, {
+      width: '50%',
+      height: '70%',
+      data: {
+        idPlanActual: this.planVigente.idPlanDesarrollo
 
-    } else {
-      console.error('El FormArray "objetivos" no está definido.');
-    }
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(async result => {
+      if (result) {
+        this.actualizarInformacionObjetivos();
+      }
+      this.actualizarInformacion(); // Refresca el estado del form
+    });
   }
+  actualizarInformacionObjetivos(): void {
+    this.objStrategiesODSService.getByPlan(this.planVigente.idPlanDesarrollo).subscribe((data) => {
+      this.dataCompleteobjetivos = data;
+      console.log(this.dataCompleteobjetivos)
+    });
+    this.actualizarRelaciones();
+  }
+
+  groupedRelations: {
+  [idObjetivo: number]: {
+    objetivo: SpecificObjetives,  // Si tienes detalles del objetivo, o solo el id
+    strategiesOds: Objectives_Strategies_Ods[]
+  }
+} = {};
 
   getObjetivoEspecifico(posicion: number): string {
     const objetivo = this.objetivos.value[posicion];  // Usar la posición para acceder al arreglo
@@ -529,10 +532,9 @@ const objetivosFormArray = this.fb.array<FormGroup<any>>([]);
   getRowspan(estrategias: any[], ods: any[]): number {
     return Math.max(estrategias.length, ods.length);
   }
-  openDialogObj(index: number): void {
-    const objetivoActual = this.objetivos.at(index).value;
+  openDialogObj(obj: SpecificObjetives): void {
+    const objetivoActual = obj;
     const objetivoInstitucional = this.myForm.get('planDesarrolloForm2_2.objInstitucional')?.value;
-    const currentObjetivo = this.objetivos.at(index);
     const dialogRef = this.dialog.open(ObjControl, {
       width: '50%',
       height: '70%',
@@ -540,66 +542,66 @@ const objetivosFormArray = this.fb.array<FormGroup<any>>([]);
         idObjetivoEspecifico: objetivoActual.idObjetivo, // <-- Aquí va el ID
         objetivoEspecifico: objetivoActual,
         objetivoInstitucional: objetivoInstitucional,
-        estrategiasSeleccionadas: objetivoActual.estrategias || [],
-        odsSeleccionados: objetivoActual.ods || []
       }
     });
 
     dialogRef.afterClosed().subscribe(async result => {
       if (result) {
-        const currentObjetivo = this.objetivos.at(index);
-        const currentEstrategias = currentObjetivo.value.estrategias || [];
-        const currentOds = currentObjetivo.value.ods || [];
+        const currentObjetivo = obj;
+        this.actualizarInformacionObjetivos(); // Refresca el estado del form
 
-        const updatedEstrategias = [...currentEstrategias, ...result.estrategias];
-        const updatedOds = [...currentOds, ...result.ods];
-
-        currentObjetivo.patchValue({
-          estrategias: updatedEstrategias,
-          ods: updatedOds
-        });
-
-        // Guardar en BD las asociaciones
-        for (let i = 0; i < result.estrategias.length; i++) {
-          const estrategia = result.estrategias[i];
-          const ods = result.ods[i];
-
-          const asociacion: Objectives_Strategies_Ods = {
-            idEstrategia: estrategia.id,
-            idODS: ods.id,
-            idObjetivoEspecifico: objetivoActual.idObjetivo,
-            usuarioCreacion: this.currentUser,
-            fechaCreacion: this.currentDate,
-            usuarioModificacion: null,
-            fechaModificacion: null,
-          };
-
-          try {
-            await this.objStrategiesODSService.create(asociacion).toPromise();
-          } catch (error) {
-            console.error('Error al guardar asociación ODS-Estrategia:', error);
-          }
-        }
       }
-      this.actualizarInformacion(); // Refresca el estado del form
+      this.actualizarInformacionObjetivos(); // Refresca el estado del form
     });
   }
 
-  eliminarOds(objetivoIndex: number, itemIndex: number): void {
-    const objetivo = this.objetivos.at(objetivoIndex);
+  relations: Objectives_Strategies_Ods[] = [];
 
-    // Clonar los arreglos actuales
-    const estrategias = [...objetivo.value.estrategias];
-    const ods = [...objetivo.value.ods];
 
-    // Verificar que el índice sea válido y eliminar ambos elementos
-    if (estrategias.length > itemIndex && ods.length > itemIndex) {
-      estrategias.splice(itemIndex, 1);
-      ods.splice(itemIndex, 1);
+  actualizarRelaciones() {
+    if (!this.planVigente) return;
 
-      // Actualizar el formulario reactivo con los nuevos valores
-      objetivo.patchValue({ estrategias, ods });
-    } this.actualizarInformacion(); // Actualizar la información
+    this.objStrategiesODSService.getByPlanRelacion(this.planVigente.idPlanDesarrollo)
+      .subscribe(data => {
+        this.relations = data;
+      });
+  }
+  eliminarRelacion(rel: Objectives_Strategies_Ods) {
+    this.objStrategiesODSService.delete(rel.idObjetivoEspecifico, rel.idEstrategia, rel.idODS)
+      .subscribe(() => {
+        this.actualizarRelaciones();
+        this.actualizarInformacionObjetivos();
+      });
+  }
+  getObjetivoTexto(idObjetivo: number): string {
+    const obj = this.dataCompleteobjetivos.find(o => o.obj.idObjetivo === idObjetivo);
+    return obj ? obj.obj.objetivo : 'Objetivo no encontrado';
+  }
+
+  getEstrategiaTexto(idEstrategia: number): string {
+    for (const obj of this.dataCompleteobjetivos) {
+      const est = obj.strategies.find(e => e.idEstrategia === idEstrategia);
+      if (est) return est.estrategia || 'Estrategia sin nombre';
+    }
+    return 'Estrategia no encontrada';
+  }
+
+  getOdsTexto(idOds: number): string {
+    for (const obj of this.dataCompleteobjetivos) {
+      const ods = obj.ods.find(o => o.id === idOds);
+      if (ods) return ods.ods || 'ODS sin descripción';
+    }
+    return 'ODS no encontrado';
+  }
+
+
+  eliminarOds(objetivo: ObjectiveCompleteOds, itemIndex: number): void {
+    const idStrategy = objetivo.strategies[itemIndex].idEstrategia;
+    const idOds = objetivo.ods[itemIndex].id;
+    this.objStrategiesODSService.delete(objetivo.obj.idObjetivo, idStrategy, idOds).subscribe((data) => {
+      this.actualizarInformacionObjetivos();
+    })
+    this.actualizarInformacion(); // Actualizar la información
 
   }
 
@@ -814,6 +816,7 @@ const objetivosFormArray = this.fb.array<FormGroup<any>>([]);
         // Crear el objetivo específico
         const objetivo: SpecificObjetives = {
           idObjetivo: 0,
+          idPlanDesarrollo: this.planVigente.idPlanDesarrollo,
           objetivo: obj.objetivo,
           usuarioCreacion: this.currentUser,
           fechaCreacion: this.currentDate,

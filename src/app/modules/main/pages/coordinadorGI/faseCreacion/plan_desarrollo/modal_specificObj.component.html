@@ -1,0 +1,33 @@
+<div class="cont">
+  <div class="container-fluid">
+    <div class="back-button-container">
+      <header style="display: flex;">
+        <h1>OBJETIVOS ESPECÍFICOS Y SU RELACIÓN CON ESTRATEGIAS INSTITUCIONALES Y LOS ODS</h1>
+      </header>
+      <h2 *ngIf="objetivoEspecifico">Objetivo Específico: {{ objetivoEspecifico }}</h2>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-spinner-overlay">
+      <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+    </div>
+
+    <div class="form-container" *ngIf="!isLoading">
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Objetivo Específico</mat-label>
+          <input matInput formControlName="objetivo" required>
+          <mat-error *ngIf="form.get('objetivo')?.invalid && form.get('objetivo')?.touched">
+            El objetivo es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <div class="button-container">
+          <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+            Guardar
+          </button>
+          <button mat-button type="button" (click)="onClickClose()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

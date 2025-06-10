@@ -8,6 +8,9 @@ import { StrategiesService } from 'src/app/core/http/strategies/strategies.servi
 import { OdsService } from 'src/app/core/http/ods/ods.service';
 import { Strategies } from 'src/app/types/strategies.types';
 import { ODS } from 'src/app/types/ods.types';
+import { ObjStrategiesODSService } from 'src/app/core/http/obj_strategies_ods/obj_strategies_ods.service';
+import { Objectives_Strategies_Ods } from 'src/app/types/obj_strategies_ods.types';
+import { SpecificObjetives } from 'src/app/types/specificObjetives.types';
 @Component({
     selector: 'app-area',
     templateUrl: './modal_objetivos.component.html',
@@ -23,13 +26,15 @@ export class ObjControl implements OnInit {
     isEditing: boolean = false; // Variable para determinar si se está en modo edición
     estrategias:Strategies[]=[];
     ods:ODS[]=[];
-    objetivoEspecifico:string;
+    objetivoEspecifico:SpecificObjetives;
+    idObjetivoEspecifico:number;
     constructor(
         private fb: FormBuilder,
         private authService: AuthService,
         public dialogRef: MatDialogRef<ObjControl>,
         private objService: ObjectivesService,
         private odsService: OdsService,
+        private objStrategiesService: ObjStrategiesODSService,
         private strategieService: StrategiesService,
         @Inject(MAT_DIALOG_DATA) public data: any, // Datos que vienen del componente de la tabla
     ) {}
@@ -37,7 +42,7 @@ export class ObjControl implements OnInit {
     ngOnInit(): void {
         this.currentUser = this.authService.getUserName();
         this.loadData();
-        this.objetivoEspecifico=this.data.objetivoEspecifico.objetivo;
+        this.objetivoEspecifico=this.data.objetivoEspecifico;
         // Inicializar el formulario
         this.form = this.fb.group({
             estrategia: [1, Validators.required], // Estrategia seleccionada
@@ -48,7 +53,7 @@ export class ObjControl implements OnInit {
     loadData(): void {
         this.strategieService.getByObj(this.data.objetivoInstitucional).subscribe((data) => {
           this.estrategias = data.filter(estrategia => estrategia.estado === true);
-          console.log(this.data.objetivoEspecifico)
+          console.log(this.data.objetivoInstitucional)
 
         });
         this.odsService.getAll().subscribe((data) => {
@@ -60,16 +65,21 @@ export class ObjControl implements OnInit {
       save(): void {
         const selectedEstrategiaId = this.form.value.estrategia;
         const selectedOdsId = this.form.value.ods;
+        const data:Objectives_Strategies_Ods={
+          idObjetivoEspecifico:this.objetivoEspecifico.idObjetivo,
+          idEstrategia:selectedEstrategiaId,
+          idODS:selectedOdsId,
+          usuarioCreacion:this.currentUser,
+          fechaCreacion:this.currentDate,
+          usuarioModificacion:null, 
+          fechaModificacion:null
+        }
+        this.objStrategiesService.create(data).subscribe((response)=>{
+          console.log(response)
+          this.dialogRef.close(response);
+        })
+        
       
-        const selectedEstrategia = this.estrategias.find(e => e.idEstrategia === selectedEstrategiaId);
-        const selectedOds = this.ods.find(o => o.id === selectedOdsId);
-      
-        const result = {
-          estrategias: [{ id: selectedEstrategiaId, descripcion: selectedEstrategia?.estrategia }],
-          ods: [{ id: selectedOdsId, descripcion: selectedOds?.ods }]
-        };
-      
-        this.dialogRef.close(result);
       }
       
           onClickClose(): void {

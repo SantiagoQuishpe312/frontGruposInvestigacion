@@ -28,8 +28,14 @@ export class ObjStrategiesODSService {
     return this.http.get<ObjectiveCompleteOds[]>(`${this.URL}/developmentPlan/${id}`);
   }
 
+  getByPlanRelacion(id:number): Observable<Objectives_Strategies_Ods[]>{
+    return this.http.get<Objectives_Strategies_Ods[]>(`${this.URL}/plan_relations/${id}`);
+  }
   create(formData: Objectives_Strategies_Ods): Observable<any> {
     return this.http.post(`${this.URL}/create`, formData);
+  }
+  delete(idObj:number,idStrategy:number,idOds:number){
+    return this.http.delete(`${this.URL}/${idObj}/strategy/${idStrategy}/ods/${idOds}`);
   }
 
 }

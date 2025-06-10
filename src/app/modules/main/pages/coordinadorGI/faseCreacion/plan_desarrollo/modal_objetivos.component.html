@@ -5,7 +5,7 @@
                 <h1>OBJETIVOS ESPECÍFICOS Y SU RELACIÓN CON ESTRATEGIAS INSTITUCIONALES Y LOS ODS</h1>
 
             </header>
-            <h1>OBJETIVOS ESPECÍFICO:{{objetivoEspecifico}}</h1>
+            <h1>OBJETIVOS ESPECÍFICO:{{objetivoEspecifico.objetivo}}</h1>
 
         </div>
 
@@ -18,10 +18,6 @@
         <div class="form-container" *ngIf="!isLoading">
             <form [formGroup]="form" (ngSubmit)="save()">
 
-             <!--    <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Objetivo Especifico</mat-label>
-                   
-                </mat-form-field>-->
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Estrategias Institucionales</mat-label>
                     <mat-select formControlName="estrategia" required>

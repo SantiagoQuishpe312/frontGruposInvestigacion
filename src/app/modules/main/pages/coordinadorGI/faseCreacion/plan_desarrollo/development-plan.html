@@ -164,78 +164,39 @@
         </mat-step>
 
         <!-- Step 3: Objetivos y Estrategias -->
-        <mat-step [stepControl]="myForm.get('planDesarrolloForm3')">
+        <mat-step>
           <ng-template matStepLabel>Objetivos específicos</ng-template>
           <div formGroupName="planDesarrolloForm3">
-            <table>
-              <thead>
-                <tr>
-                  <th>Objetivos Específicos</th>
-                  <th>Estrategias Institucionales</th>
-                  <th>ODS Relacionado</th>
-                  <th>Acciones</th>
 
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  *ngFor="let objetivo of objetivos.controls; let i = index; trackBy: trackByIndex"
-                  [formGroupName]="i">
-                  <td>
-                    <mat-form-field>
-                      <textarea matInput placeholder="Objetivo Específico"
-                        formControlName="objetivo" rows="3"></textarea>
-                    </mat-form-field>
-                    <button class="btn_add" type="button" mat-icon-button
-                      (click)="guardarYabrirDialogObj(i)"
-                      matTooltip="Añadir nuevas Estrategias y ODS">
-                      <mat-icon class="material-symbols-outlined">add</mat-icon>
-                    </button>
-
-                    <button class="btn_delete" type="button" mat-icon-button
-                      (click)="eliminarObjetivo(i)"
-                      matTooltip="Eliminar Objetivo">
-                      <mat-icon
-                        class="material-symbols-outlined">delete</mat-icon>
-                    </button>
-                  </td>
-
-                  <!-- Estrategias en una columna -->
-                  <td class="strategies">
-                    <div class="list"
-                      *ngFor="let estrategia of objetivo.get('estrategias')?.value; let j = index">
-                      {{ estrategia.descripcion || ('ID: ' + estrategia.id) }}
-                    </div>
-                  </td>
-
-                  <!-- ODS en otra columna -->
-                  <td class="strategies">
-                    <div class="list"
-                      *ngFor="let ods of objetivo.value.ods; let j = index">
-                      {{ ods.descripcion }}
-
-                    </div>
-                  </td>
-                  <td class="strategies">
-                    <div class="list"
-                      *ngFor="let ods of objetivo.value.ods; let j = index">
-
-                      <button class="btn_delete" type="button" mat-icon-button
-                        (click)="eliminarOds(i, j) "
-                        matTooltip="Eliminar Estrategia y ODS">
-                        <mat-icon
-                          class="material-symbols-outlined">delete</mat-icon>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-
-            </table>
             <!-- Botón para añadir nuevos objetivos -->
             <button type="button" mat-raised-button color="primary"
               (click)="agregarObjetivo()"
               matTooltip="Agregar nuevo Objetivo">Añadir Objetivo</button>
+            <table class="table tPlan" *ngIf="relations.length > 0">
+              <thead>
+                <tr>
+                  <th>Objetivo Específico</th>
+                  <th>Estrategia Institucional</th>
+                  <th>ODS Relacionado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let rel of relations">
+                  <td>{{ getObjetivoTexto(rel.idObjetivoEspecifico) }}</td>
+                  <td>{{ getEstrategiaTexto(rel.idEstrategia) }}</td>
+                  <td>{{ getOdsTexto(rel.idODS) }}</td>
+                  <td>
+                    <button mat-raised-button color="warn"
+                    type="button"
+                      (click)="eliminarRelacion(rel)">
+                      Eliminar Relación
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
             <div class="grid-container">
 
               <div class="grid-item">

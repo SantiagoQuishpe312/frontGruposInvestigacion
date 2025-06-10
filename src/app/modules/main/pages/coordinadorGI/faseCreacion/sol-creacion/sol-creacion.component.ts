@@ -2248,6 +2248,7 @@ if (this.myForm.valid) {
         this.saveArea(this.idGrupo);
         this.saveLine(this.idGrupo);
         this.saveMember(this.idGrupo);
+        this.router.navigateByUrl('main/principal');
 
         // Actualizar la petición de creación si existe
         //this.updateCreationRequest(this.idGrupo);
