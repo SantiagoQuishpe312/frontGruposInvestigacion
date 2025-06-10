@@ -183,35 +183,22 @@ export class TokenExpirationDialogComponent implements OnInit, OnDestroy {
     const minutes = Math.max(0, Math.floor(data.minutesLeft || 0));
     this.totalSecondsLeft = minutes * 60;
     this.initialSecondsLeft = this.totalSecondsLeft;
-    
-    console.log('🕐 Temporizador iniciado:', {
-      minutesReceived: data.minutesLeft,
-      minutesUsed: minutes,
-      totalSeconds: this.totalSecondsLeft
-    });
 
     // Inicializar audio para alarmas
     this.initializeAlarmAudio();
   }
 
   ngOnInit(): void {
-    console.log('🚀 ngOnInit - Estado inicial:', {
-      forceLogout: this.data.forceLogout,
-      manualRefreshInstructions: this.data.manualRefreshInstructions,
-      totalSecondsLeft: this.totalSecondsLeft
-    });
+
 
     if (!this.data.forceLogout && !this.data.manualRefreshInstructions) {
       if (this.totalSecondsLeft <= 0) {
-        console.log('⚠️ Tiempo inicial es 0 o negativo, cerrando inmediatamente');
         this.onLogout();
         return;
       }
 
-      console.log('⏰ Iniciando countdown desde:', this.totalSecondsLeft, 'segundos');
       
       this.countdownSubscription = timer(0, 1000).subscribe((tick) => {
-        console.log(`⏱️ Tick ${tick}: ${this.totalSecondsLeft} segundos restantes`);
         
         if (tick > 0) {
           this.totalSecondsLeft--;
@@ -221,15 +208,12 @@ export class TokenExpirationDialogComponent implements OnInit, OnDestroy {
         this.checkAlarms();
         
         if (this.totalSecondsLeft <= 0) {
-          console.log('⏰ Tiempo agotado - cerrando sesión automáticamente');
           this.onLogout();
           return;
         }
         
         if (this.totalSecondsLeft === 30) {
-          console.log('⚠️ Quedan 30 segundos para el cierre automático');
         } else if (this.totalSecondsLeft === 10) {
-          console.log('⚠️ Quedan 10 segundos para el cierre automático');
         }
       });
     }
@@ -270,24 +254,21 @@ export class TokenExpirationDialogComponent implements OnInit, OnDestroy {
     const seconds = this.totalSecondsLeft % 60;
 
     // Alarma a los 5 minutos exactos
-    if (minutes === 5 && seconds === 0 && !this.alarm5MinPlayed) {
+    if (minutes === 10 && seconds === 0 && !this.alarm5MinPlayed) {
       this.playAlarm();
       this.alarm5MinPlayed = true;
-      console.log('🔔 Alarma de 5 minutos reproducida');
     }
     
     // Alarma a los 3 minutos exactos
-    if (minutes === 3 && seconds === 0 && !this.alarm3MinPlayed) {
+    if (minutes === 5 && seconds === 0 && !this.alarm3MinPlayed) {
       this.playAlarm();
       this.alarm3MinPlayed = true;
-      console.log('🔔 Alarma de 3 minutos reproducida');
     }
     
     // Alarma a 1 minuto exacto
     if (minutes === 1 && seconds === 0 && !this.alarm1MinPlayed) {
       this.playAlarm();
       this.alarm1MinPlayed = true;
-      console.log('🔔 Alarma de 1 minuto reproducida');
     }
   }
 

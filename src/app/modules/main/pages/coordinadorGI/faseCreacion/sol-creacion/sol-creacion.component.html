@@ -655,8 +655,8 @@
             <tbody>
               <tr *ngFor="let user of selectedUsers; let i = index;">
                 <td>{{ user.user.nombres || user.user.nombre }}</td>
-                <td>{{ user.user.tipo }}</td>
-                <td>{{ user.user.escalafon }}</td>
+                <td>{{ user.user.tipo || user.user.grado }}</td>
+                <td>{{ user.user.escalafon || user.user.cargo }}</td>
                 <td>
                   <div class="cv-upload-container">
                     <!-- Usar el ID correcto del usuario -->
@@ -719,12 +719,13 @@
                   </div>
                 </td>
                 <td>
-                  <button type="button"
-                          class="delete"
-                          mat-mini-fab
-                          (click)="borrarInvestigadorExtern(i)">
-                    <i class="fas fa-trash-alt"></i>
-                  </button>
+                    <button type="button"
+                        class="delete"
+                        mat-mini-fab
+                        (click)="borrarInvestigadorExtern(i, user.idBd || user.id)">
+                        <i
+                            class="fas fa-trash-alt"></i>
+                    </button>
                 </td>
               </tr>
             </tbody>
