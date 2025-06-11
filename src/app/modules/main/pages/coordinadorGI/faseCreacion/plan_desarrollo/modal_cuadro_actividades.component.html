@@ -20,7 +20,7 @@
                     <mat-label>Objetivo Específico</mat-label>
       <mat-select formControlName="idObjetivoEspecifico" required>
         <mat-option *ngFor="let obj of objetivos; let i = index" [value]="i">
-          {{ obj.objetivo }}
+          {{ obj.obj.objetivo}}
         </mat-option>
       </mat-select>
       <mat-error *ngIf="controlPanelForm.get('idObjetivoEspecifico').invalid && controlPanelForm.get('idObjetivoEspecifico').touched">
