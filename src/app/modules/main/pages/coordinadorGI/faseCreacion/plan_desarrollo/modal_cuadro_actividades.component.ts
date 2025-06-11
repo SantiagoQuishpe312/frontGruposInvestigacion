@@ -7,6 +7,7 @@ import { InvMemberService } from "src/app/core/http/inv-member/inv-member.servic
 import { Usuario } from "src/app/types/usuario.types";
 import { InvGroupService } from "src/app/core/http/inv-group/inv-group.service";
 import { UsuarioService } from "src/app/core/http/usuario/usuario.service";
+import { ObjectiveCompleteOds } from "src/app/types/obj_strategies_ods.types";
 @Component({
     selector: 'app-area',
     templateUrl: './modal_cuadro_actividades.component.html',
@@ -21,9 +22,10 @@ export class ActControl implements OnInit {
     isEditing: boolean = false;
     controlPanel: ControlPanelForm[] = [];
     members: Usuario[] = [];
-    objetivos: any[] = [];
+    objetivos: ObjectiveCompleteOds[] = [];
     groupId: number;
     coordId: number;
+    
     constructor(
         private fb: FormBuilder,
         private authService: AuthService,
@@ -34,6 +36,7 @@ export class ActControl implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any,
     ) {
         this.objetivos = data.objetivos;
+        console.log(this.objetivos)
     }
 
     ngOnInit(): void {

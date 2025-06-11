@@ -2069,7 +2069,6 @@ export class SolCreacionComponent implements OnInit {
             }
             //
             this.snackBar.open(`Usuario agregado como ${rolSeleccionado}`, 'Cerrar', { duration: 3000 });
-
             if (rolSeleccionado === 'MIEMBRO') {
               this.totalMiembrosInternos++;
               this.miembrosInternos.push(nuevoUsuario); // Guardamos solo los miembros

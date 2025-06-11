@@ -671,7 +671,7 @@ export class DevelopmentPlanFormComponent implements OnInit {
       width: '80%',
       height: '90%',
       data: {
-        objetivos: this.objetivos.value
+        objetivos: this.dataCompleteobjetivos,
       }
     });
 
