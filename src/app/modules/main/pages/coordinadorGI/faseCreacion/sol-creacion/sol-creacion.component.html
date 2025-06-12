@@ -1,427 +1,3 @@
-<!-- <div *ngIf="loadingData" class="loading-spinner-overlay">
-    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
-</div>
-<div class="cont">
-
-    <div class="container-fluid">
-        <div class="card" *ngIf="!loadingData">
-
-            <header >
-                <h1>Formulario de Solicitud de Creación de Grupo de
-                    Investigación</h1>
-            </header>
-            
-        </div>
- 
-        <div class="container-fluid">
-            <form *ngIf="myForm.controls.grupoInv1" [formGroup]="myForm" (ngSubmit)="HandleSubmit()">
-                <mat-stepper [linear]="isLinear" #stepper>
-
-                    <mat-step [stepControl]="grupoInvform"
-                        class="centrado-y-mayusculas">
-
-                        <ng-template matStepLabel>Información del Grupo de
-                            Investigación</ng-template>
-                        <div formGroupName="grupoInv1"
-                            class="centrado-form-group">
-                            <div class="grid-container">
-                                <div class="grid-item">
-
-                                    <mat-form-field appearance="fill">
-                                        <mat-label>Nombre del Grupo (cualquier
-                                            idioma):</mat-label>
-                                        <input matInput id="nombreGrupo"
-                                            type="text"
-                                            formControlName="nombreGrupoInv"
-                                            class="form-control"
-                                            placeholder="Ingrese el nombre del grupo"
-                                            minlength="5"
-                                            maxlength="99">
-                                    </mat-form-field>
-                                </div>
-
-                                <div class="grid-item">
-
-                                    <mat-form-field appearance="fill">
-                                        <mat-label>Acrónimo:</mat-label>
-                                        <input matInput type="text"
-                                            id="acronimo"
-                                            formControlName="acronimoGrupoinv"
-                                            class="form-control"
-                                            placeholder="Ingrese el acronimo"
-                                            minlength="1"
-                                            maxlength="10">
-                                    </mat-form-field>
-                                </div><div class="grid-item"></div>
-                                <div class="grid-item">
-                                    <div>
-                                        <button type="button" mat-raised-button
-                                            color="primary"
-                                            [disabled]="!myForm.get('grupoInv1').valid"
-                                            (click)="savePartialGroup()"
-                                            matStepperNext
-                                            matTooltip="Siguiente">Siguiente</button>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </mat-step>
-
-                    <mat-step [stepControl]="grupoInv2"
-                        label="Segmentación del Grupo de Investigación">
-                        <div formGroupName="grupoInv2">
-                            <div class="grid-container">
-
-                                <div class="grid-item">
-                                    <mat-form-field appearance="fill">
-                                        <mat-label>Dominios
-                                            Académicos</mat-label>
-                                        <mat-select
-                                            [formControl]="dominiosControl"
-                                            multiple required>
-                                            <mat-option
-                                                *ngFor="let dominio of dominios"
-                                                [value]="dominio.idDomimioAcademico">
-                                                {{
-                                                dominio.nombreDominioAcademico
-                                                }}
-                                            </mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
-                                </div>
-
-                                <div class="grid-item">
-                                    <mat-form-field appearance="fill"
-                                        *ngIf="dominiosControl.value?.length>0">
-                                        <mat-label>Áreas de
-                                            Investigación</mat-label>
-                                        <mat-select [formControl]="areasControl"
-                                            multiple required>
-                                            <mat-option
-                                                *ngFor="let area of areas"
-                                                [value]="area.idArea">
-                                                {{ area.nombreArea }}
-                                            </mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
-                                </div>
-
-                                <div class="grid-item">
-                                    <mat-form-field appearance="fill"
-                                        *ngIf="areasControl.value?.length >0">
-                                        <mat-label>Líneas de
-                                            Investigación</mat-label>
-                                        <mat-select
-                                            [formControl]="lineasControl"
-                                            multiple required>
-                                            <mat-option
-                                                *ngFor="let linea of lineas"
-                                                [value]="linea.idLinea">
-                                                {{ linea.nombreLinea }}
-                                            </mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
-                                </div>
-
-                                <div class="grid-item">
-                                    <div>
-                                        <button type="button" mat-raised-button
-                                            color="primary"
-                                            matStepperPrevious
-                                            matTooltip="Anterior">Regresar</button>
-
-                                        <button type="button" mat-raised-button
-                                            color="primary"
-                                            [disabled]="!dominiosControl.value?.length || !areasControl.value?.length || !lineasControl.value?.length"
-                                            (click)="savePartialSegmentation()"
-                                            matStepperNext
-                                            matTooltip="Siguiente">Siguiente</button>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </mat-step>
-                    <mat-step [stepControl]="grupoInv5"
-                        class="centrado-y-mayusculas"
-                        label="Hoja de Vida">
-                        <ng-template matStepLabel>Hoja de Vida del
-                            Coordinador</ng-template>
-
-                        <div formGroupName="grupoInv5"
-                            class="centrado-form-group">
-
-                            <h1>Hoja de vida y Certificado de Talento Humano
-                                del Coordinador del Grupo de Investigación (Un
-                                solo PDF) </h1>
-                             <div class="drag-drop" (drop)="onDrop($event,'h')"
-                                (dragover)="onDragOver($event)">
-                                <i *ngIf="selectedCv"
-                                    class="{{ getFileIcon(selectedCv.type) }}"></i>
-                                <p *ngIf="!selectedCv">Arrastra y suelta el
-                                    documento aquí o haz clic para
-                                    seleccionarlo.</p>
-                                <p *ngIf="selectedCv">{{ CvNameOriginal }} </p>
-                                <div class="custom-file-input">
-                                    <label *ngIf="!selectedCv"
-                                        for="fileInput">Seleccionar
-                                        archivo</label>
-                                    <label *ngIf="selectedCv"
-                                        for="fileInput">Cambiar archivo</label>
-
-                                    <input id="fileInput" type="file"
-                                        (change)="onCVCoordSelected($event)"
-                                        accept=".pdf" />
-                                </div> 
-                            </div> 
-
-                              
-                                  
-                            <div class="grid-container">
-                                <div class="grid-item">
-
-                                </div>
-                                <div class="grid-item">
-                                    <div>
-                                        <button type="button" mat-raised-button
-                                            color="primary"
-                                            matStepperPrevious
-                                            matTooltip="Anterior">Regresar</button>
-                                        <button type="button" mat-raised-button
-                                            color="primary"
-                                            [disabled]="!selectedCv"
-                                            matStepperNext
-                                            matTooltip="Siguiente">
-                                            Siguiente
-                                        </button></div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </mat-step>
-
-                    <mat-step [stepControl]="grupoInv3"
-                        label="Integrantes del Grupo">
-                        <div class="creacion-grupo-investigacion">
-                            <h1>Integrantes Grupo de Investigación</h1>
-                            <div formGroupName="grupoInv3"
-                                style="text-align: center;">
-                                <div *ngIf="selectedUsers.length > 0">
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Nombre del Integrante</th>
-                                                <th>Cargo</th>
-                                                <th>Escalafon</th>
-                                                <th>Hoja de Vida</th>
-                                                <th>Borrar</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr
-                                                *ngFor="let user of selectedUsers; let i = index;">
-                                                <td>{{ user.user.nombres || user.user.nombre }}</td>
-                                                <td>{{ user.user.tipo || user.user.grado}}</td>
-                                                <td>{{ user.user.escalafon || user.user.cargo
-                                                    }}</td>
-
-                                                <!-- <td>
-                                                    <input type="file"
-                                                        (change)="onFileSelected($event,i,user.user.idBd)"
-                                                        accept=".pdf">
-                                                </td> -->
-                                                <!-- <td>
-                                                    <div *ngIf="cvUploadedMap[user.user.idBd]; else
-                                                    uploadBlock">
-                                                    Subido
-                                                    </div>
-                                                    <ng-template #uploadBlock>
-                                                    <input type="file"
-                                                    (change)="onFileSelected($event, i, user.user.idBd)"
-                                                    accept=".pdf">
-                                                    </ng-template>
-                                                    </td>                                                   <td>
-                                                        <div class="cv-upload-container">
-                                                          <input type="file"
-                                                                 (change)="onFileSelected($event, i, user.user.idBd || user.user.id)"
-                                                                 accept=".pdf"
-                                                                 [id]="'cv-input-' + i">
-                                                          <div class="cv-status" [ngClass]="{
-                                                            'cv-saved': isCVSaved(user.user.idBd || user.user.id),
-                                                            'cv-pending': !documentosCargados[user.user.idBd || user.user.id],
-                                                            'cv-selected': documentosCargados[user.user.idBd || user.user.id] && !isCVSaved(user.user.idBd || user.user.id)
-                                                          }">
-                                                            {{ getCVStatus(user.user.idBd || user.user.id) }}
-                                                          </div>
-                                                        </div>
-                                                      </td>
-                                                    
-                                                  
-                                                  
-
-                                                  
-
-                                                  
-                                                      <td>
-                                                        <button type="button"
-                                                                class="delete"
-                                                                mat-mini-fab
-                                                                (click)="borrarInvestigador(i, user.user.idBd || user.user.id)">
-                                                          <i class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                      </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div> </div>
-
-                            <div *ngIf="selectedUsersExterns.length > 0">
-
-                                <header>
-                                    <h1>Investigadores Externos:</h1>
-
-                                </header>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Nombre del Integrante</th>
-                                            <th>Institución</th>
-                                            <th>Hoja de Vida</th>
-                                            <th>Borrar</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr
-                                            *ngFor="let user of selectedUsersExterns; let i = index;">
-                                            <td>{{ user.nombres || user.nombre }}</td>
-                                            <td>{{ user.institucion }}</td>
-
-                                           
-                                              <td>
-                                                <div class="cv-upload-container">
-                                                  <input type="file"
-                                                         (change)="onFileSelectedExtern($event, i, user.id)"
-                                                         accept=".pdf"
-                                                         [id]="'cv-extern-input-' + i">
-                                                  <div class="cv-status" [ngClass]="{
-                                                    'cv-saved': isCVSaved(user.id),
-                                                    'cv-pending': !documentosCargados[user.id],
-                                                    'cv-selected': documentosCargados[user.id] && !isCVSaved(user.id)
-                                                  }">
-                                                    {{ getCVStatus(user.id) }}
-                                                  </div>
-                                                </div>
-                                              </td>
-
-                                            <td>
-                                                <button type="button"
-                                                    class="delete"
-                                                    mat-mini-fab
-                                                    (click)="borrarInvestigadorExtern(i, user.idBd || user.id)">
-                                                    <i
-                                                        class="fas fa-trash-alt"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-
-                            </div> <button type="button" mat-raised-button
-                                color="primary" class="btn-add"
-                                (click)="openDialog()">Agregar
-                                Investigador</button>
-                            <div class="grid-item">
-                                <div>
-                                    <button type="button"
-                                        mat-raised-button color="primary"
-                                        matStepperPrevious>Regresar</button>
-                                    <button type="button" mat-raised-button
-                                        color="primary" matStepperNext
-                                        [disabled]="totalMiembrosInternos <3   || !documentosCompletosCargados">Siguiente
-                                            <span *ngIf="false"> - Miembros: {{totalMiembrosInternos}}, Docs: {{documentosCompletosCargados}}</span>
-
-                                        </button>
-
-                                </div>
-                            </div>
-
-                        </div>
-                    </mat-step>
-                    
-                    <mat-step [stepControl]="grupoInv4"
-                        label="Imagen del Grupo">
-                        <div class="creacion-grupo-investigacion">
-                            <div formGroupName="grupoInv4">
-                                <h1>Imagen (logo) del Grupo de Investigación
-                                </h1>
-
-                                <div class="drag-drop"
-                                    (drop)="onDrop($event,'h')"
-                                    (dragover)="onDragOver($event)">
-                                    <div class="vista-previa-img"
-                                        *ngIf="filePreview">
-                                        <img *ngIf="isImageFile"
-                                            [src]="filePreview"
-                                            alt="Vista previa" width="150px">
-                                        <i *ngIf="!isImageFile"
-                                            [class]="fileIcon"></i>
-                                    </div>
-
-                                    <i *ngIf="selectedImg && !isImageFile"
-                                        [class]="getFileIcon(selectedImg.type)"></i>
-                                    <p *ngIf="!selectedImg">Arrastra y suelta la
-                                        imagen aquí o haz clic para
-                                        seleccionarla.</p>
-                                    <p *ngIf="selectedImg">{{ imageNameOriginal
-                                        }}</p>
-
-                                    <div class="custom-file-input">
-                                        <label for="imageInput">{{ selectedImg ?
-                                            'Cambiar imagen' :
-                                            'Seleccionar imagen' }}</label>
-                                        <input id="imageInput" type="file"
-                                            (change)="onImgSelected($event)"
-                                            accept=".jpg, .jpeg, .png, .gif, .bmp, .webp, .tiff, .svg" />
-                                    </div>
-                                </div>
-                                <mat-form-field appearance="outline"
-                                    class="full-width">
-                                    <mat-label>Selecciona un miembro del GI para
-                                        asignarle el rol de
-                                        Secretario</mat-label>
-                                    <mat-select [(value)]="selectedMember"
-                                        placeholder="Seleccionar miembro">
-                                        <mat-option
-                                            *ngFor="let miembro of miembrosInternos"
-                                            [value]="miembro">
-                                            {{ miembro.user.nombres || miembro.user.nombre}}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-
-                            </div>
-                            <div class="grid-item">
-                                <div>
-                                    <button type="button" mat-raised-button
-                                        color="primary"
-                                        matStepperPrevious>Regresar</button>
-                                    <button type="submit" mat-raised-button
-                                        color="primary"
-                                        [disabled]='!selectedImg || !selectedMember '>Guardar</button>
-
-                                </div> </div>
-                        </div>
-                    </mat-step>
-
-                </mat-stepper>
-            </form>
-        </div>
-    </div>
-</div> -->
-
-
 <div *ngIf="loadingData" class="loading-spinner-overlay">
     <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
 </div>
@@ -767,14 +343,22 @@
                                 <div class="drag-drop"
                                     (drop)="onDrop($event,'i')"
                                     (dragover)="onDragOver($event)">
-                                    <div class="vista-previa-img"
+                                    <!-- <div class="vista-previa-img"
                                         *ngIf="filePreview">
                                         <img *ngIf="isImageFile"
                                             [src]="filePreview"
                                             alt="Vista previa" width="150px">
                                         <i *ngIf="!isImageFile"
                                             [class]="fileIcon"></i>
-                                    </div>
+                                    </div> -->
+                                    <div class="vista-previa-img">
+                                        <ng-container *ngIf="filePreview && isImageFile; else noPreview">
+                                          <img [src]="filePreview" alt="Vista previa" width="150px">
+                                        </ng-container>
+                                        <ng-template #noPreview>
+                                          <i class="far fa-image" style="font-size: 48px; color: #888;"></i>
+                                        </ng-template>
+                                      </div>
 
                                     <i *ngIf="selectedImg && !isImageFile"
                                         [class]="getFileIcon(selectedImg.type)"></i>
@@ -793,7 +377,7 @@
                                             accept=".jpg, .jpeg, .png, .gif, .bmp, .webp, .tiff, .svg" />
                                     </div>
                                 </div>
-                                <mat-form-field appearance="outline"
+                                <!-- <mat-form-field appearance="outline"
                                     class="full-width">
                                     <mat-label>Selecciona un miembro del GI para
                                         asignarle el rol de
@@ -806,7 +390,18 @@
                                             {{ miembro.user.nombres || miembro.user.nombre}}
                                         </mat-option>
                                     </mat-select>
-                                </mat-form-field>
+                                </mat-form-field> -->
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Selecciona un miembro del GI para asignarle el rol de Secretario</mat-label>
+                                    <mat-select [(value)]="selectedMember" 
+                                                (selectionChange)="onSecretarySelectionChange()"
+                                                placeholder="Seleccionar miembro">
+                                      <mat-option *ngFor="let miembro of miembrosInternos" [value]="miembro">
+                                        {{ miembro.user.nombres || miembro.user.nombre }}
+                                        <span *ngIf="miembro.rol === 'SECRETARIO'" class="secretary-badge"> </span>
+                                      </mat-option>
+                                    </mat-select>
+                                  </mat-form-field>
 
                             </div>
                             <div class="grid-item">

@@ -21,13 +21,13 @@ export class AuthService {
   private readonly URL = environment.appApiUrl + '/user';
 
   // 🧪 CONFIGURACIÓN PARA TESTING - Simular token de 2 minutos
-  private readonly TESTING_MODE = false; // ⚠️ Cambiar a true para testing
-  private readonly SIMULATED_TOKEN_DURATION_MINUTES = 2;
+ // private readonly TESTING_MODE = false; // ⚠️ Cambiar a true para testing
+ // private readonly SIMULATED_TOKEN_DURATION_MINUTES = 2;
 // Cambia estas constantes
 private readonly WARNING_TIME_MINUTES = 10; // Primera alarma a 5 minutos
 private readonly SECOND_WARNING_TIME_MINUTES = 5; // Segunda alarma a 3 minutos
 private readonly FINAL_WARNING_TIME_MINUTES = 1; // Alarma final a 1 minuto
-private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para renovación automática
+//private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para renovación automática
   private simulatedTokenStartTime: number = 0;
   
   // Mejor gestión de subscripciones
@@ -96,9 +96,9 @@ private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para reno
     this.oAuthService.tryLogin({
       onTokenReceived: () => {
         // Inicializar tiempo de simulación
-        if (this.TESTING_MODE) {
-          this.simulatedTokenStartTime = Date.now();
-        }
+        // if (this.TESTING_MODE) {
+        //   this.simulatedTokenStartTime = Date.now();
+        // }
         this.getGlobalUser();
         this.startTokenExpirationMonitoring();
       }
@@ -166,21 +166,21 @@ private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para reno
     this.isRefreshing = true;
 
     // En modo testing, simular renovación exitosa
-    if (this.TESTING_MODE) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          this.isRefreshing = false;
-          this.warningShown = false;
-          this.simulatedTokenStartTime = Date.now(); // Reiniciar contador
+    // if (this.TESTING_MODE) {
+    //   return new Promise((resolve) => {
+    //     setTimeout(() => {
+    //       this.isRefreshing = false;
+    //       this.warningShown = false;
+    //       this.simulatedTokenStartTime = Date.now(); // Reiniciar contador
           
-          setTimeout(() => {
-            this.startTokenExpirationMonitoring();
-          }, 1000);
+    //       setTimeout(() => {
+    //         this.startTokenExpirationMonitoring();
+    //       }, 1000);
           
-          resolve(true);
-        }, 1000); // Simular delay de red
-      });
-    }
+    //       resolve(true);
+    //     }, 1000); // Simular delay de red
+    //   });
+    // }
 
     return this.oAuthService.refreshToken()
       .then(() => {
@@ -317,25 +317,17 @@ private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para reno
 
     let expiresIn: number;
     
-    if (this.TESTING_MODE) {
-      if (!this.simulatedTokenStartTime) {
-        this.simulatedTokenStartTime = Date.now();
-      }
-      expiresIn = this.SIMULATED_TOKEN_DURATION_MINUTES * 60 * 1000;
-    } else {
+    // if (this.TESTING_MODE) {
+    //   if (!this.simulatedTokenStartTime) {
+    //     this.simulatedTokenStartTime = Date.now();
+    //   }
+    //   expiresIn = this.SIMULATED_TOKEN_DURATION_MINUTES * 60 * 1000;
+    // } else {
       const storageTokenInfo = this.getTokenExpirationFromStorage();
       
       if (storageTokenInfo) {
         const now = Date.now();
         expiresIn = storageTokenInfo.expiresAt - now;
-        
-        // console.log('📦 Usando valores del sessionStorage:', {
-        //   expiresAt: new Date(storageTokenInfo.expiresAt).toLocaleString(),
-        //   idTokenExpiresAt: new Date(storageTokenInfo.idTokenExpiresAt).toLocaleString(),
-        //   storedAt: new Date(storageTokenInfo.storedAt).toLocaleString(),
-        //   now: new Date(now).toLocaleString(),
-        //   expiresInMinutes: Math.floor(expiresIn / 60000)
-        // });
       } else {
         const tokenExpiresAt = this.oAuthService.getAccessTokenExpiration();
         if (!tokenExpiresAt) {
@@ -344,7 +336,7 @@ private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para reno
         const now = Date.now();
         expiresIn = tokenExpiresAt - now;
       }
-    }
+    //}
     
     if (expiresIn <= 0) {
       this.handleTokenRefreshError();
@@ -355,15 +347,7 @@ private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para reno
     const warningTime1 = expiresIn - (this.WARNING_TIME_MINUTES * 60 * 1000);
     const warningTime2 = expiresIn - (this.SECOND_WARNING_TIME_MINUTES * 60 * 1000);
     const warningTime3 = expiresIn - (this.FINAL_WARNING_TIME_MINUTES * 60 * 1000);
-
-    // console.log('⏰ Configurando alarmas:', {
-    //   primeraAlarma: `${this.WARNING_TIME_MINUTES} min (en ${Math.floor(warningTime1 / 60000)} min)`,
-    //   segundaAlarma: `${this.SECOND_WARNING_TIME_MINUTES} min (en ${Math.floor(warningTime2 / 60000)} min)`,
-    //   alarmaFinal: `${this.FINAL_WARNING_TIME_MINUTES} min (en ${Math.floor(warningTime3 / 60000)} min)`
-    // });
-
-    // Primera alarma (5 minutos)
-    if (warningTime1 > 0) {
+   if (warningTime1 > 0) {
       this.warningTimer = timer(warningTime1)
         .pipe(takeUntil(this.destroy$))
         .subscribe(() => {
@@ -372,7 +356,6 @@ private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para reno
     } else {
     }
 
-    // Segunda alarma (3 minutos)
     if (warningTime2 > 0) {
       this.secondWarningTimer = timer(warningTime2)
         .pipe(takeUntil(this.destroy$))
@@ -382,7 +365,6 @@ private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para reno
     } else {
     }
 
-    // Tercera alarma (1 minuto)
     if (warningTime3 > 0) {
       this.finalWarningTimer = timer(warningTime3)
         .pipe(takeUntil(this.destroy$))
@@ -393,16 +375,16 @@ private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para reno
     }
 
     // Timer para renovación automática (30 segundos antes)
-    const autoRefreshTime = expiresIn - (this.AUTO_REFRESH_TIME_MINUTES * 60 * 1000);
-    if (autoRefreshTime > 0) {
-      this.autoRefreshTimer = timer(autoRefreshTime)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(() => {
-          this.attemptAutoRefresh();
-        });
-    } else if (!this.warningShown) {
-      this.attemptAutoRefresh();
-    }
+    // const autoRefreshTime = expiresIn - (this.AUTO_REFRESH_TIME_MINUTES * 60 * 1000);
+    // if (autoRefreshTime > 0) {
+    //   this.autoRefreshTimer = timer(autoRefreshTime)
+    //     .pipe(takeUntil(this.destroy$))
+    //     .subscribe(() => {
+    //       this.attemptAutoRefresh();
+    //     });
+    // } else if (!this.warningShown) {
+    //   this.attemptAutoRefresh();
+    // }
   }
   private stopTokenExpirationMonitoring(): void {
     
@@ -463,7 +445,8 @@ private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para reno
 
     this.refreshToken().then(success => {
       if (!success) {
-        this.showForceLogoutDialog();
+        //this.showForceLogoutDialog();
+        this.logout();
       } else {
       }
     });
@@ -471,7 +454,8 @@ private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para reno
 
   private handleTokenRefreshError(): void {
     console.error('❌ No se pudo renovar el token. Cerrando sesión...');
-    this.showForceLogoutDialog();
+    this.logout();
+    //this.showForceLogoutDialog();
   }
 
   private showForceLogoutDialog(): void {
@@ -496,26 +480,20 @@ private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para reno
       return 0;
     }
 
-    if (this.TESTING_MODE) {
-      // Calcular tiempo simulado restante
-      if (!this.simulatedTokenStartTime) {
-        return 0;
-      }
+    // if (this.TESTING_MODE) {
+    //   // Calcular tiempo simulado restante
+    //   if (!this.simulatedTokenStartTime) {
+    //     return 0;
+    //   }
       
-      const elapsed = Date.now() - this.simulatedTokenStartTime;
-      const totalDuration = this.SIMULATED_TOKEN_DURATION_MINUTES * 60 * 1000;
-      const remaining = totalDuration - elapsed;
-      const minutesRemaining = Math.max(0, Math.ceil(remaining / (60 * 1000)));
+    //   const elapsed = Date.now() - this.simulatedTokenStartTime;
+    //   const totalDuration = this.SIMULATED_TOKEN_DURATION_MINUTES * 60 * 1000;
+    //   const remaining = totalDuration - elapsed;
+    //   const minutesRemaining = Math.max(0, Math.ceil(remaining / (60 * 1000)));
       
-      // console.log('🧪 Tiempo simulado:', {
-      //   elapsed: Math.floor(elapsed / 1000) + 's',
-      //   totalDuration: this.SIMULATED_TOKEN_DURATION_MINUTES + 'min',
-      //   remaining: Math.floor(remaining / 1000) + 's',
-      //   minutesRemaining: minutesRemaining + 'min'
-      // });
       
-      return minutesRemaining;
-    }
+     // return minutesRemaining;
+    //}
 
     // Usar valores reales del sessionStorage
     const storageTokenInfo = this.getTokenExpirationFromStorage();
@@ -524,14 +502,7 @@ private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para reno
       const now = Date.now();
       const remaining = storageTokenInfo.expiresAt - now;
       const minutesRemaining = Math.max(0, Math.ceil(remaining / (60 * 1000)));
-      
-      // console.log('📦 Tiempo desde sessionStorage:', {
-      //   expiresAt: new Date(storageTokenInfo.expiresAt).toLocaleTimeString(),
-      //   now: new Date(now).toLocaleTimeString(),
-      //   remaining: Math.floor(remaining / 1000) + 's',
-      //   minutesRemaining: minutesRemaining + 'min'
-      // });
-      
+           
       return minutesRemaining;
     }
 
@@ -545,13 +516,6 @@ private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para reno
     const remaining = tokenExpiresAt - now;
     const minutesRemaining = Math.max(0, Math.ceil(remaining / (60 * 1000)));
     
-    // console.log('📅 Tiempo desde OAuth Service:', {
-    //   expiresAt: new Date(tokenExpiresAt).toLocaleTimeString(),
-    //   now: new Date(now).toLocaleTimeString(),
-    //   remaining: Math.floor(remaining / 1000) + 's',
-    //   minutesRemaining: minutesRemaining + 'min'
-    // });
-    
     return minutesRemaining;
   }
 
@@ -560,16 +524,16 @@ private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para reno
       return 0;
     }
 
-    if (this.TESTING_MODE) {
-      if (!this.simulatedTokenStartTime) {
-        return 0;
-      }
+    // if (this.TESTING_MODE) {
+    //   if (!this.simulatedTokenStartTime) {
+    //     return 0;
+    //   }
       
-      const elapsed = Date.now() - this.simulatedTokenStartTime;
-      const totalDuration = this.SIMULATED_TOKEN_DURATION_MINUTES * 60 * 1000;
-      const remaining = totalDuration - elapsed;
-      return Math.max(0, Math.floor(remaining / 1000));
-    }
+    //   const elapsed = Date.now() - this.simulatedTokenStartTime;
+    //   const totalDuration = this.SIMULATED_TOKEN_DURATION_MINUTES * 60 * 1000;
+    //   const remaining = totalDuration - elapsed;
+    //   return Math.max(0, Math.floor(remaining / 1000));
+    // }
 
     // Usar valores reales del sessionStorage
     const storageTokenInfo = this.getTokenExpirationFromStorage();
@@ -608,10 +572,10 @@ private readonly AUTO_REFRESH_TIME_MINUTES = 0.5; // 30 segundos antes para reno
     
     return {
       valid: true,
-      testingMode: this.TESTING_MODE,
-      simulatedDuration: this.TESTING_MODE ? this.SIMULATED_TOKEN_DURATION_MINUTES : null,
-      simulatedStartTime: this.TESTING_MODE ? new Date(this.simulatedTokenStartTime) : null,
-      sessionStorageInfo: storageTokenInfo ? {
+      // testingMode: this.TESTING_MODE,
+      // simulatedDuration: this.TESTING_MODE ? this.SIMULATED_TOKEN_DURATION_MINUTES : null,
+      // simulatedStartTime: this.TESTING_MODE ? new Date(this.simulatedTokenStartTime) : null,
+       sessionStorageInfo: storageTokenInfo ? {
         expiresAt: new Date(storageTokenInfo.expiresAt),
         idTokenExpiresAt: new Date(storageTokenInfo.idTokenExpiresAt),
         storedAt: new Date(storageTokenInfo.storedAt)
