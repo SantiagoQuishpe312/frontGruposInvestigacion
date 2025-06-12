@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="back-button-container">
       <header style="display: flex;">
-        <h1>OBJETIVOS ESPECÍFICOS Y SU RELACIÓN CON ESTRATEGIAS INSTITUCIONALES Y LOS ODS</h1>
+<h1>{{ isEditing ? 'EDITAR OBJETIVO ESPECÍFICO' : 'NUEVO OBJETIVO ESPECÍFICO' }}</h1>
       </header>
       <h2 *ngIf="objetivoEspecifico">Objetivo Específico: {{ objetivoEspecifico }}</h2>
     </div>

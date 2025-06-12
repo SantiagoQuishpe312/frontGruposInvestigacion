@@ -16,3 +16,12 @@ export interface ObjectiveCompleteOds{
     ods:ODS[];
     strategies:Strategies[];
 }
+export interface EstrategiaOds{
+    estrategia:Strategies;
+    ods:ODS;
+}
+
+export interface ObjectiveCompleteOdsById{  
+    obj:SpecificObjetives ;
+    estrategiasOds: EstrategiaOds[];
+}

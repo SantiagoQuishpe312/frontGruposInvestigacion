@@ -116,7 +116,7 @@ export class ModalCuadroOp implements OnInit {
     obtenerObjetivosEspecificos(): void {
         this.objetivosEspecificos = this.planDesarrolloCompleto.panelControl.map(panel => ({
             panelControl: panel,
-            objetivoEspecifico: panel.objetivoEspecífico
+            objetivoEspecifico: panel.objetivoEspecifico
         }));
         console.log(this.objetivosEspecificos)
     }

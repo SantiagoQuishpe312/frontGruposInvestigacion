@@ -172,7 +172,7 @@
             <button type="button" mat-raised-button color="primary"
               (click)="agregarObjetivo()"
               matTooltip="Agregar nuevo Objetivo">Añadir Objetivo</button>
-            <table class="table tPlan" *ngIf="relations.length > 0">
+            <table class="table tPlan" *ngIf="dataCompleteobjetivos.length > 0">
               <thead>
                 <tr>
                   <th>Objetivo Específico</th>
@@ -182,26 +182,49 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let rel of relations">
-                  <td>{{ getObjetivoTexto(rel.idObjetivoEspecifico) }}</td>
-                  <td>{{ getEstrategiaTexto(rel.idEstrategia) }}</td>
-                  <td>{{ getOdsTexto(rel.idODS) }}</td>
-                  <td>
-                    <button mat-raised-button color="warn"
-                    type="button"
-                      (click)="eliminarRelacion(rel)">
-                      Eliminar Relación
+                <tr *ngFor="let array of dataCompleteobjetivos">
+                  <td>{{array.obj.objetivo }}<br />
+                    <button type="button" class="edit" mat-mini-fab
+                      color="primary"
+                      (click)="editarObjetivo(array.obj)"
+                      matTooltip="Editar área">
+                      <i class="fas fa-edit"></i>
                     </button>
+
+                    <button mat-raised-button color="primary"
+                      type="button"
+                      (click)="openDialogObj(array.obj)">
+
+                      Agregar Estrategia y ODS
+                    </button>
+                  </td>
+                  <td><div class="list"
+                      *ngFor="let estrategia of array.estrategiasOds">
+                      {{ estrategia.estrategia.estrategia }}<br>
+                    </div></td>
+                  <td><div class="list"
+                      *ngFor="let ods of array.estrategiasOds">
+                      {{ ods.ods.ods }}<br>
+                    </div></td>
+
+                  <td>
+                    <div class="list"
+                      *ngFor="let strategyOds of array.estrategiasOds">
+                      <button mat-raised-button color="warn"
+                        type="button"
+                        (click)="eliminarRelacion(strategyOds,array.obj.idObjetivo)">
+
+                        Eliminar Relación
+                      </button>
+                    </div>
+
                   </td>
                 </tr>
               </tbody>
             </table>
-
             <div class="grid-container">
-
               <div class="grid-item">
               </div>
-
               <div class="grid-item">
                 <div>
                   <button type="button" mat-raised-button color="primary"
@@ -230,7 +253,7 @@
               <textarea matInput
                 [value]="informacionObjetivos" readonly
                 class="textarea" rows="15" required
-                maxlength="4000">
+                maxlength="4000">3
 </textarea>
 
             </mat-form-field>
@@ -261,7 +284,8 @@
                 <button type="button" mat-raised-button
                   color="primary"
                   [disabled]="!myForm.get('grupoInv2_1').valid"
-                  matStepperNext>
+                  matStepperNext
+                  (click)="savePartialPlan(6)">
                   Siguiente
                 </button>
               </div>
@@ -293,32 +317,29 @@
               </thead>
               <tbody>
                 <tr
-                  *ngFor="let marco of marco.controls; let i = index; trackBy: trackByIndex"
-                  [formGroupName]="i">
+                  *ngFor="let marco of controlPanel; let i = index;"
+                  >
                   <td>{{ i + 1 }}</td>
-                  <td> {{
-                    getObjetivoEspecifico(marco.get('idObjetivoEspecifico')?.value)
-                    }}</td>
+                  <td> {{marco.objetivoEspecifico.objetivo }}</td>
                   <!-- Asegúrate de usar los nombres de campo correctos -->
-                  <td>{{ marco.get('actividad')?.value }}</td>
-                  <td>{{ getName(marco.get('idResponsable')?.value) | async
-                    }}</td>
+                  <td>{{ marco.panelControl.actividad }}</td>
+                  <td>{{ marco.responsable.nombre }}</td>
+                  <td>{{ marco.panelControl.indicadorNombre }}</td>
+                  <td>{{ marco.panelControl.meta1 }}</td>
+                  <td>{{ marco.panelControl.meta2 }}</td>
+                  <td>{{ marco.panelControl.meta3 }}</td>
+                  <td>{{ marco.panelControl.meta4 }}</td>
+                  <td>{{ marco.panelControl.financiamiento }}</td>
+                  <td>{{ marco.panelControl.observacion }}</td>
 
-                  <td>{{ marco.get('indicadorNombre')?.value }}</td>
-                  <td>{{ marco.get('meta1')?.value }}</td>
-                  <td>{{ marco.get('meta2')?.value }}</td>
-                  <td>{{ marco.get('meta3')?.value }}</td>
-                  <td>{{ marco.get('meta4')?.value }}</td>
-                  <td>{{ marco.get('financiamiento')?.value }}</td>
-                  <td>{{ marco.get('observacion')?.value }}</td>
                   <td>
                     <button class="btn_add" type="button" mat-icon-button
-                      (click)="openModalMarco(i)">
+                      (click)="openModalMarco(marco)">
                       <mat-icon
                         class="material-symbols-outlined">edit</mat-icon>
                     </button>
                     <button class="btn_delete" type="button" mat-icon-button
-                      (click)="eliminarMarco(i)">
+                      (click)="eliminarMarco(marco.panelControl.idPanelControl)">
                       <mat-icon
                         class="material-symbols-outlined">delete</mat-icon>
                     </button>
@@ -340,11 +361,25 @@
                   <button type="button" mat-raised-button color="primary"
                     matStepperPrevious>Regresar</button>
                   <button type="submit" mat-raised-button color="primary"
-                    [disabled]="!myForm.get('planDesarrolloForm4').valid">
-                    Enviar
+                    
+                    *ngIf="controlPanel">
+                    Siguiente
                   </button></div>
               </div> </div></div>
         </mat-step>
+        <mat-step *ngIf="planVigente">
+          <ng-template matStepLabel>Enviar</ng-template>
+          <app-developmentPlanForm-component [id]="planVigente.idGrupoInv"></app-developmentPlanForm-component>
+        
+                      <div class="grid-item">
+                <div>
+                  <button type="button" mat-raised-button color="primary"
+                    matStepperPrevious>Regresar</button>
+                  <button type="submit" mat-raised-button color="primary"
+                    [disabled]="!myForm.get('planDesarrolloForm4').valid">
+                    Enviar
+                  </button></div>
+              </div> </mat-step>
 
       </mat-stepper>
     </form>

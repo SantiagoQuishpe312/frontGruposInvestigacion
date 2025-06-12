@@ -27,5 +27,5 @@ export interface ControlPanelForm {
 export interface ControlPanelComplete{
     panelControl:ControlPanelForm;
     responsable:Usuario;
-    objetivoEspecífico:SpecificObjetives;
+    objetivoEspecifico:SpecificObjetives;
 }

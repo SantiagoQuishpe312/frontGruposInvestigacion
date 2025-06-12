@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ObjectiveCompleteOds, Objectives_Strategies_Ods } from 'src/app/types/obj_strategies_ods.types';
+import { ObjectiveCompleteOds, ObjectiveCompleteOdsById, Objectives_Strategies_Ods } from 'src/app/types/obj_strategies_ods.types';
 @Injectable({
   providedIn: 'root'
 })
@@ -20,7 +20,9 @@ export class ObjStrategiesODSService {
   getCompleteByObj(id:number): Observable<ObjectiveCompleteOds>{
     return this.http.get<ObjectiveCompleteOds>(`${this.URL}/all-by-obj/${id}`);
   }
-
+ getCompleteByObjRelations(id:number): Observable<ObjectiveCompleteOdsById[]>{
+    return this.http.get<ObjectiveCompleteOdsById[]>(`${this.URL}/relation/developmentPlan/${id}`);
+  }
   getById(id: number): Observable<Objectives_Strategies_Ods[]> {
     return this.http.get<Objectives_Strategies_Ods[]>(`${this.URL}/objective/${id}`);
   }

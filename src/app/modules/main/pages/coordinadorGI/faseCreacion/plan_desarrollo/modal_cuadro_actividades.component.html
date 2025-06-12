@@ -3,7 +3,7 @@
         <div class="back-button-container">
             <header style="display: flex;">
                 
-                <h1>PANEL DE CONTROL{{ isEditing ? 'Editar Control' : 'Crear Nuevo control' }}</h1>
+<h1>PANEL DE CONTROL - {{ isEditing ? 'Editar Control' : 'Crear Nuevo Control' }}</h1>
             </header>
         </div>
 
@@ -19,7 +19,7 @@
                 <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Objetivo Específico</mat-label>
       <mat-select formControlName="idObjetivoEspecifico" required>
-        <mat-option *ngFor="let obj of objetivos; let i = index" [value]="i">
+        <mat-option *ngFor="let obj of objetivos; let i = index" [value]="obj.obj.idObjetivo">
           {{ obj.obj.objetivo}}
         </mat-option>
       </mat-select>

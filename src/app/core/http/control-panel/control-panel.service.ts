@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ControlPanelForm } from 'src/app/types/controlPanel.types';
+import { ControlPanelComplete, ControlPanelForm } from 'src/app/types/controlPanel.types';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -24,6 +24,9 @@ export class ControlPanelService {
   getByPlan(id: number): Observable<ControlPanelForm[]> {
     return this.http.get<ControlPanelForm[]>(`${this.URL}/bydev/${id}`);
   }
+  getCompleteByPlan(id: number): Observable<ControlPanelComplete[]> {
+    return this.http.get<ControlPanelComplete[]>(`${this.URL}/bycontrl/${id}`);
+  }
   getBySpecificObjetive(id: number): Observable<ControlPanelForm[]> {
     return this.http.get<ControlPanelForm[]>(`${this.URL}/bySpecificObj/${id}`);
   }
@@ -34,5 +37,8 @@ export class ControlPanelService {
 
   update(id: number, formData: ControlPanelForm): Observable<ControlPanelForm> {
     return this.http.put<ControlPanelForm>(`${this.URL}/update/${id}`, formData);
-  }}
+  }
+delete(id:number){
+  return this.http.delete(`${this.URL}/delete/${id}`);}
+}
 

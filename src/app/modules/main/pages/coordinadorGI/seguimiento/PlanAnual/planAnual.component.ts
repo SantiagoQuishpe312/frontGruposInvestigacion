@@ -122,7 +122,7 @@ export class AnnualPlanComponent implements OnInit {
   obtenerObjetivosEspecificos(): void {
     this.objetivosEspecificos = this.planDesarrolloCompleto.panelControl.map(panel => ({
       panelControl: panel,
-      objetivoEspecifico: panel.objetivoEspecífico
+      objetivoEspecifico: panel.objetivoEspecifico
     }));
   }
 

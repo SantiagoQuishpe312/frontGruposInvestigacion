@@ -77,7 +77,7 @@ export class AgregarObjetivosComponent {
       this.panelAnual = data;
       this.objetivos = data.controlAnual.map(panel => ({
         panelControl: panel.controlPanel,
-        objetivoEspecifico: panel.controlPanel.objetivoEspecífico
+        objetivoEspecifico: panel.controlPanel.objetivoEspecifico
       }));
       console.log(this.panelAnual);
     });

@@ -21,6 +21,8 @@ export class Modal_ObjEspecifico implements OnInit {
 
   objetivoEspecifico: string;
 planDesarrollo:number;
+idObjetivo: number = 0;
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -29,43 +31,50 @@ planDesarrollo:number;
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
-  ngOnInit(): void {
-    this.currentUser = this.authService.getUserName();
+ngOnInit(): void {
+  this.currentUser = this.authService.getUserName();
+  const dataObj = this.data?.objetivoEspecifico;
 
-    // Puede llegar undefined si es nuevo, así que validamos
-    this.objetivoEspecifico = this.data?.objetivoEspecifico?.objetivo || '';
-    this.planDesarrollo = this.data?.idPlanActual;
+  this.objetivoEspecifico = dataObj?.objetivo || '';
+  this.planDesarrollo = this.data?.idPlanActual;
+  this.idObjetivo = dataObj?.idObjetivo || 0;
+  this.isEditing = !!dataObj;
 
-    this.form = this.fb.group({
-      objetivo: [this.objetivoEspecifico, Validators.required]
-    });
-  }
+  this.form = this.fb.group({
+    objetivo: [this.objetivoEspecifico, Validators.required]
+  });
+}
 
   save(): void {
-    if (this.form.invalid) return;
+  if (this.form.invalid) return;
 
-    const objetivo: SpecificObjetives = {
-      idObjetivo: 0,
-      idPlanDesarrollo:this.planDesarrollo,
-      objetivo: this.form.value.objetivo,
-      usuarioCreacion: this.currentUser,
-      fechaCreacion: this.currentDate,
-      usuarioModificacion: null,
-      fechaModificacion: null,
-    };
+  const objetivo: SpecificObjetives = {
+    idObjetivo: this.idObjetivo,
+    idPlanDesarrollo: this.planDesarrollo,
+    objetivo: this.form.value.objetivo,
+    usuarioCreacion: this.isEditing ? null : this.currentUser,
+    fechaCreacion: this.isEditing ? null : this.currentDate,
+    usuarioModificacion: this.isEditing ? this.currentUser : null,
+    fechaModificacion: this.isEditing ? this.currentDate : null,
+  };
 
-    this.isLoading = true;
-    this.objService.createSpecificObjetive(objetivo).subscribe({
-      next: (data) => {
-        this.isLoading = false;
-        this.dialogRef.close(data);
-      },
-      error: () => {
-        this.isLoading = false;
-        // Manejo de errores si deseas mostrar algo
-      }
-    });
-  }
+  this.isLoading = true;
+
+  const request$ = this.isEditing
+    ? this.objService.update(this.idObjetivo,objetivo)
+    : this.objService.createSpecificObjetive(objetivo);
+
+  request$.subscribe({
+    next: (data) => {
+      this.isLoading = false;
+      this.dialogRef.close(data);
+    },
+    error: () => {
+      this.isLoading = false;
+    }
+  });
+}
+
 
   onClickClose(): void {
     this.dialogRef.close();
