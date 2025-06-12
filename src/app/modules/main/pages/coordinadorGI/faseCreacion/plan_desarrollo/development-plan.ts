@@ -159,7 +159,7 @@ export class DevelopmentPlanFormComponent implements OnInit {
           usuarioModificacionUsuario: null,
           fechaModificacionUsuario: null
         };
-          this.planVigente = planDesarrollo;
+        this.planVigente = planDesarrollo;
 
 
         this.developmentPlanService.create(planDesarrollo).subscribe(response => {
@@ -416,12 +416,6 @@ export class DevelopmentPlanFormComponent implements OnInit {
   get grupoInv2_1() {
     return this.myForm.get('grupoInv2_1') as FormGroup;
   }
-
-  trackByIndex(index: number, item: any): number {
-    return item ? item.value.id || index : index;
-  }
-
-
   //Cargar Data inicial para poder iniciar los Formularios con Datos
   loadData() {
     return forkJoin({
@@ -442,10 +436,6 @@ export class DevelopmentPlanFormComponent implements OnInit {
       })
     );
   }
-
-
-
-
   agregarObjetivo(): void {
     const dialogRef = this.dialog.open(Modal_ObjEspecifico, {
       width: '50%',
@@ -475,7 +465,6 @@ export class DevelopmentPlanFormComponent implements OnInit {
         this.actualizarInformacionObjetivos();
       }
       this.actualizarInformacionObjetivos();
-
     });
   }
 
@@ -486,26 +475,15 @@ export class DevelopmentPlanFormComponent implements OnInit {
     });
   }
 
-  groupedRelations: {
-    [idObjetivo: number]: {
-      objetivo: SpecificObjetives,  // Si tienes detalles del objetivo, o solo el id
-      strategiesOds: Objectives_Strategies_Ods[]
-    }
-  } = {};
-
   getObjetivoEspecifico(posicion: number): string {
     const objetivo = this.objetivos.value[posicion];  // Usar la posición para acceder al arreglo
     return objetivo ? objetivo.objetivo : 'Objetivo no encontrado';  // Ajusta según el campo que quieras mostrar
   }
-
-
-
   actualizarInformacion(): void {
     if (!this.dataCompleteobjetivos || this.dataCompleteobjetivos.length === 0) {
       this.informacionObjetivos = "No hay objetivos registrados.";
       return;
     }
-
     this.informacionObjetivos = this.dataCompleteobjetivos.map((item, index) => {
       const estrategias = item.estrategiasOds.map(e => e.estrategia?.estrategia).filter(Boolean);
       const ods = item.estrategiasOds.map(o => o.ods?.ods).filter(Boolean);
@@ -544,22 +522,6 @@ export class DevelopmentPlanFormComponent implements OnInit {
     });
   }
 
-  esFormularioValido(): boolean {
-    // Verifica si el formulario es válido
-    if (!this.myForm.get('planDesarrolloForm3').valid) {
-      return false;
-    }
-
-    // Verifica cada objetivo para asegurar que tenga al menos una estrategia
-    for (const objetivo of this.objetivos.controls) {
-      if (!objetivo.value.objetivo || objetivo.value.estrategias.length === 0) {
-        return false; // Si un objetivo no tiene descripción o estrategias, el formulario no es válido
-      }
-    }
-
-    return true; // Todo está lleno y válido
-  }
-
 
   agregarMarco(): void {
     const dialogRef = this.dialog.open(ActControl, {
@@ -594,7 +556,6 @@ export class DevelopmentPlanFormComponent implements OnInit {
 
   openModalMarco(marco: ControlPanelComplete): void {
     const marcoActual = marco;
-
     const dialogRef = this.dialog.open(ActControl, {
       width: '50%',
       height: '70%',
@@ -608,7 +569,8 @@ export class DevelopmentPlanFormComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.obtenerPanelesControl();
-      } this.obtenerPanelesControl();
+      } 
+      this.obtenerPanelesControl();
 
     });
   }
@@ -621,7 +583,6 @@ export class DevelopmentPlanFormComponent implements OnInit {
   }
   //Envio del Formulario------------------------------
   HandleSubmit() {
-    this.formReady = true;
     this.isLoading = true;
     if (this.myForm.valid) {
       this.guardarPlanBase();
@@ -629,7 +590,6 @@ export class DevelopmentPlanFormComponent implements OnInit {
         duration: 3000,
       });
     } else {
-      this.formReady = false;
       this.snackBar.open('Por favor, complete todos los campos requeridos.', 'Cerrar', {
         duration: 3000,
       });
@@ -638,7 +598,6 @@ export class DevelopmentPlanFormComponent implements OnInit {
   guardarPlanBase() {
     this.planVigente.fechaCreacionUsuario = this.currentDate;
     this.planVigente.usuarioModificacionUsuario = this.currentUser;
-
     this.developmentPlanService.update(this.planVigente.idPlanDesarrollo, this.planVigente).subscribe(
       () => {
         this.actualizarEstados();
@@ -679,6 +638,8 @@ export class DevelopmentPlanFormComponent implements OnInit {
       }
       this.invGroupService.update(this.idGroup, invGroup).subscribe(
         () => {
+          this.isLoading = false;
+          this.router.navigateByUrl(`main/dashboard`);
         });
     })
   }

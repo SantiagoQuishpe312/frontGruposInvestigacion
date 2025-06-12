@@ -7,10 +7,10 @@
         <h1>Plan de Desarrollo</h1>
       </header>
     </div>
-    <div *ngIf="!formReady" class="loading-spinner-overlay">
+    <div *ngIf="!isLoading" class="loading-spinner-overlay">
       <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
     </div>
-    <form [formGroup]="myForm" (ngSubmit)="HandleSubmit()" *ngIf="formReady">
+    <form [formGroup]="myForm" (ngSubmit)="HandleSubmit()">
       <mat-stepper [linear]="isLinear" #stepper>
         <!-- Step 1: Referencias -->
         <mat-step [stepControl]="planDesarrolloForm1">
@@ -230,7 +230,7 @@
                   <button type="button" mat-raised-button color="primary"
                     matStepperPrevious>Regresar</button>
                   <button type="button" mat-raised-button color="primary"
-                    [disabled]="!esFormularioValido()"
+                    [disabled]="!dataCompleteobjetivos"
                     matStepperNext>
                     Siguiente
                   </button></div>
