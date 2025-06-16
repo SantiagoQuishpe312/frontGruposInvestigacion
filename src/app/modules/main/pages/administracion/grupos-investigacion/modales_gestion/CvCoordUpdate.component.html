@@ -1,0 +1,42 @@
+<div *ngIf="isLoading" class="loading-spinner-overlay">
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+</div>
+<div class="cont">
+  <header>
+    <h1>Gestión de mi Hoja de Vida</h1>
+  </header>
+
+  <div *ngIf="view==0">
+    <button type="button" mat-raised-button color="primary"
+      (click)="toggleForm(5)">
+      Actualizar Hoja de Vida
+    </button> 
+<iframe *ngIf="pdfUrl" [src]="pdfUrl" width="100%" height="600px"></iframe>
+  </div>
+  <div *ngIf="view==5">
+    <p>Adjunte Su Hoja de Vida</p>
+    <form (submit)="onSubmit()">
+      <div class="drag-drop" (drop)="onDrop($event)" (dragover)="onDragOver($event)">
+        <i *ngIf="selectedFile"
+            class="{{ getFileIcon(selectedFile.type) }}"></i>
+        <p *ngIf="!selectedFile">Arrastra y suelta el documento aquí o haz
+          clic para seleccionarlo.</p>
+          <p *ngIf="selectedFile">{{ originalFileName }}</p>
+          <div class="custom-file-input">
+            <label *ngIf="!selectedFile" for="fileInput">Seleccionar
+              archivo</label>
+            <label *ngIf="selectedFile" for="fileInput">Cambiar archivo</label>
+            <input id="fileInput" type="file" (change)="onFileSelected($event)"
+              accept=".pdf" />
+        </div>
+      </div>
+      <button class="boton" type="submit" [disabled]="!selectedFile">Guardar</button>
+      <div *ngIf="selectedFile" class="file-info">
+        <p *ngIf="fileUploaded" class="success-message">Archivo cargado con éxito.</p>
+      </div>
+    </form>
+  </div>
+
+  
+     
+    </div>

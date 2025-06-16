@@ -6,14 +6,14 @@
     <h1>Gestión de Integrantes</h1>
   </header>
 
-  <table *ngIf="!showExternalForm && !showInternalForm && !isEdit">
+  <table *ngIf="view==0">
     <thead>
       <tr>
         <th>Nombre</th>
         <th>Escalafón</th>
         <th>Institución</th>
         <th>Tipo</th>
-        <th>Eliminar</th>
+        <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -23,30 +23,80 @@
         <td>{{ u.user.institucion }}</td>
         <td>{{ u.tipo }} - {{ u.status }}</td>
         <td>
-          <button class="delete" mat-mini-fab
+          <button type="button" *ngIf="groupId" class="delete" mat-mini-fab
             (click)="deleteMember(u,u.idUsuario)">
             <i class="fas fa-trash-alt" inert></i>
           </button>
-          <button color="primary" mat-mini-fab (click)="editMemberInfo(u)">
-            <i class="fa fa-file-pen"></i>
+          <button
+            type="button"
+            color="primary"
+            mat-mini-fab
+            matTooltip="Editar información del miembro"
+            matTooltipPosition="above"
+            (click)="editMemberInfo(u)">
+            <i class="fa fa-edit"></i>
+          </button><button
+            type="button"
+            color="primary"
+            mat-mini-fab
+            matTooltip="Gestionar Hoja de Vida"
+            matTooltipPosition="above"
+            (click)="cargarHojasDeVida(u)">
+
+            <i class="fa fa-file-alt"></i>
           </button>
+
         </td>
       </tr>
     </tbody>
   </table>
-  <div *ngIf="!showExternalForm && !showInternalForm && !isEdit">
-    <button mat-raised-button color="primary" (click)="toggleForm(true)">
+  <div *ngIf="view==0">
+    <button type="button" mat-raised-button color="primary"
+      (click)="toggleForm(3)">
       Agregar Miembro Interno
     </button>
-    <button mat-raised-button color="accent" (click)="toggleForm(false)">
+    <button type="button" mat-raised-button color="accent"
+      (click)="toggleForm(4)">
       Agregar Miembro Externo
     </button>
   </div>
-  
+  <div *ngIf="view==2">
+    <button type="button" mat-raised-button color="primary"
+      (click)="toggleForm(5)">
+      Actualizar Hoja de Vida
+    </button> <button class="btn-save" mat-button type="button" (click)="toggleForm(0)"
+          matTooltip="Regresar">
+          Regresar/Cancelar
+        </button>
+    <iframe [src]="pdfUrl" width="100%" height="800px"></iframe>
+  </div>
+  <div *ngIf="view==5">
+    <p>Adjunte el memorando</p>
+    <form (submit)="onSubmit()">
+      <div class="drag-drop" (drop)="onDrop($event)" (dragover)="onDragOver($event)">
+        <i *ngIf="selectedFile"
+            class="{{ getFileIcon(selectedFile.type) }}"></i>
+        <p *ngIf="!selectedFile">Arrastra y suelta el documento aquí o haz
+          clic para seleccionarlo.</p>
+          <p *ngIf="selectedFile">{{ originalFileName }}</p>
+          <div class="custom-file-input">
+            <label *ngIf="!selectedFile" for="fileInput">Seleccionar
+              archivo</label>
+            <label *ngIf="selectedFile" for="fileInput">Cambiar archivo</label>
+            <input id="fileInput" type="file" (change)="onFileSelected($event)"
+              accept=".pdf" />
+        </div>
+      </div>
+      <button class="boton" type="submit" [disabled]="!selectedFile">Guardar</button>
+      <div *ngIf="selectedFile" class="file-info">
+        <p *ngIf="fileUploaded" class="success-message">Archivo cargado con éxito.</p>
+      </div>
+    </form>
+  </div>
 
   <div *ngIf="!isLoading">
     <!-- Formulario Interno -->
-    <div class="cont" *ngIf="showInternalForm">
+    <div class="cont" *ngIf="view==3">
       <div class="container-fluid">
         <form [formGroup]="myForm" (ngSubmit)="buscarMiembro()"
           class="container">
@@ -111,7 +161,7 @@
             [disabled]="!rolExterno">
             Añadir
           </button>
-          <button mat-button type="button" (click)="cancelar()"
+          <button mat-button type="button" (click)="toggleForm(0)"
             matTooltip="Regresar">
             Regresar/Cancelar
           </button>
@@ -120,7 +170,7 @@
     </div>
 
     <!-- Formulario Externo -->
-    <div class="container-fluid" *ngIf="isEdit">
+    <div class="container-fluid" *ngIf="view==1">
       <form [formGroup]="userDataForm" class="container">
         <header class="header">
           <h1 class="title">Editar Información del Investigador</h1>
@@ -269,14 +319,14 @@
           type="button">
           Guardar cambios
         </button>
-        <button class="btn-save" mat-button type="button" (click)="cancelar()"
+        <button class="btn-save" mat-button type="button" (click)="toggleForm(0)"
           matTooltip="Regresar">
           Regresar/Cancelar
         </button>
       </div>
     </div>
 
-    <div class="container-fluid" *ngIf="showExternalForm">
+    <div class="container-fluid" *ngIf="view==4">
       <form [formGroup]="miembro" (submit)="guardarmiembro()" class="container">
         <header class="header">
           <h1 class="title">Añadir Investigadores Externos</h1>
@@ -307,7 +357,7 @@
 
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Cédula</mat-label>
-            <input matInput type="text" formControlName="cedula" >
+            <input matInput type="text" formControlName="cedula">
             <mat-error
               *ngIf="miembro.get('cedula').invalid && miembro.get('cedula').touched">
               La cédula es obligatoria
@@ -382,7 +432,7 @@
           (click)="guardarmiembro()" type="button">
           Añadir
         </button>
-        <button mat-button type="button" (click)="cancelar()"
+        <button mat-button type="button" (click)="toggleForm(0)"
           matTooltip="Regresar">
           Regresar/Cancelar
         </button>

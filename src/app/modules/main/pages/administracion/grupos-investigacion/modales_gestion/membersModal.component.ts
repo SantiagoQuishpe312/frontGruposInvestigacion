@@ -1,3 +1,4 @@
+
 import { Component, OnInit, Inject, ElementRef, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
@@ -13,6 +14,12 @@ import { DislinkMembersService } from 'src/app/core/http/dislink-members/dislink
 import { DislinkMembers } from 'src/app/types/dislinkMembers.types';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClient } from '@angular/common/http';
+import { DocumentsService } from 'src/app/core/http/documentos/documents.service';
+import { AnnexesService } from 'src/app/core/http/annexes/annexes.service';
+import { Router } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser'; // Importa DomSanitizer y SafeResourceUrl
+import { Annexes } from 'src/app/types/annexes.types';
+
 @Component({
   selector: 'app-members',
   templateUrl: './membersModal.component.html',
@@ -40,6 +47,11 @@ export class MembersModalEdit implements OnInit {
   nacionalidades: string[] = [];
   nacionalidadesFiltradas: Observable<string[]>;
   rolExterno: string;
+  idByCoord: number;
+  view: number = 0;
+  selectedFile: File | undefined;
+  fileName: string = '';
+  fileUploaded: boolean = false;
   constructor(
     private fb: FormBuilder,
     private userService: UsuarioService,
@@ -50,15 +62,23 @@ export class MembersModalEdit implements OnInit {
     private dislinkService: DislinkMembersService,
     private snackBar: MatSnackBar,
     private http: HttpClient,
-
+    private documentService: DocumentsService,
+    private sanitizer: DomSanitizer,
+    private router: Router,
+    private annexesService: AnnexesService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
   ngOnInit(): void {
     this.groupId = Number(sessionStorage.getItem('selectedId'));
+    this.idByCoord = Number(sessionStorage.getItem('invGroup'));
     this.currentUser = this.authService.getUserName();
     this.currentDate = new Date();
-    this.get(this.groupId);
+    if (this.idByCoord) {
+      this.get(this.idByCoord);
+    } else {
+      this.get(this.groupId);
+    }
     this.cargarFormularios();
   }
 
@@ -92,9 +112,9 @@ export class MembersModalEdit implements OnInit {
     });
   }
 
-  toggleForm(isInternal: boolean): void {
-    this.showInternalForm = isInternal;
-    this.showExternalForm = !isInternal;
+  toggleForm(index: number): void {
+    this.view = index;
+  
   }
   buscarMiembro(): void {
     const user = this.myForm.get('usuario').value;
@@ -230,6 +250,38 @@ export class MembersModalEdit implements OnInit {
   editMemberInfo(user: InvMemberForm): void {
     this.cargarFormulariosInfoUser(user);
     this.isEdit = true;
+    this.view = 1;
+
+  }
+  token: string;
+  pdfUrl: SafeResourceUrl | undefined;
+  selectedUser: InvMemberForm;
+  cargarHojasDeVida(user: InvMemberForm): void {
+    this.token = sessionStorage.getItem('access_token');
+    this.selectedUser = user;
+    this.isLoading = true;
+    this.annexesService.getByGroupType(user.idGrupoInv, `_hojaDeVida_${user.idUsuario}`).subscribe((data) => {
+this.dataAnexo=data[0];
+      this.documentService.getDocument(this.token, data[0].rutaAnexo, data[0].nombreAnexo)
+        .subscribe({
+          next: (blob) => {
+            const pdfBlob = new Blob([blob], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(pdfBlob);
+            this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url); // Marcar la URL como segura
+            this.isLoading = false;
+            this.view=2;
+
+          },
+          error: (err) => {
+            console.error('Error al cargar el documento:', err);
+            this.isLoading = false;
+
+          }
+        });
+
+    })
+  }
+  ActualizarCV() {
 
   }
   onlyRead;
@@ -255,8 +307,8 @@ export class MembersModalEdit implements OnInit {
       idInstitucional: [user.user.idInstitucional],
       correo: [user.user.correo],
       departamento: [user.user.departamento ?? 'EXTERNO'],
-      cedula: [user.user.cedula],
-            institucion: [user.user.institucion],
+      cedula: [user.user.cedula ?? 1111111111],
+      institucion: [user.user.institucion],
       cargo: [user.user.cargo],
       nacionalidad: [user.user.nacionalidad, Validators.required],
       foto: [user.user.foto],
@@ -269,50 +321,52 @@ export class MembersModalEdit implements OnInit {
       usuarioModificacion: [user.user.usuarioModificacion],
     })
     this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe(data => {
-      this.nacionalidades = data.map(country => country.translations.spa.common); // Extraer nombres en español
+      this.nacionalidades = data
+        .map(country => country.translations?.spa?.common)
+        .filter(nombre => !!nombre); // Filtra los undefined o null
       this.nacionalidadesFiltradas = this.userDataForm.get('nacionalidad')!.valueChanges.pipe(
         startWith(''),
         map(value => this.filtrarNacionalidades(value || ''))
       );
     });
+  }
+  dataAnexo: Annexes;
+
+  actualizarInfoMiembro(): void {
+    this.isLoading = true;
+    const miembroData = this.miembroForm.value;
+    const usuarioData = this.userDataForm.value;
+    // Llamada concurrente para actualizar miembro y usuario
+    forkJoin([
+      this.invMemberService.update(miembroData.idUsuario, miembroData.idGrupoInv, miembroData),
+      this.userService.update(usuarioData.id, usuarioData)
+    ]).subscribe({
+      next: ([miembroResponse, usuarioResponse]) => {
+        if (this.groupId) {
+          this.get(this.groupId);
+        } else {
+          this.get(this.idByCoord);
+        }
+        this.isEdit = false;
+        this.isLoading = false;
+        this.view = 0;
+        this.snackBar.open('Información del usuario actualizada con éxito.', 'Cerrar', {
+          duration: 3000,
+          panelClass: ['success-snackbar'],
+        });
+      },
+      error: (err) => {
+        this.isLoading = false;
+
+        // Mostrar mensaje de error
+        this.snackBar.open('Error al actualizar la información del usuario.', 'Cerrar', {
+          duration: 3000,
+          panelClass: ['error-snackbar'],
+        });
+      }
+    });
 
   }
-
-
-actualizarInfoMiembro(): void {
-  this.isLoading = true;
-  console.log('actualizarInfoMiembro');
-  const miembroData = this.miembroForm.value;
-  const usuarioData = this.userDataForm.value;
-  console.log(this.userDataForm.valid);
-  console.log(this.userDataForm.value);
-  // Llamada concurrente para actualizar miembro y usuario
-  forkJoin([
-    this.invMemberService.update(miembroData.idUsuario, miembroData.idGrupoInv, miembroData),
-    this.userService.update(usuarioData.id, usuarioData)
-  ]).subscribe({
-    next: ([miembroResponse, usuarioResponse]) => {
-      this.get(this.groupId);         // Recargar datos del grupo
-      this.isEdit = false;
-      this.isLoading = false;
-      // Mostrar mensaje de éxito
-      this.snackBar.open('Información del usuario actualizada con éxito.', 'Cerrar', {
-        duration: 3000,
-        panelClass: ['success-snackbar'],
-      });
-    },
-    error: (err) => {
-      this.isLoading = false;
-  
-      // Mostrar mensaje de error
-      this.snackBar.open('Error al actualizar la información del usuario.', 'Cerrar', {
-        duration: 3000,
-        panelClass: ['error-snackbar'],
-      });
-    }
-  });
-  
-}
 
 
   private filtrarNacionalidades(valor: string): string[] {
@@ -334,7 +388,7 @@ actualizarInfoMiembro(): void {
         userData.id = response;
         this.AgregarMiembro(userData.id, 'EXTERNO');
         this.miembro.reset();
-        this.cancelar();
+        this.view = 0;
       },
       (error) => {
         console.error('Error al crear el usuario', error);
@@ -362,13 +416,154 @@ actualizarInfoMiembro(): void {
     }
     this.invMemberService.createInvMemberFormForm(data).subscribe(
       (response) => {
-        this.get(this.groupId);
+        if (this.groupId) {
+          this.get(this.groupId);
+        } else {
+          this.get(this.idByCoord);
+        }
         this.isLoading = false;
       },
       (error) => {
-        this.get(this.groupId);
-        this.isLoading = false;
+        if (this.groupId) {
+          this.get(this.groupId);
+        } else {
+          this.get(this.idByCoord);
+        } this.isLoading = false;
       }
     );
   }
+   originalFileName: string;
+  onDrop(event: any) {
+        event.preventDefault();
+        const files = event.dataTransfer.files;
+        if (files.length > 0) {
+          const file = files[0];
+          const fileExtension = file.name.split('.').pop().toLowerCase();
+          if (fileExtension !== 'pdf') {
+            alert('Solo se permiten archivos PDF.');
+            this.clearFileInput();
+            return;
+          }
+          this.selectedFile = file;
+          this.setFileName();
+        }
+      }
+    
+      setFileName() {
+        if (!this.selectedFile) {
+          console.error("Error: No hay archivo seleccionado.");
+          return;
+        }
+        this.originalFileName = this.selectedFile.name;
+        const name = `hojaDeVida_${this.selectedUser.idUsuario}_${this.currentDate.getFullYear()}-${this.currentDate.getMonth() + 1}-${this.currentDate.getDate()}.pdf`;
+        const modifiedFile = new File([this.selectedFile], name, { type: this.selectedFile.type });
+        this.selectedFile = modifiedFile;
+      }
+      onDragOver(event: any) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.target.classList.add('drag-over');
+    
+      }
+    
+      onDragLeave(event: any) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.target.classList.remove('drag-over');
+      }
+    
+    
+      onFileSelected(event: any) {
+        this.selectedFile = event.target.files[0];
+        this.validateFileType();
+      }
+    
+      validateFileType() {
+        if (this.selectedFile) {
+          const fileExtension = this.selectedFile.name.split('.').pop().toLowerCase();
+          if (fileExtension !== 'pdf') {
+            alert('Solo se permiten archivos PDF.');
+            this.clearFileInput();
+            this.selectedFile = undefined;
+          } else {
+            this.setFileName();
+          }
+        }
+      }
+    
+      clearFileInput() {
+        const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+        if (fileInput) {
+          fileInput.value = '';
+        }
+      }
+    
+    
+      onSubmit() {
+        this.isLoading = true;
+        if (this.selectedFile) {
+          const fileToUpload = this.selectedFile;
+          const sistema = 'GruposInv';
+    
+          this.documentService.saveDocument(this.token, fileToUpload, sistema).subscribe({
+            next: (response) => {
+              const annexes: Annexes = {
+                idAnexo: this.dataAnexo.idAnexo,
+                idDocumento: this.dataAnexo.idDocumento,
+                idGrupo: this.dataAnexo.idGrupo,
+                nombreAnexo: response.fileName,
+                rutaAnexo: response.uuid,
+                usuarioCreacionAnexo: this.dataAnexo.usuarioCreacionAnexo,
+                fechaCreacionAnexo: this.dataAnexo.fechaCreacionAnexo,
+                usuarioModificacionAnexo: this.currentUser,
+                fechaModificacionAnexo: this.currentDate
+              };
+    
+              this.annexesService.update(annexes.idAnexo,annexes).subscribe({
+                next: () => {
+                  this.snackBar.open('Memorando enviado correctamente.', 'Cerrar', {
+                    duration: 3000,
+                  });
+                  this.isLoading = false;
+                  this.view=0;
+    
+                },
+                error: (err) => {
+                  console.error('Error al guardar anexos:', err);
+                  this.isLoading = false;
+                  this.snackBar.open('Error al enviar el memorando.', 'Cerrar', {
+                    duration: 3000,
+                  });
+                }
+              });
+            },
+            error: (err) => {
+              console.error('Error al guardar documento:', err);
+              this.isLoading = false;
+              this.snackBar.open('Error al guardar el documento.', 'Cerrar', {
+                duration: 3000,
+              });
+            }
+          });
+        }
+    
+    
+      }
+    
+      getFileIcon(fileType: string | undefined): string {
+        if (!fileType) return 'far fa-file'; // Ícono genérico si no hay tipo de archivo
+        const fileIcons: { [key: string]: string } = {
+            'application/pdf': 'far fa-file-pdf', // Ícono para PDF
+            'image/png': 'far fa-file-image',
+            'image/jpeg': 'far fa-file-image',
+            'image/jpg': 'far fa-file-image',
+            'image/gif': 'far fa-file-image',
+            'image/bmp': 'far fa-file-image',
+            'image/webp': 'far fa-file-image',
+            'image/tiff': 'far fa-file-image',
+            'image/svg+xml': 'far fa-file-image',
+        };
+        return fileIcons[fileType] || 'far fa-file';
+    }
+  
 }

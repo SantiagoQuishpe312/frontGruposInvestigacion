@@ -229,8 +229,8 @@ const routes: Routes = [
     component: DashboardCoordinadorComponent
   },
   {
-path: 'memorando-vitt',
-component: MemorandoCreacionVITTComponent
+    path: 'memorando-vitt',
+    component: MemorandoCreacionVITTComponent
   },
 
   {
@@ -497,129 +497,134 @@ component: MemorandoCreacionVITTComponent
     component: StrategiesComponent
   },
   {
-    path:'memorando-8',
-    component:MemorandoOchoComponent
+    path: 'memorando-8',
+    component: MemorandoOchoComponent
   },
   {
-    path:'solicitudes-comite',
-    component:SolicitudesFaseNueveComponent
+    path: 'solicitudes-comite',
+    component: SolicitudesFaseNueveComponent
   },
   {
-    path:'presentar-grupo-comite',
-    component:MostrarGrupoFaseNueveComponent
+    path: 'presentar-grupo-comite',
+    component: MostrarGrupoFaseNueveComponent
   },
   {
-    path:'memorando-9',
-    component:MemorandoNueveComponent
+    path: 'memorando-9',
+    component: MemorandoNueveComponent
   },
   {
-    path:'solicitud-aprobada',
-    component:GruposAprobadosComponent
+    path: 'solicitud-aprobada',
+    component: GruposAprobadosComponent
   },
   {
-    path:'solicitudes-aprobadas',
-    component:SolicitudGruposFaseDiezComponent
+    path: 'solicitudes-aprobadas',
+    component: SolicitudGruposFaseDiezComponent
   },
   {
-    path:'memorando-10',
-    component:MemorandoDiezComponent
+    path: 'memorando-10',
+    component: MemorandoDiezComponent
   },
   {
-    path:'grupos-resoluciones',
-    component:SolicitudesParaResolucionComponent
+    path: 'grupos-resoluciones',
+    component: SolicitudesParaResolucionComponent
   },
   {
-    path:'grupo-resolucion',
-    component:GruposParaResolucionComponent
+    path: 'grupo-resolucion',
+    component: GruposParaResolucionComponent
   },
   {
-    path:'memorando-12',
-    component:MemorandoDoceComponent
+    path: 'memorando-12',
+    component: MemorandoDoceComponent
   },
   //fase de cierre
   {
-    path:'fase-cierre',
-    component:FaseCierreComponent
+    path: 'fase-cierre',
+    component: FaseCierreComponent
   },
   {
-    path:'ver-informe-cierre',
-    component:VerInformeCierreComponent
-  },{
-    path:'grupos-cierre',
-    component:SolicitudesComponent30
+    path: 'ver-informe-cierre',
+    component: VerInformeCierreComponent
+  }, {
+    path: 'grupos-cierre',
+    component: SolicitudesComponent30
   },
   {
-    path:'grupos-cierre-1',
-    component:SolicitudesComponent31
+    path: 'grupos-cierre-1',
+    component: SolicitudesComponent31
   },
   {
-    path:'solicitud-cierre',
-    component:MostrarSolicitud31
-  },{
-    path:'memorando-cierre',
+    path: 'solicitud-cierre',
+    component: MostrarSolicitud31
+  }, {
+    path: 'memorando-cierre',
     component: Memorando31Component
-  },{
-    path:'informe-bienes',
+  }, {
+    path: 'informe-bienes',
     component: infBienesEquiposComponent
-  },{
-    path:'solicitud-cierre-36',
-    component:Solicitudes36Component
-    },{
-      path:'doc-informe-bienes',
-      component:MostrarSolicitud36
-    },
-    {
-      path:'solicitud-cierre',
-      component:MostrarSolicitud31
-    },{
-      path:'memorando-cierre',
-      component: Memorando31Component
-    },{
-      path:'informe-bienes',
-      component: infBienesEquiposComponent
-    },
-    {
-      path:'grupos-cierre-VITT',
-      component:SolicitudesComponent32
-    },
-    {
-      path:'solicitud-cierre2',
-      component:MostrarSolicitud32
-    },{
-      path:'memorando-cierre2',
-      component: Memorando32Component
-    },
-    {
-      path:'grupos-cierre-UTI',
-      component:SolicitudesComponent33
-    },
-    {
-      path:'solicitud-cierre3',
-      component:MostrarSolicitud33
-    },{
-      path:'memorando-cierre3',
-      component: Memorando33Component
-    },
-    {
-      path:'grupos-cierre-UTIC',
-      component:SolicitudesComponent34
-    },
-    {
-      path:'solicitud-cierre4',
-      component:MostrarSolicitud34
-    },{
-      path:'memorando-cierre4',
-      component: Memorando34Component
-    },{
-      path:'actas-cierre',
-      component: Memorando36Component
-    },{
-      path:'solicitud-vinculacion',
-      component:SolicitudesComponent39
-    },{
-      path:'mostrar-solicitud-vinculacion',
-      component:MostrarSolicitud39
-    }
+  }, {
+    path: 'solicitud-cierre-36',
+    component: Solicitudes36Component
+  }, {
+    path: 'doc-informe-bienes',
+    component: MostrarSolicitud36
+  },
+  {
+    path: 'solicitud-cierre',
+    component: MostrarSolicitud31
+  }, {
+    path: 'memorando-cierre',
+    component: Memorando31Component
+  }, {
+    path: 'informe-bienes',
+    component: infBienesEquiposComponent
+  },
+  {
+    path: 'grupos-cierre-VITT',
+    component: SolicitudesComponent32
+  },
+  {
+    path: 'solicitud-cierre2',
+    component: MostrarSolicitud32
+  }, {
+    path: 'memorando-cierre2',
+    component: Memorando32Component
+  },
+  {
+    path: 'grupos-cierre-UTI',
+    component: SolicitudesComponent33
+  },
+  {
+    path: 'solicitud-cierre3',
+    component: MostrarSolicitud33
+  }, {
+    path: 'memorando-cierre3',
+    component: Memorando33Component
+  },
+  {
+    path: 'grupos-cierre-UTIC',
+    component: SolicitudesComponent34
+  },
+  {
+    path: 'solicitud-cierre4',
+    component: MostrarSolicitud34
+  }, {
+    path: 'memorando-cierre4',
+    component: Memorando34Component
+  }, {
+    path: 'actas-cierre',
+    component: Memorando36Component
+  }, {
+    path: 'solicitud-vinculacion',
+    component: SolicitudesComponent39
+  }, {
+    path: 'mostrar-solicitud-vinculacion',
+    component: MostrarSolicitud39
+  }, {
+    path: 'coord/gestion-grupo',
+    component: DetalleGIComponent
+  }
+
+
 ];
 
 

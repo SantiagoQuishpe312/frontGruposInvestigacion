@@ -5,7 +5,7 @@ export interface Usuario{
     idInstitucional?:string;
     correo:string;
     departamento?:string;
-    cedula:string;
+    cedula?:string;
     institucion:string;
     cargo?:string;
     nacionalidad?:string;

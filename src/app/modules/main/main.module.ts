@@ -206,6 +206,7 @@ import { LinkFormComponent } from 'src/@vex/components/forms/linkForm/linkForm.c
 import { MostrarSolicitud39 } from './pages/unidad-gestion-inv/fase-vinculacion/mostrarSolicitud.component';
 import { SolicitudesComponent39 } from './pages/unidad-gestion-inv/fase-vinculacion/obtenerSolicitudes.component';
 import { Modal_ObjEspecifico } from './pages/coordinadorGI/faseCreacion/plan_desarrollo/modal_specificObj.component';
+import { CvCoordUpdate } from './pages/administracion/grupos-investigacion/modales_gestion/CvCoordUpdate.component';
 @NgModule({
   declarations: [
     SolicitudesComponent30,
@@ -375,7 +376,8 @@ import { Modal_ObjEspecifico } from './pages/coordinadorGI/faseCreacion/plan_des
     MostrarSolicitud32,
     MostrarSolicitud33,
     MostrarSolicitud34,
-    Modal_ObjEspecifico
+    Modal_ObjEspecifico,
+    CvCoordUpdate
 
   ],
   imports: [

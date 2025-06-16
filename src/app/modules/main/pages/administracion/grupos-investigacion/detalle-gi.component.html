@@ -250,7 +250,13 @@
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
         </table>
-        <div class="botones-container">
+        <div class="botones-container" *ngIf="idByCoord">
+          <button type="button" mat-raised-button color="primary" class="btn-container"
+          [disabled]="!invGroup" (click)="EditMembers()">Editar Información de Miembros del Grupo</button>
+                    <button type="button" mat-raised-button color="primary" class="btn-container"
+          [disabled]="!invGroup" (click)="UpdateCvCoord()">Actualizar mi Hoja de Vida</button>
+        </div>
+        <div class="botones-container" *ngIf="id">
           <button type="button" mat-raised-button color="primary" class="btn-container"
             [disabled]="!invGroup" (click)="EditGroup()">Editar Información del Grupo</button>
         

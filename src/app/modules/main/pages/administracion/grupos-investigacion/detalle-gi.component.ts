@@ -14,6 +14,7 @@ import { DocumentsService } from 'src/app/core/http/documentos/documents.service
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormControl } from '@angular/forms';
+import { CvCoordUpdate } from './modales_gestion/CvCoordUpdate.component';
 
 @Component({
   selector: 'app-grupos-investigacion-crud',
@@ -24,26 +25,27 @@ export class DetalleGIComponent implements OnInit {
   invGroup: InvGroupCompleteForm;
   coordinador: Usuario;
   isLoading: boolean = true;
-  displayedColumns: string[] = ['pais', 'nombreDocente', 'tipo', 'departamento', 'universidadCentro','genero','grado'];
+  displayedColumns: string[] = ['pais', 'nombreDocente', 'tipo', 'departamento', 'universidadCentro', 'genero', 'grado'];
   dataSource = new MatTableDataSource<any>(); // Fuente de datos para la tabla
   id: number;
+  idByCoord: number;
   token: string;
   imagenUrl: SafeResourceUrl | undefined;
   @ViewChild(MatSort) sort!: MatSort;
   usuariosPorFuncion: { [key: string]: number } = {};
-  usuariosPorGradoAcademico:{ [key: string]: number } = {};
+  usuariosPorGradoAcademico: { [key: string]: number } = {};
   usuariosPorGenero: { [key: string]: number } = {};
   usuariosPorDepartamento: { [key: string]: number } = {};
   fullDataSource: any[] = [];
   totalUsuarios: number = 0;
-  funcionControl=new FormControl('');
-  gradoControl=new FormControl('');
-  generoControl=new FormControl('');
-  departamentoControl=new FormControl('');
-  tipo:string[]=[];
-  grado:string[] = [];
-  genero:string[]=[];
-  departamento:string[] = [];
+  funcionControl = new FormControl('');
+  gradoControl = new FormControl('');
+  generoControl = new FormControl('');
+  departamentoControl = new FormControl('');
+  tipo: string[] = [];
+  grado: string[] = [];
+  genero: string[] = [];
+  departamento: string[] = [];
 
   funcionCountDataSource = new MatTableDataSource<{ tipo: string, cantidad: number }>([]);
   gradoCountDataSource = new MatTableDataSource<{ grado: string, cantidad: number }>([]);
@@ -51,7 +53,7 @@ export class DetalleGIComponent implements OnInit {
   departamentoCountDataSource = new MatTableDataSource<{ departamento: string, cantidad: number }>([]);
   totalFuncionCount: number = 0;
   totalGradoCount: number = 0;
-  totalGeneroCount: number = 0; 
+  totalGeneroCount: number = 0;
   totalDepartamentoCount: number = 0;
   // Variables para los filtros:
 
@@ -62,12 +64,19 @@ export class DetalleGIComponent implements OnInit {
     private dialog: MatDialog,
     private documentsService: DocumentsService,
     private sanitizer: DomSanitizer
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.id = Number(sessionStorage.getItem('selectedId'));
+    this.idByCoord=Number(sessionStorage.getItem('invGroup'));
+   
     this.token = sessionStorage.getItem('access_token')!;
-    this.get(this.id);
+    if(this.id){
+       this.get(this.id);
+    }else if(this.idByCoord){
+      this.get(this.idByCoord);
+    }
+   
     this.getImage();
     this.funcionControl.valueChanges.subscribe(() => this.aplicarFiltro());
     this.gradoControl.valueChanges.subscribe(() => this.aplicarFiltro());
@@ -76,51 +85,50 @@ export class DetalleGIComponent implements OnInit {
   }
 
   get(id: number) {
-  this.isLoading = true;
+    this.isLoading = true;
     this.giService.getByIdAll(id).subscribe((data) => {
-      this.totalUsuarios=data.users.length+1;
-     this.usuariosPorDepartamento=this.contarPorCategoria(data.users,'departamento')
-     this.usuariosPorFuncion=this.contarPorCategoria(data.users,'tipo'); 
-     this.usuariosPorGenero=this.contarPorCategoria(data.users,'genero'); 
-     this.usuariosPorGradoAcademico=this.contarPorCategoria(data.users,'grado');
-     {//data.users.user este arreglo contiene la }
-     this.invGroup = data;
-     const dataGroup = [
-      ...data.users.map(user => ({
-        ...user.user,  // Extraemos la información de 'user' (Usuario) de cada miembro
-        ...user,  // También incluimos las propiedades de 'InvMemberForm' (fuera de 'user')
-          // Añadimos la función 'Miembro'
-      })),
-      {
-        ...data.coordinador,  // Extraemos directamente la información del coordinador
-        tipo: 'Coordinador'  // Añadimos la función 'Coordinador'
-      }
+      this.totalUsuarios = data.users.length + 1;
+      this.usuariosPorDepartamento = this.contarPorCategoria(data.users, 'departamento')
+      this.usuariosPorFuncion = this.contarPorCategoria(data.users, 'tipo');
+      this.usuariosPorGenero = this.contarPorCategoria(data.users, 'genero');
+      this.usuariosPorGradoAcademico = this.contarPorCategoria(data.users, 'grado');
+      {//data.users.user este arreglo contiene la }
+        this.invGroup = data;
+        const dataGroup = [
+          ...data.users.map(user => ({
+            ...user.user,  // Extraemos la información de 'user' (Usuario) de cada miembro
+            ...user,  // También incluimos las propiedades de 'InvMemberForm' (fuera de 'user')
+            // Añadimos la función 'Miembro'
+          })),
+          {
+            ...data.coordinador,  // Extraemos directamente la información del coordinador
+            tipo: 'Coordinador'  // Añadimos la función 'Coordinador'
+          }
 
-    ];
-    this.isLoading = false;
-    this.actualizarConteoDepartamento(dataGroup);
-    this.actualizarConteoGenero(dataGroup);
-    this.actualizarConteoGrado(dataGroup);  
-    this.actualizarConteoFuncion(dataGroup);
-    this.departamento=Array.from(new Set(dataGroup.map(user => user.departamento))).filter(Boolean).sort();
-    this.tipo = Array.from(new Set(dataGroup.map(user => user.tipo))).filter(Boolean).sort();
-    this.genero = Array.from(new Set(dataGroup.map(user => user.genero))).filter(Boolean).sort();
-    this.grado = Array.from(new Set(dataGroup.map(user => user.grado))).filter(Boolean).sort();
-    // Contar usuarios por función
-      this.contarUsuariosPorFuncion(dataGroup);
-      this.fullDataSource = [...dataGroup]; // Guarda los datos originales para filtrar
-      this.dataSource.data=dataGroup;
-      //this.dataSource = new MatTableDataSource(dataGroup);
-      this.dataSource.sort = this.sort;
-      this.dataSource.filterPredicate = (data: any, filter: string) =>
-        data.nombre.toLowerCase().includes(filter);}
+        ];
+        this.isLoading = false;
+        this.actualizarConteoDepartamento(dataGroup);
+        this.actualizarConteoGenero(dataGroup);
+        this.actualizarConteoGrado(dataGroup);
+        this.actualizarConteoFuncion(dataGroup);
+        this.departamento = Array.from(new Set(dataGroup.map(user => user.departamento))).filter(Boolean).sort();
+        this.tipo = Array.from(new Set(dataGroup.map(user => user.tipo))).filter(Boolean).sort();
+        this.genero = Array.from(new Set(dataGroup.map(user => user.genero))).filter(Boolean).sort();
+        this.grado = Array.from(new Set(dataGroup.map(user => user.grado))).filter(Boolean).sort();
+        // Contar usuarios por función
+        this.contarUsuariosPorFuncion(dataGroup);
+        this.fullDataSource = [...dataGroup]; // Guarda los datos originales para filtrar
+        this.dataSource.data = dataGroup;
+        //this.dataSource = new MatTableDataSource(dataGroup);
+        this.dataSource.sort = this.sort;
+        this.dataSource.filterPredicate = (data: any, filter: string) =>
+          data.nombre.toLowerCase().includes(filter);
+      }
     });
   }
-  
 
 
 
-  
   contarUsuariosPorFuncion(data: any[]) {
     // Contar los diferentes tipos de función
     this.usuariosPorFuncion = data.reduce((acc, user) => {
@@ -132,23 +140,23 @@ export class DetalleGIComponent implements OnInit {
 
 
   aplicarFiltro() {
-    let filterData=[...this.fullDataSource];
-    const selectedDepartment=this.departamentoControl.value;
+    let filterData = [...this.fullDataSource];
+    const selectedDepartment = this.departamentoControl.value;
     if (selectedDepartment) {
       console.log(selectedDepartment);
-      
+
       filterData = filterData.filter(item => item.departamento === selectedDepartment);
       console.log(filterData);
     }
-    const selectedGenero=this.generoControl.value;
+    const selectedGenero = this.generoControl.value;
     if (selectedGenero) {
       filterData = filterData.filter(item => item.genero === selectedGenero);
     }
-    const selectedGrado=this.gradoControl.value;
+    const selectedGrado = this.gradoControl.value;
     if (selectedGrado) {
       filterData = filterData.filter(item => item.grado === selectedGrado);
     }
-    const selectedFuncion=this.funcionControl.value;
+    const selectedFuncion = this.funcionControl.value;
     if (selectedFuncion) {
       filterData = filterData.filter(item => item.tipo === selectedFuncion);
     }
@@ -159,8 +167,8 @@ export class DetalleGIComponent implements OnInit {
     this.actualizarConteoDepartamento(filterData);
   }
   actualizarConteoDepartamento(filterData: any[]) {
-    const conteo=this.contarPorCategoria(filterData,'departamento');
-    this.totalDepartamentoCount=Object.values(conteo).reduce((sum, value) => sum + value, 0);
+    const conteo = this.contarPorCategoria(filterData, 'departamento');
+    this.totalDepartamentoCount = Object.values(conteo).reduce((sum, value) => sum + value, 0);
     this.departamentoCountDataSource.data = [
       ...Object.keys(conteo).map(departamento => ({
         departamento,
@@ -169,7 +177,7 @@ export class DetalleGIComponent implements OnInit {
       //{ departamento: 'Total', cantidad: this.totalDepartamentoCount }
     ];
   }
-  contarPorCategoria(data: any[], campo: string):{[key: string]: number} {
+  contarPorCategoria(data: any[], campo: string): { [key: string]: number } {
     return data.reduce((acc, item) => {
       const key = item[campo] || 'Desconocido';
       acc[key] = (acc[key] || 0) + 1;
@@ -177,8 +185,8 @@ export class DetalleGIComponent implements OnInit {
     }, {} as { [key: string]: number });
   }
   actualizarConteoGenero(filterData: any[]) {
-    const conteo=this.contarPorCategoria(filterData,'genero');
-    this.totalGeneroCount=Object.values(conteo).reduce((sum, value) => sum + value, 0);
+    const conteo = this.contarPorCategoria(filterData, 'genero');
+    this.totalGeneroCount = Object.values(conteo).reduce((sum, value) => sum + value, 0);
     this.generoCountDataSource.data = [
       ...Object.keys(conteo).map(genero => ({
         genero,
@@ -188,8 +196,8 @@ export class DetalleGIComponent implements OnInit {
     ];
   }
   actualizarConteoGrado(filterData: any[]) {
-    const conteo=this.contarPorCategoria(filterData,'grado');
-    this.totalGradoCount=Object.values(conteo).reduce((sum, value) => sum + value, 0);
+    const conteo = this.contarPorCategoria(filterData, 'grado');
+    this.totalGradoCount = Object.values(conteo).reduce((sum, value) => sum + value, 0);
     this.gradoCountDataSource.data = [
       ...Object.keys(conteo).map(grado => ({
         grado,
@@ -199,9 +207,9 @@ export class DetalleGIComponent implements OnInit {
     ];
   }
   actualizarConteoFuncion(filterData: any[]) {
-    const conteo=this.contarPorCategoria(filterData,'tipo');
-    this.totalFuncionCount=Object.values(conteo).reduce((sum, value) => sum + value, 0);
-    
+    const conteo = this.contarPorCategoria(filterData, 'tipo');
+    this.totalFuncionCount = Object.values(conteo).reduce((sum, value) => sum + value, 0);
+
     console.log(conteo);
     console.log(filterData)
     this.funcionCountDataSource.data = [
@@ -251,12 +259,26 @@ export class DetalleGIComponent implements OnInit {
   EditMembers(): void {
     const dialogRef = this.dialog.open(MembersModalEdit, { width: '80%', height: '70%' });
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) this.get(this.id);
+      if (result) {
+        if(this.id){
+        this.get(this.id);
+
+        }else if(this.idByCoord){
+        this.get(this.idByCoord);
+        }
+
+      }
     });
   }
 
   EditGroup(): void {
     const dialogRef = this.dialog.open(GroupModalEdit, { width: '80%', height: '70%' });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) this.get(this.id);
+    });
+  }
+  UpdateCvCoord(): void {
+    const dialogRef = this.dialog.open(CvCoordUpdate, { width: '80%', height: '70%' });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) this.get(this.id);
     });

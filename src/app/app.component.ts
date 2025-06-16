@@ -206,6 +206,11 @@ export class AppComponent implements OnInit {
                   label: 'Grupo de Investigación',
                   route: 'main/dashboard',
                   icon: 'mat:groups'
+                },{
+                  type: 'link',
+                  label: 'Gestion Grupo',
+                  route: 'main/coord/gestion-grupo',
+                  icon: 'mat:groups'
                 },
                 {
                   type: 'subheading',
@@ -224,12 +229,7 @@ export class AppComponent implements OnInit {
                   route: 'main/desvinculacion',
                   icon: 'mat:group_remove'
                 },
-                {
-                  type: 'link',
-                  label: 'Vista Plan Anual',
-                  route: 'main/vista-plan-anual',
-                  icon: 'mat:group_remove'
-                },
+                
 
               );
             } 
