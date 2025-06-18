@@ -11,6 +11,7 @@ import { AnnexesService } from 'src/app/core/http/annexes/annexes.service';
 import { Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser'; // Importa DomSanitizer y SafeResourceUrl
 import { Annexes } from 'src/app/types/annexes.types';
+import { error } from 'console';
 
 @Component({
     selector: 'app-members',
@@ -77,6 +78,12 @@ export class CvCoordUpdate implements OnInit {
                 });
 
         })
+        if (!this.dataAnexo){
+            this.snackBar.open('No se encontró la hoja de vida.', 'Cerrar', {
+                duration: 3000,
+            });
+            this.isLoading = false;
+        }
     }
     originalFileName: string;
     onDrop(event: any) {

@@ -136,11 +136,13 @@ export class DevelopmentPlanFormComponent implements OnInit {
         // ✅ Ahora que ya se ha definido planVigente, puedes actualizar los objetivos
         this.actualizarInformacionObjetivos();
         this.obtenerPanelesControl();
+        this.isLoading = false;
 
         this.loadData().subscribe(() => {
           this.cargaFormularios(); // crea el formulario con opciones ya cargadas
           this.loadDataForm(this.planVigente.idPlanDesarrollo); // ahora sí, setear seleccionados desde BD
           this.formReady = true;
+          this.isLoading = false;
         });
         this.isLoading = false;
 

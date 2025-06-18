@@ -7,15 +7,15 @@
         <h1>Plan de Desarrollo</h1>
       </header>
     </div>
-    <div *ngIf="!isLoading" class="loading-spinner-overlay">
+    <div *ngIf="isLoading" class="loading-spinner-overlay">
       <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
     </div>
-    <form [formGroup]="myForm" (ngSubmit)="HandleSubmit()">
+    <form *ngIf="myForm"  [formGroup]="myForm" (ngSubmit)="HandleSubmit()">
       <mat-stepper [linear]="isLinear" #stepper>
         <!-- Step 1: Referencias -->
         <mat-step [stepControl]="planDesarrolloForm1">
           <ng-template matStepLabel>Referencias</ng-template>
-          <div formGroupName="planDesarrolloForm1">
+          <div *ngIf="planDesarrolloForm1" formGroupName="planDesarrolloForm1">
             <div class="grid-container">
               <div class="grid-item">
                 <mat-form-field appearance="fill">
